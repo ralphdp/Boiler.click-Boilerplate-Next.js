@@ -4,7 +4,7 @@ import { useState, useEffect } from "react";
 import { motion, AnimatePresence } from "framer-motion";
 import { useSession } from "next-auth/react";
 import { GlassCard } from "@/components/ui/GlassCard";
-import { ShieldAlert, Users, Activity, Settings, ArrowLeft, ArrowRight, ShieldCheck, Palette, Radio, ShoppingCart, Trash2, Plus, Edit2, ArrowUp, ArrowDown, X, Check } from "lucide-react";
+import { ShieldAlert, Users, Activity, Settings, ArrowLeft, ArrowRight, ShieldCheck, Palette, Radio, ShoppingCart, Trash2, Plus, Edit2, ArrowUp, ArrowDown, X, Check, Eye, EyeOff } from "lucide-react";
 import Link from "next/link";
 import { Button } from "@/components/ui/Button";
 import { getSovereignNodes, setNodeRole, getTelemetryData, setSovereignWebGLVariant, setGlobalBroadcast, setContentOverride, getGlobalOverrides, getAuditTraces, setCommerceMode, setResendFrom, setSiteTitle, setContactEmail, setHaltingProtocol as setHaltingProtocolAction, setPreLaunchMode as setPreLaunchModeAction, setSandboxMode as setSandboxModeAction, setPrimaryColor, setSocialLinks, setSEOMetadata, setRateLimitMode, setTelemetryKeys, setPricingMatrix, getStoreProducts, createStoreProduct, updateStoreProduct, deleteStoreProduct } from "@/core/actions/admin";
@@ -575,10 +575,19 @@ export default function AdminPage() {
 
                                                         <div className="text-xs font-bold text-white mb-2 uppercase tracking-widest flex justify-between items-center">
                                                             Tier {tIdx + 1}
-                                                            <button onClick={() => {
-                                                                setPricingTiers(pricingTiers.filter((_, i) => i !== tIdx));
-                                                                if (recommendedPlan === tier.id) setRecommendedPlan("");
-                                                            }} className="text-red-500 hover:text-red-400 p-1"><Trash2 size={14} /></button>
+                                                            <div className="flex gap-2">
+                                                                <button onClick={() => {
+                                                                    const newTiers = [...pricingTiers];
+                                                                    newTiers[tIdx].hidden = !newTiers[tIdx].hidden;
+                                                                    setPricingTiers(newTiers);
+                                                                }} className={`p-1 rounded ${tier.hidden ? 'text-white/30 hover:text-white/50' : 'text-green-500 hover:text-green-400'}`}>
+                                                                    {tier.hidden ? <EyeOff size={14} /> : <Eye size={14} />}
+                                                                </button>
+                                                                <button onClick={() => {
+                                                                    setPricingTiers(pricingTiers.filter((_, i) => i !== tIdx));
+                                                                    if (recommendedPlan === tier.id) setRecommendedPlan("");
+                                                                }} className="text-red-500 hover:text-red-400 p-1"><Trash2 size={14} /></button>
+                                                            </div>
                                                         </div>
 
                                                         <input type="text" placeholder="Plan Name" className="bg-black/50 border border-white/10 text-xs px-4 py-2 outline-none focus:border-[var(--accent)] text-white w-full font-mono font-bold" value={tier.name} onChange={(e) => {

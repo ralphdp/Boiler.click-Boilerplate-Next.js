@@ -45,7 +45,7 @@ export default function DemoPage() {
                         typeof f === 'string' ? { name: f, active: true } : f
                     )
                 }));
-                setPricingTiers(processedTiers);
+                setPricingTiers(processedTiers.filter((t: any) => !t.hidden));
             }
             if (overrides.recommendedPlan) setRecommendedPlan(overrides.recommendedPlan);
             setProducts(prods);
@@ -98,9 +98,9 @@ export default function DemoPage() {
                         </div>
 
                         <div className={`grid gap-8 w-full mx-auto ${pricingTiers.length === 1 ? 'grid-cols-1 max-w-md' :
-                                pricingTiers.length === 2 ? 'grid-cols-1 md:grid-cols-2 max-w-4xl' :
-                                    pricingTiers.length === 3 ? 'grid-cols-1 md:grid-cols-3 max-w-6xl' :
-                                        'grid-cols-1 md:grid-cols-2 lg:grid-cols-2 max-w-4xl'
+                            pricingTiers.length === 2 ? 'grid-cols-1 md:grid-cols-2 max-w-4xl' :
+                                pricingTiers.length === 3 ? 'grid-cols-1 md:grid-cols-3 max-w-6xl' :
+                                    'grid-cols-1 md:grid-cols-2 lg:grid-cols-2 max-w-4xl'
                             }`}>
                             {pricingTiers.map(tier => (
                                 <GlassCard key={tier.id} className={`p-8 flex flex-col justify-between transition-all relative overflow-hidden ${recommendedPlan === tier.id ? 'border-[var(--accent)]/50 bg-[var(--accent)]/5 shadow-[0_0_30px_rgba(var(--accent-rgb),0.1)]' : 'hover:border-white/20'}`}>
