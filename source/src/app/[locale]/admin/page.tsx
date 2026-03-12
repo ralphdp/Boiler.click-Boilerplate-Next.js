@@ -311,8 +311,10 @@ export default function AdminPage() {
                                                         <tr key={trace.id || i} className="hover:bg-white/5 transition-colors group">
                                                             <td className="p-4 text-white/40 whitespace-nowrap">{new Date(trace.timestamp).toLocaleString()}</td>
                                                             <td className="p-4 font-bold tracking-widest uppercase">{trace.action}</td>
-                                                            <td className={`p-4 font-bold tracking-widest uppercase ${trace.severity === 'FATAL' || trace.severity === 'ERROR' || trace.severity === 'CRIT' ? 'text-[var(--accent)]' : trace.severity === 'WARN' ? 'text-yellow-500' : 'text-[var(--accent)]'}`}>
-                                                                {trace.severity}
+                                                            <td className="p-4">
+                                                                <div className={`text-[10px] px-3 py-1 rounded min-w-[70px] uppercase tracking-widest font-black inline-block text-center ${trace.severity === 'FATAL' || trace.severity === 'ERROR' || trace.severity === 'CRIT' ? 'bg-red-500/10 text-red-500 border border-red-500/20' : trace.severity === 'WARN' ? 'bg-yellow-500/10 text-yellow-500 border border-yellow-500/20' : 'bg-blue-500/10 text-blue-500 border border-blue-500/20'}`}>
+                                                                    {trace.severity}
+                                                                </div>
                                                             </td>
                                                             <td className="p-4 text-[var(--accent)] max-w-xs truncate">{trace.user}</td>
                                                             <td className="p-4 text-white/60 w-1/3 min-w-[200px] max-w-[400px]">
@@ -509,8 +511,10 @@ export default function AdminPage() {
                                                             <tr key={trace.id || i} className="hover:bg-white/5 transition-colors">
                                                                 <td className="p-4 text-white/40 whitespace-nowrap">{new Date(trace.timestamp).toLocaleString()}</td>
                                                                 <td className="p-4 font-bold tracking-widest">{trace.action}</td>
-                                                                <td className={`p-4 font-bold tracking-widest ${trace.severity === 'FATAL' || trace.severity === 'ERROR' ? 'text-[var(--accent)]' : trace.severity === 'WARN' ? 'text-yellow-500' : 'text-[var(--accent)]'}`}>
-                                                                    {trace.severity}
+                                                                <td className="p-4">
+                                                                    <div className={`text-[10px] px-3 py-1 rounded min-w-[70px] uppercase tracking-widest font-black inline-block text-center ${trace.severity === 'FATAL' || trace.severity === 'ERROR' || trace.severity === 'CRIT' ? 'bg-red-500/10 text-red-500 border border-red-500/20' : trace.severity === 'WARN' ? 'bg-yellow-500/10 text-yellow-500 border border-yellow-500/20' : 'bg-blue-500/10 text-blue-500 border border-blue-500/20'}`}>
+                                                                        {trace.severity}
+                                                                    </div>
                                                                 </td>
                                                                 <td className="p-4 text-[var(--accent)] max-w-xs truncate">{trace.user}</td>
                                                                 <td className="p-4 text-white/60">{trace.message}</td>
