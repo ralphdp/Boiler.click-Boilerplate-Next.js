@@ -23,6 +23,7 @@ export default function AdminPage() {
     const [nodePage, setNodePage] = useState(1);
     const [auditSearch, setAuditSearch] = useState("");
     const [auditFilter, setAuditFilter] = useState<"ALL" | "INFO" | "WARN" | "CRIT">("ALL");
+    const [auditPage, setAuditPage] = useState(1);
 
     const exportToCSV = (filename: string, rows: any[][]) => {
         const csvContent = "data:text/csv;charset=utf-8," + rows.map(e => e.map(item => `"${String(item).replace(/"/g, '""')}"`).join(",")).join("\n");
@@ -52,6 +53,8 @@ export default function AdminPage() {
     const totalNodePages = Math.ceil(filteredNodes.length / 50);
 
     const filteredTraces = traces.filter(t => (auditFilter === "ALL" || t.severity === auditFilter) && (t.message.toLowerCase().includes(auditSearch.toLowerCase()) || t.user.toLowerCase().includes(auditSearch.toLowerCase()) || t.action.toLowerCase().includes(auditSearch.toLowerCase())));
+    const paginatedTraces = filteredTraces.slice((auditPage - 1) * 50, auditPage * 50);
+    const totalAuditPages = Math.ceil(filteredTraces.length / 50);
 
     const moveTier = (idx: number, direction: number) => {
         if (idx + direction < 0 || idx + direction >= pricingTiers.length) return;
@@ -504,10 +507,10 @@ export default function AdminPage() {
                                                 <tbody className="divide-y divide-white/5 focus:outline-none">
                                                     {loading ? (
                                                         <tr><td colSpan={5} className="p-8 text-center text-white/30 animate-pulse">Loading logs...</td></tr>
-                                                    ) : filteredTraces.length === 0 ? (
+                                                    ) : paginatedTraces.length === 0 ? (
                                                         <tr><td colSpan={5} className="p-8 text-center text-white/30 truncate">No events logged matching filters.</td></tr>
                                                     ) : (
-                                                        filteredTraces.map((trace, i) => (
+                                                        paginatedTraces.map((trace, i) => (
                                                             <tr key={trace.id || i} className="hover:bg-white/5 transition-colors">
                                                                 <td className="p-4 text-white/40 whitespace-nowrap">{new Date(trace.timestamp).toLocaleString()}</td>
                                                                 <td className="p-4 font-bold tracking-widest">{trace.action}</td>
@@ -524,12 +527,12 @@ export default function AdminPage() {
                                                 </tbody>
                                             </table>
                                         </div>
-                                        {totalNodePages > 1 && (
+                                        {totalAuditPages > 1 && (
                                             <div className="p-4 border-t border-white/5 bg-white/5 flex justify-between items-center text-xs font-mono text-white/50">
-                                                <div>Showing {(nodePage - 1) * 50 + 1}-{Math.min(nodePage * 50, filteredNodes.length)} of {filteredNodes.length}</div>
+                                                <div>Showing {(auditPage - 1) * 50 + 1}-{Math.min(auditPage * 50, filteredTraces.length)} of {filteredTraces.length}</div>
                                                 <div className="flex gap-2">
-                                                    <button onClick={() => setNodePage(p => Math.max(1, p - 1))} disabled={nodePage === 1} className="px-3 py-1 bg-black/50 border border-white/10 rounded disabled:opacity-30 hover:bg-white/5 text-[10px] font-black tracking-widest uppercase text-white transition-colors">Prev</button>
-                                                    <button onClick={() => setNodePage(p => Math.min(totalNodePages, p + 1))} disabled={nodePage === totalNodePages} className="px-3 py-1 bg-black/50 border border-white/10 rounded disabled:opacity-30 hover:bg-white/5 text-[10px] font-black tracking-widest uppercase text-white transition-colors">Next</button>
+                                                    <button onClick={() => setAuditPage(p => Math.max(1, p - 1))} disabled={auditPage === 1} className="px-3 py-1 bg-black/50 border border-white/10 rounded disabled:opacity-30 hover:bg-white/5 text-[10px] font-black tracking-widest uppercase text-white transition-colors">Prev</button>
+                                                    <button onClick={() => setAuditPage(p => Math.min(totalAuditPages, p + 1))} disabled={auditPage === totalAuditPages} className="px-3 py-1 bg-black/50 border border-white/10 rounded disabled:opacity-30 hover:bg-white/5 text-[10px] font-black tracking-widest uppercase text-white transition-colors">Next</button>
                                                 </div>
                                             </div>
                                         )}
