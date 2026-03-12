@@ -504,10 +504,10 @@ export default function AdminPage() {
                                                 <tbody className="divide-y divide-white/5 focus:outline-none">
                                                     {loading ? (
                                                         <tr><td colSpan={5} className="p-8 text-center text-white/30 animate-pulse">Loading logs...</td></tr>
-                                                    ) : traces.length === 0 ? (
-                                                        <tr><td colSpan={5} className="p-8 text-center text-white/30 truncate">No events logged.</td></tr>
+                                                    ) : filteredTraces.length === 0 ? (
+                                                        <tr><td colSpan={5} className="p-8 text-center text-white/30 truncate">No events logged matching filters.</td></tr>
                                                     ) : (
-                                                        traces.map((trace, i) => (
+                                                        filteredTraces.map((trace, i) => (
                                                             <tr key={trace.id || i} className="hover:bg-white/5 transition-colors">
                                                                 <td className="p-4 text-white/40 whitespace-nowrap">{new Date(trace.timestamp).toLocaleString()}</td>
                                                                 <td className="p-4 font-bold tracking-widest">{trace.action}</td>
