@@ -5,7 +5,7 @@ import { createPortal } from "react-dom";
 import { motion, AnimatePresence } from "framer-motion";
 import { useSession } from "next-auth/react";
 import { GlassCard } from "@/components/ui/GlassCard";
-import { ShieldAlert, Users, Activity, Settings, ArrowLeft, ArrowRight, ShieldCheck, Palette, Radio, ShoppingCart, Trash2, Plus, Edit2, ArrowUp, ArrowDown, X, Check, Eye, EyeOff } from "lucide-react";
+import { ShieldAlert, Users, Activity, Settings, ArrowLeft, ArrowRight, ShieldCheck, Palette, Radio, ShoppingCart, Trash2, Plus, Edit2, ArrowUp, ArrowDown, X, Check, Eye, EyeOff, LayoutDashboard, Download, Search, Filter, ChevronUp, ChevronDown as ChevronDownIcon } from "lucide-react";
 import Link from "next/link";
 import { Button } from "@/components/ui/Button";
 import { getSovereignNodes, setNodeRole, setNodeStatus, getTelemetryData, setSovereignWebGLVariant, setGlobalBroadcast, setContentOverride, getGlobalOverrides, getAuditTraces, setCommerceMode, setResendFrom, setSiteTitle, setContactEmail, setHaltingProtocol as setHaltingProtocolAction, setPreLaunchMode as setPreLaunchModeAction, setSandboxMode as setSandboxModeAction, setPrimaryColor, setSocialLinks, setSEOMetadata, setRateLimitMode, setTelemetryKeys, setPricingMatrix, getStoreProducts, createStoreProduct, updateStoreProduct, deleteStoreProduct } from "@/core/actions/admin";
@@ -16,9 +16,52 @@ export default function AdminPage() {
     const router = useRouter();
     const { data: session } = useSession();
     const { language } = useTranslation();
-    const [tab, setTab] = useState<"nodes" | "audit" | "telemetry" | "config" | "branding" | "broadcast" | "store">("branding");
+    const [tab, setTab] = useState<"overview" | "nodes" | "audit" | "telemetry" | "config" | "branding" | "broadcast" | "store">("overview");
     const [nodes, setNodes] = useState<any[]>([]);
     const [traces, setTraces] = useState<any[]>([]);
+    const [nodeSearch, setNodeSearch] = useState("");
+    const [nodePage, setNodePage] = useState(1);
+    const [auditSearch, setAuditSearch] = useState("");
+    const [auditFilter, setAuditFilter] = useState<"ALL" | "INFO" | "WARN" | "CRIT">("ALL");
+
+    const exportToCSV = (filename: string, rows: any[][]) => {
+        const csvContent = "data:text/csv;charset=utf-8," + rows.map(e => e.map(item => `"${String(item).replace(/"/g, '""')}"`).join(",")).join("\n");
+        const encodedUri = encodeURI(csvContent);
+        const link = document.createElement("a");
+        link.setAttribute("href", encodedUri);
+        link.setAttribute("download", filename);
+        document.body.appendChild(link);
+        link.click();
+        document.body.removeChild(link);
+    };
+
+    const exportNodesCSV = () => {
+        const header = ["ID", "Name", "Email", "Role", "Status", "Auth Type", "Created"];
+        const rows = filteredNodes.map(n => [n.uid, n.displayName, n.email, n.customClaims?.role || "USER", n.disabled ? "BANNED" : "ACTIVE", n.provider, new Date(n.creationTime).toLocaleString()]);
+        exportToCSV(`nodes_export_${Date.now()}.csv`, [header, ...rows]);
+    };
+
+    const exportAuditCSV = () => {
+        const header = ["ID", "Timestamp", "Action", "Severity", "Origin User", "Details"];
+        const rows = filteredTraces.map(t => [t.id, new Date(t.timestamp).toLocaleString(), t.action, t.severity, t.user, t.message]);
+        exportToCSV(`audit_export_${Date.now()}.csv`, [header, ...rows]);
+    };
+
+    const filteredNodes = nodes.filter(n => n.email.toLowerCase().includes(nodeSearch.toLowerCase()) || n.uid.toLowerCase().includes(nodeSearch.toLowerCase()));
+    const paginatedNodes = filteredNodes.slice((nodePage - 1) * 50, nodePage * 50);
+    const totalNodePages = Math.ceil(filteredNodes.length / 50);
+
+    const filteredTraces = traces.filter(t => (auditFilter === "ALL" || t.severity === auditFilter) && (t.message.toLowerCase().includes(auditSearch.toLowerCase()) || t.user.toLowerCase().includes(auditSearch.toLowerCase()) || t.action.toLowerCase().includes(auditSearch.toLowerCase())));
+
+    const moveTier = (idx: number, direction: number) => {
+        if (idx + direction < 0 || idx + direction >= pricingTiers.length) return;
+        const newTiers = [...pricingTiers];
+        const temp = newTiers[idx];
+        newTiers[idx] = newTiers[idx + direction];
+        newTiers[idx + direction] = temp;
+        setPricingTiers(newTiers);
+    };
+
     const [loading, setLoading] = useState(true);
     const [updatingNode, setUpdatingNode] = useState<string | null>(null);
     const [activeRoleNode, setActiveRoleNode] = useState<string | null>(null);
@@ -61,7 +104,7 @@ export default function AdminPage() {
         }
     }, []);
 
-    const handleTabChange = (newTab: "nodes" | "audit" | "telemetry" | "config" | "branding" | "broadcast" | "store") => {
+    const handleTabChange = (newTab: "overview" | "nodes" | "audit" | "telemetry" | "config" | "branding" | "broadcast" | "store") => {
         setTab(newTab);
         window.history.replaceState(null, "", `#${newTab}`);
     };
@@ -194,6 +237,7 @@ export default function AdminPage() {
                     {/* Tabs Sidebar */}
                     <div className="flex flex-row md:flex-col overflow-x-auto md:overflow-visible w-full md:w-56 shrink-0 gap-1 border-b md:border-b-0 md:border-r border-white/5 pb-2 md:pb-0 md:pr-4 select-none admin-scrollbar">
                         {([
+                            { id: "overview", icon: LayoutDashboard, label: "Overview" },
                             { id: "branding", icon: Palette, label: "Branding" },
                             { id: "nodes", icon: Users, label: "Users" },
                             { id: "audit", icon: ShieldCheck, label: "Audit Logs" },
@@ -222,6 +266,67 @@ export default function AdminPage() {
                     <div className="flex-1 w-full min-w-0">
                         <AnimatePresence mode="wait">
 
+
+                            {/* Tab: Overview */}
+                            {tab === "overview" && (
+                                <motion.div key="overview-view" initial={{ opacity: 0, y: 10 }} animate={{ opacity: 1, y: 0 }} exit={{ opacity: 0, y: -10 }} transition={{ duration: 0.3 }} className="space-y-6">
+                                    <div className="grid grid-cols-1 md:grid-cols-3 gap-6">
+                                        <GlassCard className="border border-white/5 bg-black/40 p-6 flex flex-col justify-between gap-4 relative overflow-hidden group">
+                                            <div className="absolute -right-4 -top-4 opacity-5 group-hover:opacity-10 transition-opacity"><Users size={120} /></div>
+                                            <h3 className="text-xs font-black uppercase tracking-[0.2em] text-white/50 relative z-10">Total Nodes</h3>
+                                            <div className="text-4xl font-mono text-[var(--accent)] font-bold relative z-10">{nodes.length}</div>
+                                            <div className="text-[10px] text-white/30 uppercase tracking-widest relative z-10">Active Sovereign Citizens</div>
+                                        </GlassCard>
+                                        <GlassCard className="border border-white/5 bg-black/40 p-6 flex flex-col justify-between gap-4 relative overflow-hidden group">
+                                            <div className="absolute -right-4 -top-4 opacity-5 group-hover:opacity-10 transition-opacity"><Activity size={120} /></div>
+                                            <h3 className="text-xs font-black uppercase tracking-[0.2em] text-white/50 relative z-10">System State</h3>
+                                            <div className="text-xl font-mono text-[var(--accent)] font-bold relative z-10">{commerceMode.toUpperCase() || "MAINTENANCE"}</div>
+                                            <div className="text-[10px] text-white/30 uppercase tracking-widest relative z-10">Current Substrate Posture</div>
+                                        </GlassCard>
+                                        <GlassCard className="border border-white/5 bg-black/40 p-6 flex flex-col justify-between gap-4 relative overflow-hidden group">
+                                            <div className="absolute -right-4 -top-4 opacity-5 group-hover:opacity-10 transition-opacity"><ShieldCheck size={120} /></div>
+                                            <h3 className="text-xs font-black uppercase tracking-[0.2em] text-white/50 relative z-10">Security Faults</h3>
+                                            <div className="text-4xl font-mono text-red-500 font-bold relative z-10">{traces.filter(t => t.severity === "CRIT").length}</div>
+                                            <div className="text-[10px] text-white/30 uppercase tracking-widest relative z-10">Critical Audit Traces</div>
+                                        </GlassCard>
+                                    </div>
+                                    <div className="bg-black/40 border border-white/5">
+                                        <div className="p-4 border-b border-white/5 bg-white/5 flex justify-between items-center">
+                                            <h3 className="text-xs font-black uppercase tracking-[0.2em]">Recent Audit Activity</h3>
+                                            <button onClick={() => setTab("audit")} className="text-[10px] text-[var(--accent)] hover:text-white transition-colors tracking-widest uppercase font-bold">View All</button>
+                                        </div>
+                                        <div className="w-full overflow-x-auto admin-scrollbar">
+                                            <table className="w-full min-w-[800px] text-left border-collapse text-xs font-mono">
+                                                <tbody className="divide-y divide-white/5 focus:outline-none">
+                                                    {traces.slice(0, 5).map(trace => (
+                                                        <tr key={trace.id} className="hover:bg-white/5 transition-colors group">
+                                                            <td className="p-4 text-white/30 whitespace-nowrap">{new Date(trace.timestamp).toLocaleString()}</td>
+                                                            <td className="p-4 text-[var(--accent)] tracking-widest uppercase font-bold text-[10px]">{trace.action}</td>
+                                                            <td className="p-4">
+                                                                <span className={`px-2 py-1 rounded text-[9px] font-black tracking-widest uppercase ${trace.severity === 'INFO' ? 'bg-blue-500/10 text-blue-500 border border-blue-500/20' : trace.severity === 'WARN' ? 'bg-yellow-500/10 text-yellow-500 border border-yellow-500/20' : 'bg-red-500/10 text-red-500 border border-red-500/20'}`}>{trace.severity}</span>
+                                                            </td>
+                                                            <td className="p-4 text-white/70">{trace.user}</td>
+                                                            <td className="p-4 w-1/3 min-w-[200px] max-w-[400px]">
+                                                                <div className="truncate text-white/50">{trace.message}</div>
+                                                            </td>
+                                                        </tr>
+                                                    ))}
+                                                </tbody>
+                                            </table>
+                                        </div>
+                                        {totalNodePages > 1 && (
+                                            <div className="p-4 border-t border-white/5 bg-white/5 flex justify-between items-center text-xs font-mono text-white/50">
+                                                <div>Showing {(nodePage - 1) * 50 + 1}-{Math.min(nodePage * 50, filteredNodes.length)} of {filteredNodes.length}</div>
+                                                <div className="flex gap-2">
+                                                    <button onClick={() => setNodePage(p => Math.max(1, p - 1))} disabled={nodePage === 1} className="px-3 py-1 bg-black/50 border border-white/10 rounded disabled:opacity-30 hover:bg-white/5 text-[10px] font-black tracking-widest uppercase text-white transition-colors">Prev</button>
+                                                    <button onClick={() => setNodePage(p => Math.min(totalNodePages, p + 1))} disabled={nodePage === totalNodePages} className="px-3 py-1 bg-black/50 border border-white/10 rounded disabled:opacity-30 hover:bg-white/5 text-[10px] font-black tracking-widest uppercase text-white transition-colors">Next</button>
+                                                </div>
+                                            </div>
+                                        )}
+                                    </div>
+                                </motion.div>
+                            )}
+
                             {/* Tab: Nodes */}
                             {tab === "nodes" && (
                                 <motion.div
@@ -236,8 +341,17 @@ export default function AdminPage() {
 
 
                                     <div className="bg-black/40 border border-white/5">
-                                        <div className="p-4 border-b border-white/5 bg-white/5">
-                                            <h3 className="text-xs font-black uppercase tracking-[0.2em]">Active Users</h3>
+                                        <div className="p-4 border-b border-white/5 bg-white/5 flex flex-col md:flex-row justify-between items-start md:items-center gap-4">
+                                            <h3 className="text-xs font-black uppercase tracking-[0.2em] shrink-0">Active Users</h3>
+                                            <div className="flex items-center gap-3 w-full md:w-auto">
+                                                <div className="relative w-full md:w-64">
+                                                    <Search size={14} className="absolute left-3 top-1/2 -translate-y-1/2 text-white/30" />
+                                                    <input type="text" placeholder="Search by ID or Email..." value={nodeSearch} onChange={(e) => { setNodeSearch(e.target.value); setNodePage(1); }} className="w-full bg-black/50 border border-white/10 text-xs py-2 pl-9 pr-3 rounded focus:border-[var(--accent)] outline-none text-white font-mono placeholder:text-white/20 transition-colors" />
+                                                </div>
+                                                <button onClick={exportNodesCSV} className="shrink-0 flex items-center justify-center gap-2 bg-white/5 hover:bg-white/10 border border-white/10 px-3 py-2 rounded text-[10px] font-black uppercase tracking-widest transition-colors text-white/70 hover:text-white">
+                                                    <Download size={14} /> <span className="hidden sm:inline">Export</span>
+                                                </button>
+                                            </div>
                                         </div>
                                         <div className="w-full max-h-[600px] overflow-y-auto overflow-x-auto admin-scrollbar">
                                             <table className="w-full min-w-[800px] text-left border-collapse text-xs font-mono">
@@ -258,7 +372,7 @@ export default function AdminPage() {
                                                     ) : nodes.length === 0 ? (
                                                         <tr><td colSpan={5} className="p-8 text-center text-white/30">No users found.</td></tr>
                                                     ) : (
-                                                        nodes.map((node) => (
+                                                        paginatedNodes.map((node) => (
                                                             <tr key={node.uid} className="hover:bg-white/5 transition-colors group">
                                                                 <td className="p-4 text-white/40 group-hover:text-[var(--accent)] transition-colors">{node.uid.substring(0, 8)}...</td>
                                                                 <td className="p-4">{node.displayName}</td>
@@ -333,6 +447,15 @@ export default function AdminPage() {
                                                 </tbody>
                                             </table>
                                         </div>
+                                        {totalNodePages > 1 && (
+                                            <div className="p-4 border-t border-white/5 bg-white/5 flex justify-between items-center text-xs font-mono text-white/50">
+                                                <div>Showing {(nodePage - 1) * 50 + 1}-{Math.min(nodePage * 50, filteredNodes.length)} of {filteredNodes.length}</div>
+                                                <div className="flex gap-2">
+                                                    <button onClick={() => setNodePage(p => Math.max(1, p - 1))} disabled={nodePage === 1} className="px-3 py-1 bg-black/50 border border-white/10 rounded disabled:opacity-30 hover:bg-white/5 text-[10px] font-black tracking-widest uppercase text-white transition-colors">Prev</button>
+                                                    <button onClick={() => setNodePage(p => Math.min(totalNodePages, p + 1))} disabled={nodePage === totalNodePages} className="px-3 py-1 bg-black/50 border border-white/10 rounded disabled:opacity-30 hover:bg-white/5 text-[10px] font-black tracking-widest uppercase text-white transition-colors">Next</button>
+                                                </div>
+                                            </div>
+                                        )}
                                     </div>
                                 </motion.div>
                             )}
@@ -348,8 +471,22 @@ export default function AdminPage() {
                                     className="space-y-6"
                                 >
                                     <div className="bg-black/40 border border-white/5">
-                                        <div className="p-4 border-b border-white/5 bg-white/5">
-                                            <h3 className="text-xs font-black uppercase tracking-[0.2em]">System Audit Logs</h3>
+                                        <div className="p-4 border-b border-white/5 bg-white/5 flex flex-col md:flex-row justify-between items-start md:items-center gap-4">
+                                            <h3 className="text-xs font-black uppercase tracking-[0.2em] shrink-0">System Audit Logs</h3>
+                                            <div className="flex flex-wrap items-center gap-3 w-full md:w-auto">
+                                                <div className="flex items-center gap-1 bg-black/50 border border-white/10 rounded overflow-hidden">
+                                                    {["ALL", "INFO", "WARN", "CRIT"].map(f => (
+                                                        <button key={f} onClick={() => setAuditFilter(f as any)} className={`px-3 py-2 text-[10px] font-black tracking-widest uppercase transition-colors ${auditFilter === f ? 'bg-white/10 text-white' : 'text-white/40 hover:text-white hover:bg-white/5'}`}>{f}</button>
+                                                    ))}
+                                                </div>
+                                                <div className="relative flex-1 md:w-48">
+                                                    <Search size={14} className="absolute left-3 top-1/2 -translate-y-1/2 text-white/30" />
+                                                    <input type="text" placeholder="Search logs..." value={auditSearch} onChange={(e) => setAuditSearch(e.target.value)} className="w-full bg-black/50 border border-white/10 text-xs py-2 pl-9 pr-3 rounded focus:border-[var(--accent)] outline-none text-white font-mono placeholder:text-white/20 transition-colors" />
+                                                </div>
+                                                <button onClick={exportAuditCSV} className="shrink-0 flex items-center justify-center gap-2 bg-white/5 hover:bg-white/10 border border-white/10 px-3 py-2 rounded text-[10px] font-black uppercase tracking-widest transition-colors text-white/70 hover:text-white">
+                                                    <Download size={14} /> <span className="hidden sm:inline">Export</span>
+                                                </button>
+                                            </div>
                                         </div>
                                         <div className="w-full max-h-[600px] overflow-y-auto overflow-x-auto admin-scrollbar">
                                             <table className="w-full min-w-[800px] text-left border-collapse text-xs font-mono">
@@ -383,6 +520,15 @@ export default function AdminPage() {
                                                 </tbody>
                                             </table>
                                         </div>
+                                        {totalNodePages > 1 && (
+                                            <div className="p-4 border-t border-white/5 bg-white/5 flex justify-between items-center text-xs font-mono text-white/50">
+                                                <div>Showing {(nodePage - 1) * 50 + 1}-{Math.min(nodePage * 50, filteredNodes.length)} of {filteredNodes.length}</div>
+                                                <div className="flex gap-2">
+                                                    <button onClick={() => setNodePage(p => Math.max(1, p - 1))} disabled={nodePage === 1} className="px-3 py-1 bg-black/50 border border-white/10 rounded disabled:opacity-30 hover:bg-white/5 text-[10px] font-black tracking-widest uppercase text-white transition-colors">Prev</button>
+                                                    <button onClick={() => setNodePage(p => Math.min(totalNodePages, p + 1))} disabled={nodePage === totalNodePages} className="px-3 py-1 bg-black/50 border border-white/10 rounded disabled:opacity-30 hover:bg-white/5 text-[10px] font-black tracking-widest uppercase text-white transition-colors">Next</button>
+                                                </div>
+                                            </div>
+                                        )}
                                     </div>
                                 </motion.div>
                             )}
