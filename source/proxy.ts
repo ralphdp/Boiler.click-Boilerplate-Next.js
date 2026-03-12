@@ -1,0 +1,104 @@
+import NextAuth from "next-auth";
+import { authConfig } from "./src/core/auth.config";
+import { NextResponse } from "next/server";
+import { checkEdgeRateLimit } from "./src/core/security/rate-limiter-edge";
+
+const { auth } = NextAuth(authConfig);
+
+const locales = ['en', 'es', 'it'];
+const defaultLocale = 'en';
+
+export default auth(async (req) => {
+    const isLoggedIn = !!req.auth;
+    const { nextUrl } = req;
+    const { pathname, search } = nextUrl;
+
+    // --- EDGE SECURITY GATE ---
+    // If the REDIS_PROVIDER="upstash", evaluate the Token Bucket natively at the CDN Edge.
+    const ip = req.headers.get("x-forwarded-for") || "unknown";
+    const isAllowed = await checkEdgeRateLimit(ip, 20, 60);
+
+    if (!isAllowed) {
+        return new NextResponse("Network Intercept: Rate Limit Breached.", { status: 429 });
+    }
+
+    // --- NONCE GENERATION & CSP ---
+    const nonce = Buffer.from(crypto.randomUUID()).toString('base64');
+    const cspHeader = `
+        default-src 'self';
+        script-src 'self' 'nonce-${nonce}' 'strict-dynamic' https: 'unsafe-inline';
+        style-src 'self' 'unsafe-inline';
+        img-src 'self' blob: data: https:;
+        font-src 'self' data: https:;
+        object-src 'none';
+        base-uri 'self';
+        form-action 'self';
+        frame-ancestors 'none';
+        upgrade-insecure-requests;
+    `.replace(/\s{2,}/g, ' ').trim();
+
+    const requestHeaders = new Headers(req.headers);
+    requestHeaders.set('x-nonce', nonce);
+    requestHeaders.set('Content-Security-Policy', cspHeader);
+
+    // Create the baseline response integrating the patched headers
+    let response = NextResponse.next({
+        request: {
+            headers: requestHeaders,
+        },
+    });
+
+    response.headers.set('Content-Security-Policy', cspHeader);
+
+    // --- LOCALIZATION & AUTH LOGIC ---
+    const isRootAdmin = req.auth?.user?.role === "ADMIN" || req.auth?.user?.email === process.env.NEXT_PUBLIC_SUPER_ADMIN_EMAIL;
+
+    // Check if the route is an admin route (e.g., /en/admin, /admin)
+    const isAdminRoute = locales.some(loc => pathname.startsWith(`/${loc}/admin`)) || pathname.startsWith('/admin');
+    const isDashboardRoute = locales.some(loc => pathname.startsWith(`/${loc}/dashboard`)) || pathname.startsWith('/dashboard');
+
+    if (isAdminRoute) {
+        if (!isLoggedIn) {
+            response = NextResponse.redirect(new URL(`/${defaultLocale}/auth/handshake?callbackUrl=${encodeURIComponent(pathname)}`, req.url));
+            response.headers.set('Content-Security-Policy', cspHeader);
+            return response;
+        }
+
+        if (!isRootAdmin) {
+            response = NextResponse.redirect(new URL(`/${defaultLocale}/dashboard?error=Access_Denied_Root_Clearance_Required`, req.url));
+            response.headers.set('Content-Security-Policy', cspHeader);
+            return response;
+        }
+    }
+
+    if (isDashboardRoute && !isLoggedIn) {
+        response = NextResponse.redirect(new URL(`/${defaultLocale}/auth/handshake?callbackUrl=${encodeURIComponent(pathname)}`, req.url));
+        response.headers.set('Content-Security-Policy', cspHeader);
+        return response;
+    }
+
+    // --- LOCALIZATION REWRITE LOGIC ---
+    const pathnameIsMissingLocale = locales.every(
+        (locale) => !pathname.startsWith(`/${locale}/`) && pathname !== `/${locale}`
+    );
+
+    if (pathnameIsMissingLocale && !pathname.startsWith('/api')) {
+        response = NextResponse.redirect(new URL(`/${defaultLocale}${pathname}${search}`, req.url));
+        response.headers.set('Content-Security-Policy', cspHeader);
+        return response;
+    }
+
+    // Redirect already authenticated users away from the Handshake gateway
+    const isHandshake = locales.some(loc => pathname === `/${loc}/auth/handshake`) || pathname === '/auth/handshake';
+    if (isLoggedIn && isHandshake) {
+        response = NextResponse.redirect(new URL(`/${defaultLocale}/`, req.url));
+        response.headers.set('Content-Security-Policy', cspHeader);
+        return response;
+    }
+
+    return response;
+});
+
+export const config = {
+    matcher: ["/((?!api|_next/static|_next/image|favicon.ico).*)"],
+};

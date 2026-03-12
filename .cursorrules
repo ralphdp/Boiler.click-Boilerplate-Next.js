@@ -1,0 +1,17 @@
+# Boiler™ AI Directives
+
+## Core Directives
+1. **Assumption Protocol**: You are STRICTLY FORBIDDEN from making architectural assumptions. If a requirement is ambiguous, or if multiple paths exist (e.g., choosing a database ORM, finalizing a UI grid layout, or deciding on an authentication provider), you MUST pause execution, present the options to the user, and ask for explicit clarity before proceeding. 
+2. **Deterministic Outputs**: Ensure all code generated follows the Sovereign Mono architecture. Use pure, modular functions.
+3. **No Ghost Compute**: Remove commented-out dead code. Keep the substrate clean.
+
+## Tech Stack
+- Next.js 16 (App Router)
+- React 19
+- Tailwind CSS (v4 compatible)
+- Framer Motion
+
+## Design Guidelines
+- The aesthetic is "Sovereign Mono": High contrast, black/gold/white accents, monospace tracking, and strict structuralism. 
+- Use Glassmorphism lightly and intentionally.
+- All interface copy should read like technical schematics, utilizing uppercase tracking for labels.

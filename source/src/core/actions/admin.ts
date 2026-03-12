@@ -1,0 +1,454 @@
+"use server";
+
+import { getAdminAuth, getAdminDb } from "@/core/firebase/admin";
+import { auth } from "@/core/auth";
+import { Resend } from "resend";
+import { cookies } from "next/headers";
+
+export async function getSovereignNodes(maxResults = 100) {
+    const session = await auth();
+    const isRootAdmin = session?.user?.role === "ADMIN" || session?.user?.email === process.env.NEXT_PUBLIC_SUPER_ADMIN_EMAIL;
+
+    if (!isRootAdmin) {
+        throw new Error("UNAUTHORIZED_ACCESS: Clearance level insufficient.");
+    }
+
+    try {
+        const authAdmin = getAdminAuth();
+        const listUsersResult = await authAdmin.listUsers(maxResults);
+
+        return listUsersResult.users.map(u => ({
+            uid: u.uid,
+            email: u.email,
+            displayName: u.displayName || "Unknown Node",
+            creationTime: u.metadata.creationTime,
+            lastSignInTime: u.metadata.lastSignInTime,
+            provider: u.providerData[0]?.providerId || "native",
+            customClaims: u.customClaims || {}
+        }));
+    } catch (e: any) {
+        console.error("[Admin Substrate Error]:", e);
+        throw new Error("Failed to retrieve node mapping. See logs.");
+    }
+}
+
+export async function setNodeRole(uid: string, role: "ADMIN" | "USER") {
+    const session = await auth();
+    const isRootAdmin = session?.user?.role === "ADMIN" || session?.user?.email === process.env.NEXT_PUBLIC_SUPER_ADMIN_EMAIL;
+
+    if (!isRootAdmin) {
+        throw new Error("UNAUTHORIZED_ACCESS: Only existing Root Administrators can escalate nodes.");
+    }
+
+    try {
+        const authAdmin = getAdminAuth();
+        await authAdmin.setCustomUserClaims(uid, { role });
+        return { success: true, message: `Node successfully updated to ${role}.` };
+    } catch (e: any) {
+        console.error("[Admin Escalation Fault]:", e);
+        return { error: true, message: "Escalation failed. Node may not exist." };
+    }
+}
+
+export async function getTelemetryData() {
+    const session = await auth();
+    const isRootAdmin = session?.user?.role === "ADMIN" || session?.user?.email === process.env.NEXT_PUBLIC_SUPER_ADMIN_EMAIL;
+
+    if (!isRootAdmin) {
+        throw new Error("UNAUTHORIZED_ACCESS: Clearance level insufficient.");
+    }
+
+    const start = Date.now();
+    let firebaseSync = "FAULT";
+    let resendStatus = process.env.RESEND_API_KEY ? "ONLINE" : "OFFLINE";
+    let stripeStatus = process.env.STRIPE_SECRET_KEY ? "ONLINE" : "OFFLINE";
+    let redisStatus = process.env.UPSTASH_REDIS_REST_URL ? "ONLINE" : "OFFLINE";
+
+    try {
+        // Ping Firebase Admin Auth to measure latency and test sync state
+        const authAdmin = getAdminAuth();
+        await authAdmin.listUsers(1);
+        firebaseSync = "NOMINAL";
+    } catch (e) {
+        console.error("[Telemetry] Firebase FAULT", e);
+    }
+    const latency = Date.now() - start;
+
+    return {
+        latency,
+        firebaseSync,
+        resendTransport: resendStatus,
+        stripeBridge: stripeStatus,
+        redisEdge: redisStatus
+    };
+}
+
+export async function setSovereignWebGLVariant(variant: 'matrix' | 'fire' | 'galaxy' | 'none') {
+    const session = await auth();
+    const isRootAdmin = session?.user?.role === "ADMIN" || session?.user?.email === process.env.NEXT_PUBLIC_SUPER_ADMIN_EMAIL;
+
+    if (!isRootAdmin) {
+        throw new Error("UNAUTHORIZED_ACCESS: Clearance level insufficient to execute systemic aesthetic overwrite.");
+    }
+
+    try {
+        const rootCookieStore = await cookies();
+        rootCookieStore.set("sovereign_webgl_variant", variant, { path: "/", maxAge: 60 * 60 * 24 * 365, httpOnly: true, secure: process.env.NODE_ENV === "production", sameSite: "lax" });
+        return { success: true };
+    } catch (e: any) {
+        console.error("[WebGL Global Override Fault]:", e);
+        return { error: true, message: "Aesthetic override failed to propagate." };
+    }
+}
+
+export async function setGlobalBroadcast(message: string) {
+    const session = await auth();
+    const isRootAdmin = session?.user?.role === "ADMIN" || session?.user?.email === process.env.NEXT_PUBLIC_SUPER_ADMIN_EMAIL;
+
+    if (!isRootAdmin) {
+        throw new Error("UNAUTHORIZED_ACCESS: Clearance level insufficient.");
+    }
+
+    try {
+        const db = getAdminDb();
+        await db.collection("sovereign_config").doc("global").set({ broadcast: message || "" }, { merge: true });
+        return { success: true };
+    } catch (e: any) {
+        return { error: true, message: "Broadcast failed." };
+    }
+}
+
+export async function setContentOverride(tagline: string) {
+    const session = await auth();
+    const isRootAdmin = session?.user?.role === "ADMIN" || session?.user?.email === process.env.NEXT_PUBLIC_SUPER_ADMIN_EMAIL;
+
+    if (!isRootAdmin) {
+        throw new Error("UNAUTHORIZED_ACCESS: Clearance level insufficient.");
+    }
+
+    try {
+        const db = getAdminDb();
+        await db.collection("sovereign_config").doc("global").set({ typography: tagline || "" }, { merge: true });
+        return { success: true };
+    } catch (e: any) {
+        return { error: true, message: "Content override failed." };
+    }
+}
+
+export async function getGlobalOverrides() {
+    try {
+        const rootCookieStore = await cookies();
+        const activeVariant = (rootCookieStore.get("sovereign_webgl_variant")?.value || "fire") as string;
+
+        const db = getAdminDb();
+        const doc = await db.collection("sovereign_config").doc("global").get();
+        const data = doc.data() || {};
+        return {
+            broadcast: data.broadcast || "",
+            typography: data.typography || "",
+            commerceMode: data.commerceMode || process.env.COMMERCE_MODE || "saas",
+            resendFrom: data.resendFrom || process.env.RESEND_DEFAULT_FROM || "noreply@boiler.click",
+            siteTitle: data.siteTitle || "",
+            contactEmail: data.contactEmail || "",
+            primaryColor: data.primaryColor || "",
+            haltingProtocol: !!data.haltingProtocol,
+            preLaunchMode: !!data.preLaunchMode,
+            socialX: data.socialX || "",
+            socialGithub: data.socialGithub || "",
+            socialDiscord: data.socialDiscord || "",
+            seoDescription: data.seoDescription || "",
+            seoKeywords: data.seoKeywords || "",
+            seoOgImage: data.seoOgImage || "",
+            rateLimitMode: data.rateLimitMode || "standard",
+            gaId: data.gaId || "",
+            posthogId: data.posthogId || "",
+                                                pricingTiers: data.pricingTiers || [{"id": "basic", "name": "Basic Node", "price": "9", "features": ["Standard Telemetry", "Email Support", "Priority Access"], "buttonText": "Initialize Basic"}, {"id": "pro", "name": "Pro Node", "price": "99", "features": ["Advanced Telemetry", "24/7 Priority Support", "Full Admin Access"], "buttonText": "Initialize Pro"}],
+            recommendedPlan: data.recommendedPlan || "pro",
+            webglVariant: activeVariant,
+            sandboxMode: !!data.sandboxMode
+        };
+    } catch (e: any) {
+        return {
+            broadcast: "",
+            typography: "",
+            commerceMode: process.env.COMMERCE_MODE || "saas",
+            resendFrom: process.env.RESEND_DEFAULT_FROM || "noreply@boiler.click",
+            siteTitle: "",
+            contactEmail: "",
+            primaryColor: "",
+            haltingProtocol: false,
+            preLaunchMode: false,
+            socialX: "",
+            socialGithub: "",
+            socialDiscord: "",
+            seoDescription: "",
+            seoKeywords: "",
+            seoOgImage: "",
+            rateLimitMode: "standard",
+            gaId: "",
+            posthogId: "",
+                                                pricingTiers: [{"id": "basic", "name": "Basic Node", "price": "9", "features": ["Standard Telemetry", "Email Support", "Priority Access"], "buttonText": "Initialize Basic"}, {"id": "pro", "name": "Pro Node", "price": "99", "features": ["Advanced Telemetry", "24/7 Priority Support", "Full Admin Access"], "buttonText": "Initialize Pro"}],
+            recommendedPlan: "pro",
+            webglVariant: "fire",
+            sandboxMode: false
+        };
+    }
+}
+
+export async function setSandboxMode(mode: boolean) {
+    const session = await auth();
+    const isRootAdmin = session?.user?.role === "ADMIN" || session?.user?.email === process.env.NEXT_PUBLIC_SUPER_ADMIN_EMAIL;
+
+    if (!isRootAdmin) {
+        throw new Error("UNAUTHORIZED_ACCESS: Clearance level insufficient.");
+    }
+
+    try {
+        const db = getAdminDb();
+        await db.collection("sovereign_config").doc("global").set({ sandboxMode: mode }, { merge: true });
+        return { success: true };
+    } catch (e: any) {
+        return { error: true, message: "Sandbox mode toggle failed." };
+    }
+}
+
+export async function setSiteTitle(title: string) {
+    const session = await auth();
+    const isRootAdmin = session?.user?.role === "ADMIN" || session?.user?.email === process.env.NEXT_PUBLIC_SUPER_ADMIN_EMAIL;
+
+    if (!isRootAdmin) {
+        throw new Error("UNAUTHORIZED_ACCESS: Clearance level insufficient.");
+    }
+
+    try {
+        const db = getAdminDb();
+        await db.collection("sovereign_config").doc("global").set({ siteTitle: title || "" }, { merge: true });
+        return { success: true };
+    } catch (e: any) {
+        return { error: true, message: "Site title override failed." };
+    }
+}
+
+export async function setContactEmail(email: string) {
+    const session = await auth();
+    const isRootAdmin = session?.user?.role === "ADMIN" || session?.user?.email === process.env.NEXT_PUBLIC_SUPER_ADMIN_EMAIL;
+
+    if (!isRootAdmin) {
+        throw new Error("UNAUTHORIZED_ACCESS: Clearance level insufficient.");
+    }
+
+    try {
+        const db = getAdminDb();
+        await db.collection("sovereign_config").doc("global").set({ contactEmail: email || "" }, { merge: true });
+        return { success: true };
+    } catch (e: any) {
+        return { error: true, message: "Contact email override failed." };
+    }
+}
+
+export async function setCommerceMode(mode: string) {
+    const session = await auth();
+    const isRootAdmin = session?.user?.role === "ADMIN" || session?.user?.email === process.env.NEXT_PUBLIC_SUPER_ADMIN_EMAIL;
+
+    if (!isRootAdmin) {
+        throw new Error("UNAUTHORIZED_ACCESS: Clearance level insufficient.");
+    }
+
+    try {
+        const db = getAdminDb();
+        await db.collection("sovereign_config").doc("global").set({ commerceMode: mode }, { merge: true });
+        return { success: true };
+    } catch (e: any) {
+        return { error: true, message: "Commerce override failed." };
+    }
+}
+
+export async function setResendFrom(email: string) {
+    const session = await auth();
+    const isRootAdmin = session?.user?.role === "ADMIN" || session?.user?.email === process.env.NEXT_PUBLIC_SUPER_ADMIN_EMAIL;
+
+    if (!isRootAdmin) {
+        throw new Error("UNAUTHORIZED_ACCESS: Clearance level insufficient.");
+    }
+
+    try {
+        const db = getAdminDb();
+        await db.collection("sovereign_config").doc("global").set({ resendFrom: email }, { merge: true });
+        return { success: true };
+    } catch (e: any) {
+        return { error: true, message: "Resend email override failed." };
+    }
+}
+
+export async function setHaltingProtocol(isActive: boolean) {
+    const session = await auth();
+    const isRootAdmin = session?.user?.role === "ADMIN" || session?.user?.email === process.env.NEXT_PUBLIC_SUPER_ADMIN_EMAIL;
+
+    if (!isRootAdmin) throw new Error("UNAUTHORIZED_ACCESS: Clearance level insufficient.");
+
+    try {
+        await getAdminDb().collection("sovereign_config").doc("global").set({ haltingProtocol: isActive }, { merge: true });
+        return { success: true };
+    } catch (e: any) {
+        return { error: true, message: "Halting protocol override failed." };
+    }
+}
+
+export async function setPreLaunchMode(isActive: boolean) {
+    const session = await auth();
+    const isRootAdmin = session?.user?.role === "ADMIN" || session?.user?.email === process.env.NEXT_PUBLIC_SUPER_ADMIN_EMAIL;
+
+    if (!isRootAdmin) throw new Error("UNAUTHORIZED_ACCESS: Clearance level insufficient.");
+
+    try {
+        await getAdminDb().collection("sovereign_config").doc("global").set({ preLaunchMode: isActive }, { merge: true });
+        return { success: true };
+    } catch (e: any) {
+        return { error: true, message: "Pre-Launch override failed." };
+    }
+}
+
+export async function setPrimaryColor(colorHex: string) {
+    const session = await auth();
+    const isRootAdmin = session?.user?.role === "ADMIN" || session?.user?.email === process.env.NEXT_PUBLIC_SUPER_ADMIN_EMAIL;
+
+    if (!isRootAdmin) throw new Error("UNAUTHORIZED_ACCESS: Clearance level insufficient.");
+
+    try {
+        await getAdminDb().collection("sovereign_config").doc("global").set({ primaryColor: colorHex }, { merge: true });
+        return { success: true };
+    } catch (e: any) {
+        return { error: true, message: "Primary Color override failed." };
+    }
+}
+
+export async function setSocialLinks(socials: { socialX?: string, socialGithub?: string, socialDiscord?: string }) {
+    const session = await auth();
+    const isRootAdmin = session?.user?.role === "ADMIN" || session?.user?.email === process.env.NEXT_PUBLIC_SUPER_ADMIN_EMAIL;
+
+    if (!isRootAdmin) throw new Error("UNAUTHORIZED_ACCESS: Clearance level insufficient.");
+
+    try {
+        await getAdminDb().collection("sovereign_config").doc("global").set(socials, { merge: true });
+        return { success: true };
+    } catch (e: any) {
+        return { error: true, message: "Social Link override failed." };
+    }
+}
+
+export async function getAuditTraces(limitCount = 20) {
+    const session = await auth();
+    const isRootAdmin = session?.user?.role === "ADMIN" || session?.user?.email === process.env.NEXT_PUBLIC_SUPER_ADMIN_EMAIL;
+
+    if (!isRootAdmin) {
+        throw new Error("UNAUTHORIZED_ACCESS: Clearance level insufficient.");
+    }
+
+    try {
+        const db = getAdminDb();
+        const snapshot = await db.collection("omni_audit_traces")
+            .orderBy("timestamp", "desc")
+            .limit(limitCount)
+            .get();
+
+        if (snapshot.empty) {
+            // Fallback representation if no traces exist yet in the actual DB
+            return [
+                { id: "MOCK_TRACE_2", action: "SYSTEM_REBOOT", severity: "WARN", message: "Kernel subsystem diagnostic reboot.", timestamp: Date.now() - 3600000, user: "SYSTEM" },
+                { id: "MOCK_TRACE_1", action: "ROOT_SYNC", severity: "INFO", message: "Initialization of Sovereign Audit Transport.", timestamp: Date.now() - 7200000, user: session?.user?.email || "ROOT" }
+            ];
+        }
+
+        return snapshot.docs.map(d => ({
+            id: d.id,
+            action: d.data().action || "UNKNOWN",
+            severity: d.data().severity || "INFO",
+            message: d.data().message || "",
+            timestamp: d.data().timestamp?.toMillis ? d.data().timestamp.toMillis() : Date.now(),
+            user: d.data().user || "SYSTEM"
+        }));
+    } catch (e: any) {
+        console.error("[Audit Transport Error]:", e);
+        return [];
+    }
+}
+
+export async function setSEOMetadata(data: { description: string, keywords: string, ogUrl: string }) {
+    const session = await auth();
+    const isRootAdmin = session?.user?.role === "ADMIN" || session?.user?.email === process.env.NEXT_PUBLIC_SUPER_ADMIN_EMAIL;
+    if (!isRootAdmin) throw new Error("UNAUTHORIZED");
+    const db = getAdminDb();
+    await db.collection("sovereign_config").doc("global").set({ seoDescription: data.description || "", seoKeywords: data.keywords || "", seoOgImage: data.ogUrl || "" }, { merge: true });
+    return { success: true };
+}
+
+export async function setRateLimitMode(mode: string) {
+    const session = await auth();
+    const isRootAdmin = session?.user?.role === "ADMIN" || session?.user?.email === process.env.NEXT_PUBLIC_SUPER_ADMIN_EMAIL;
+    if (!isRootAdmin) throw new Error("UNAUTHORIZED");
+    const db = getAdminDb();
+    await db.collection("sovereign_config").doc("global").set({ rateLimitMode: mode }, { merge: true });
+    return { success: true };
+}
+
+export async function setTelemetryKeys(data: { gaId: string, posthogId: string }) {
+    const session = await auth();
+    const isRootAdmin = session?.user?.role === "ADMIN" || session?.user?.email === process.env.NEXT_PUBLIC_SUPER_ADMIN_EMAIL;
+    if (!isRootAdmin) throw new Error("UNAUTHORIZED");
+    const db = getAdminDb();
+    await db.collection("sovereign_config").doc("global").set({ gaId: data.gaId || "", posthogId: data.posthogId || "" }, { merge: true });
+    return { success: true };
+}
+
+export async function setPricingMatrix(data: {
+    pricingTiers: any[],
+    recommendedPlan: string
+}) {
+    const session = await auth();
+    const isRootAdmin = session?.user?.role === "ADMIN" || session?.user?.email === process.env.NEXT_PUBLIC_SUPER_ADMIN_EMAIL;
+    if (!isRootAdmin) throw new Error("UNAUTHORIZED");
+    const db = getAdminDb();
+    await db.collection("sovereign_config").doc("global").set({
+        pricingTiers: data.pricingTiers || [],
+        recommendedPlan: data.recommendedPlan || ""
+    }, { merge: true });
+    return { success: true };
+}
+
+export async function getStoreProducts() {
+    const db = getAdminDb();
+    try {
+        const snap = await db.collection("store_products").get();
+        return snap.docs.map(doc => ({ id: doc.id, ...doc.data() }));
+    } catch (e) {
+        return [];
+    }
+}
+
+export async function createStoreProduct(data: any) {
+    const session = await auth();
+    const isRootAdmin = session?.user?.role === "ADMIN" || session?.user?.email === process.env.NEXT_PUBLIC_SUPER_ADMIN_EMAIL;
+    if (!isRootAdmin) throw new Error("UNAUTHORIZED");
+    const db = getAdminDb();
+    const docRef = db.collection("store_products").doc();
+    await docRef.set({ ...data, createdAt: new Date().toISOString() });
+    return { success: true, id: docRef.id };
+}
+
+export async function updateStoreProduct(id: string, data: any) {
+    const session = await auth();
+    const isRootAdmin = session?.user?.role === "ADMIN" || session?.user?.email === process.env.NEXT_PUBLIC_SUPER_ADMIN_EMAIL;
+    if (!isRootAdmin) throw new Error("UNAUTHORIZED");
+    const db = getAdminDb();
+    await db.collection("store_products").doc(id).set(data, { merge: true });
+    return { success: true };
+}
+
+export async function deleteStoreProduct(id: string) {
+    const session = await auth();
+    const isRootAdmin = session?.user?.role === "ADMIN" || session?.user?.email === process.env.NEXT_PUBLIC_SUPER_ADMIN_EMAIL;
+    if (!isRootAdmin) throw new Error("UNAUTHORIZED");
+    const db = getAdminDb();
+    await db.collection("store_products").doc(id).delete();
+    return { success: true };
+}
