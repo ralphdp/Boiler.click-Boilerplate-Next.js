@@ -283,7 +283,14 @@ export default function AdminPage() {
                                         <GlassCard className="border border-white/5 bg-black/40 p-6 flex flex-col justify-between gap-4 relative overflow-hidden group">
                                             <div className="absolute -right-4 -top-4 opacity-5 group-hover:opacity-10 transition-opacity"><Activity size={120} /></div>
                                             <h3 className="text-xs font-black uppercase tracking-[0.2em] text-white/50 relative z-10">System State</h3>
-                                            <div className="text-xl font-mono text-[var(--accent)] font-bold relative z-10">{commerceMode.toUpperCase() || "MAINTENANCE"}</div>
+                                            <div className="flex flex-col gap-2 relative z-10">
+                                                <div className="text-xl font-mono text-[var(--accent)] font-bold">{commerceMode ? commerceMode.toUpperCase() : "SYNCING..."}</div>
+                                                <div className="flex flex-wrap gap-2">
+                                                    {haltingProtocol && <span className="px-2 py-0.5 text-[9px] bg-red-500/20 text-red-500 border border-red-500/30 rounded uppercase tracking-widest font-bold">Maintenance</span>}
+                                                    {preLaunchMode && <span className="px-2 py-0.5 text-[9px] bg-yellow-500/20 text-yellow-500 border border-yellow-500/30 rounded uppercase tracking-widest font-bold">Early Access</span>}
+                                                    {sandboxMode && <span className="px-2 py-0.5 text-[9px] bg-blue-500/20 text-blue-500 border border-blue-500/30 rounded uppercase tracking-widest font-bold">Sandbox</span>}
+                                                </div>
+                                            </div>
                                             <div className="text-[10px] text-white/30 uppercase tracking-widest relative z-10">Current Substrate Posture</div>
                                         </GlassCard>
                                         <GlassCard className="border border-white/5 bg-black/40 p-6 flex flex-col justify-between gap-4 relative overflow-hidden group">
