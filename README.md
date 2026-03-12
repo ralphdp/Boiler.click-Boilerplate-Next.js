@@ -3,7 +3,7 @@
 This is a high-performance, universal Next.js substrate for sovereign architectural nodes.
 
 ## Repository
-https://github.com/ralphdp/Boiler-Next.js
+https://github.com/ralphdp/Boiler.click-Boilerplate-Next.js
 
 ## Development
 This is a Next.js 16 project optimized with Turbopack and Framer Motion.
@@ -13,4 +13,4 @@ npm run dev
 ```
 
 ---
-Powered by Logos Protocol.
+Powered by Boiler.click
