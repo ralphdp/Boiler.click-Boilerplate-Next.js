@@ -237,10 +237,10 @@ export default function AdminPage() {
                                         <div className="p-4 border-b border-white/5 bg-white/5">
                                             <h3 className="text-xs font-black uppercase tracking-[0.2em]">Active Users</h3>
                                         </div>
-                                        <div className="w-full overflow-visible">
+                                        <div className="w-full max-h-[600px] overflow-y-auto overflow-x-auto admin-scrollbar">
                                             <table className="w-full min-w-[800px] text-left border-collapse text-xs font-mono">
                                                 <thead>
-                                                    <tr className="bg-white/5 text-white/50">
+                                                    <tr className="bg-white/5 text-white/50 sticky top-0 z-10 backdrop-blur-md">
                                                         <th className="p-4 font-normal tracking-widest uppercase">ID</th>
                                                         <th className="p-4 font-normal tracking-widest uppercase">Name</th>
                                                         <th className="p-4 font-normal tracking-widest uppercase">Email Address</th>
@@ -284,8 +284,8 @@ export default function AdminPage() {
                                                                                                 setActiveRoleNode(null);
                                                                                             }}
                                                                                             className={`px-3 py-2 text-[10px] font-black tracking-widest text-left transition-colors uppercase ${(node.customClaims?.role === "ADMIN" && roleOpt === "ADMIN") || (node.customClaims?.role !== "ADMIN" && roleOpt === "USER")
-                                                                                                    ? 'bg-white/10 text-white'
-                                                                                                    : 'text-white/50 hover:text-white hover:bg-white/5'
+                                                                                                ? 'bg-white/10 text-white'
+                                                                                                : 'text-white/50 hover:text-white hover:bg-white/5'
                                                                                                 }`}
                                                                                         >
                                                                                             {roleOpt === "ADMIN" ? "ROOT" : "USER"}
