@@ -1,6 +1,7 @@
 "use client";
 
 import { useState, useEffect } from "react";
+import { createPortal } from "react-dom";
 import { motion, AnimatePresence } from "framer-motion";
 import { useSession } from "next-auth/react";
 import { GlassCard } from "@/components/ui/GlassCard";
@@ -21,6 +22,7 @@ export default function AdminPage() {
     const [loading, setLoading] = useState(true);
     const [updatingNode, setUpdatingNode] = useState<string | null>(null);
     const [activeRoleNode, setActiveRoleNode] = useState<string | null>(null);
+    const [roleDropdownRect, setRoleDropdownRect] = useState<DOMRect | null>(null);
     const [sandboxMode, setSandboxMode] = useState(false);
     const [haltingProtocol, setHaltingProtocol] = useState(false);
     const [broadcastMessage, setBroadcastMessage] = useState("");
@@ -265,16 +267,29 @@ export default function AdminPage() {
                                                                     <div className="relative inline-block w-full max-w-[90px]">
                                                                         <button
                                                                             type="button"
-                                                                            onClick={() => setActiveRoleNode(activeRoleNode === node.uid ? null : node.uid)}
+                                                                            onClick={(e) => {
+                                                                                if (activeRoleNode === node.uid) {
+                                                                                    setActiveRoleNode(null);
+                                                                                } else {
+                                                                                    setRoleDropdownRect(e.currentTarget.getBoundingClientRect());
+                                                                                    setActiveRoleNode(node.uid);
+                                                                                }
+                                                                            }}
                                                                             className="bg-black/50 border border-white/10 text-[10px] px-3 py-2 outline-none rounded focus:border-[var(--accent)] disabled:opacity-50 min-w-[70px] text-left uppercase tracking-widest font-black text-white/80 transition-colors hover:bg-white/5 hover:text-white"
                                                                             disabled={updatingNode === node.uid || node.email === process.env.NEXT_PUBLIC_SUPER_ADMIN_EMAIL || node.email === session?.user?.email}
                                                                         >
                                                                             {updatingNode === node.uid ? "SYNC..." : (node.customClaims?.role === "ADMIN" || node.email === process.env.NEXT_PUBLIC_SUPER_ADMIN_EMAIL ? "ROOT" : "USER")}
                                                                         </button>
-                                                                        {activeRoleNode === node.uid && (
+                                                                        {activeRoleNode === node.uid && roleDropdownRect && typeof document !== 'undefined' && createPortal(
                                                                             <>
-                                                                                <div className="fixed inset-0 z-40" onClick={() => setActiveRoleNode(null)} />
-                                                                                <div className="absolute top-full left-0 mt-2 bg-black/90 backdrop-blur-xl border border-white/10 flex flex-col z-50 min-w-[70px] shadow-2xl p-1 gap-1">
+                                                                                <div className="fixed inset-0 z-[1000] cursor-default" onClick={() => setActiveRoleNode(null)} />
+                                                                                <div
+                                                                                    className="fixed z-[1001] bg-black/90 backdrop-blur-xl border border-white/10 flex flex-col shadow-2xl p-1 gap-1 min-w-[70px]"
+                                                                                    style={{
+                                                                                        top: `${roleDropdownRect.bottom + 8}px`,
+                                                                                        left: `${roleDropdownRect.left}px`
+                                                                                    }}
+                                                                                >
                                                                                     {["USER", "ADMIN"].map(roleOpt => (
                                                                                         <button
                                                                                             type="button"
@@ -292,7 +307,8 @@ export default function AdminPage() {
                                                                                         </button>
                                                                                     ))}
                                                                                 </div>
-                                                                            </>
+                                                                            </>,
+                                                                            document.body
                                                                         )}
                                                                     </div>
                                                                 </td>
