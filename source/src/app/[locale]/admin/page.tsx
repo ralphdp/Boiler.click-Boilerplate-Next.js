@@ -263,20 +263,36 @@ export default function AdminPage() {
                                                                 <td className="p-4 font-bold">{node.email}</td>
                                                                 <td className="p-4">
                                                                     <div className="relative inline-block w-full max-w-[90px]">
-                                                                        {updatingNode === node.uid ? (
-                                                                            <button disabled className="bg-black/50 border border-white/10 text-[10px] px-3 py-1 outline-none rounded min-w-[70px] uppercase font-black text-white/50 animate-pulse cursor-not-allowed">
-                                                                                SYNC...
-                                                                            </button>
-                                                                        ) : (
-                                                                            <select
-                                                                                className="bg-black/50 border border-white/10 text-[10px] px-3 py-1 outline-none rounded focus:border-[var(--accent)] disabled:opacity-50 min-w-[70px] uppercase tracking-widest font-black text-white/80 transition-colors hover:bg-white/5 appearance-none cursor-pointer"
-                                                                                value={node.customClaims?.role === "ADMIN" || node.email === process.env.NEXT_PUBLIC_SUPER_ADMIN_EMAIL ? "ADMIN" : "USER"}
-                                                                                onChange={(e) => handleRoleChange(node.uid, e.target.value as "ADMIN" | "USER")}
-                                                                                disabled={node.email === process.env.NEXT_PUBLIC_SUPER_ADMIN_EMAIL || node.email === session?.user?.email}
-                                                                            >
-                                                                                <option value="USER" className="bg-black text-white text-[10px] font-mono tracking-widest uppercase font-black p-2">USER</option>
-                                                                                <option value="ADMIN" className="bg-black text-[var(--accent)] text-[10px] font-mono tracking-widest uppercase font-black p-2">ROOT</option>
-                                                                            </select>
+                                                                        <button
+                                                                            type="button"
+                                                                            onClick={() => setActiveRoleNode(activeRoleNode === node.uid ? null : node.uid)}
+                                                                            className="bg-black/50 border border-white/10 text-[10px] px-3 py-2 outline-none rounded focus:border-[var(--accent)] disabled:opacity-50 min-w-[70px] text-left uppercase tracking-widest font-black text-white/80 transition-colors hover:bg-white/5 hover:text-white"
+                                                                            disabled={updatingNode === node.uid || node.email === process.env.NEXT_PUBLIC_SUPER_ADMIN_EMAIL || node.email === session?.user?.email}
+                                                                        >
+                                                                            {updatingNode === node.uid ? "SYNC..." : (node.customClaims?.role === "ADMIN" || node.email === process.env.NEXT_PUBLIC_SUPER_ADMIN_EMAIL ? "ROOT" : "USER")}
+                                                                        </button>
+                                                                        {activeRoleNode === node.uid && (
+                                                                            <>
+                                                                                <div className="fixed inset-0 z-40" onClick={() => setActiveRoleNode(null)} />
+                                                                                <div className="absolute top-full left-0 mt-2 bg-black/90 backdrop-blur-xl border border-white/10 flex flex-col z-50 min-w-[70px] shadow-2xl p-1 gap-1">
+                                                                                    {["USER", "ADMIN"].map(roleOpt => (
+                                                                                        <button
+                                                                                            type="button"
+                                                                                            key={roleOpt}
+                                                                                            onClick={() => {
+                                                                                                handleRoleChange(node.uid, roleOpt as "ADMIN" | "USER");
+                                                                                                setActiveRoleNode(null);
+                                                                                            }}
+                                                                                            className={`px-3 py-2 text-[10px] font-black tracking-widest text-left transition-colors uppercase ${(node.customClaims?.role === "ADMIN" && roleOpt === "ADMIN") || (node.customClaims?.role !== "ADMIN" && roleOpt === "USER")
+                                                                                                    ? 'bg-white/10 text-white'
+                                                                                                    : 'text-white/50 hover:text-white hover:bg-white/5'
+                                                                                                }`}
+                                                                                        >
+                                                                                            {roleOpt === "ADMIN" ? "ROOT" : "USER"}
+                                                                                        </button>
+                                                                                    ))}
+                                                                                </div>
+                                                                            </>
                                                                         )}
                                                                     </div>
                                                                 </td>
