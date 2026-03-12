@@ -237,7 +237,7 @@ export default function AdminPage() {
                                         <div className="p-4 border-b border-white/5 bg-white/5">
                                             <h3 className="text-xs font-black uppercase tracking-[0.2em]">Active Users</h3>
                                         </div>
-                                        <div className="w-full overflow-x-auto admin-scrollbar">
+                                        <div className="w-full overflow-x-auto admin-scrollbar pb-32">
                                             <table className="w-full min-w-[800px] text-left border-collapse text-xs font-mono">
                                                 <thead>
                                                     <tr className="bg-white/5 text-white/50">
@@ -299,8 +299,8 @@ export default function AdminPage() {
                                                                         type="button"
                                                                         onClick={() => handleStatusChange(node.uid, node.disabled)}
                                                                         className={`text-[10px] px-3 py-1 outline-none rounded min-w-[70px] uppercase tracking-widest font-black transition-colors ${node.disabled
-                                                                                ? "bg-red-500/10 text-red-500 border border-red-500/20 hover:bg-red-500 hover:text-white"
-                                                                                : "bg-green-500/10 text-green-500 border border-green-500/20 hover:bg-green-500 hover:text-white"
+                                                                            ? "bg-red-500/10 text-red-500 border border-red-500/20 hover:bg-red-500 hover:text-white"
+                                                                            : "bg-green-500/10 text-green-500 border border-green-500/20 hover:bg-green-500 hover:text-white"
                                                                             }`}
                                                                         disabled={updatingNode === node.uid || node.email === process.env.NEXT_PUBLIC_SUPER_ADMIN_EMAIL || node.email === session?.user?.email}
                                                                     >
