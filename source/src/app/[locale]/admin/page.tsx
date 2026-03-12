@@ -97,8 +97,8 @@ export default function AdminPage() {
     // Read inbound hash on initial render to preserve active tab
     useEffect(() => {
         if (typeof window !== "undefined") {
-            const hash = window.location.hash.replace("#", "") as "nodes" | "audit" | "telemetry" | "config" | "branding" | "broadcast" | "store";
-            if (["nodes", "audit", "telemetry", "config", "branding", "broadcast", "store"].includes(hash)) {
+            const hash = window.location.hash.replace("#", "") as "overview" | "nodes" | "audit" | "telemetry" | "config" | "branding" | "broadcast" | "store";
+            if (["overview", "nodes", "audit", "telemetry", "config", "branding", "broadcast", "store"].includes(hash)) {
                 setTab(hash);
             }
         }
@@ -114,17 +114,17 @@ export default function AdminPage() {
     useEffect(() => {
         let telemetryInterval: NodeJS.Timeout;
 
-        if (tab === "nodes") {
+        if (tab === "nodes" || tab === "overview") {
             setLoading(true);
-            getSovereignNodes(50)
+            getSovereignNodes(500)
                 .then(setNodes)
                 .catch(e => console.error("Failed to load nodes", e))
                 .finally(() => setLoading(false));
         }
 
-        if (tab === "audit") {
+        if (tab === "audit" || tab === "overview") {
             setLoading(true);
-            getAuditTraces(20)
+            getAuditTraces(100)
                 .then(setTraces)
                 .catch(e => console.error("Failed to load traces", e))
                 .finally(() => setLoading(false));
