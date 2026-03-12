@@ -297,32 +297,32 @@ export default function AdminPage() {
                                         </div>
                                         <div className="w-full overflow-x-auto admin-scrollbar">
                                             <table className="w-full min-w-[800px] text-left border-collapse text-xs font-mono">
+                                                <thead>
+                                                    <tr className="bg-white/5 text-white/50 sticky top-0 z-10 backdrop-blur-md">
+                                                        <th className="p-4 font-normal tracking-widest uppercase">Timestamp</th>
+                                                        <th className="p-4 font-normal tracking-widest uppercase">Action</th>
+                                                        <th className="p-4 font-normal tracking-widest uppercase">Severity</th>
+                                                        <th className="p-4 font-normal tracking-widest uppercase">Origin User</th>
+                                                        <th className="p-4 font-normal tracking-widest uppercase">Details</th>
+                                                    </tr>
+                                                </thead>
                                                 <tbody className="divide-y divide-white/5 focus:outline-none">
-                                                    {traces.slice(0, 5).map(trace => (
-                                                        <tr key={trace.id} className="hover:bg-white/5 transition-colors group">
-                                                            <td className="p-4 text-white/30 whitespace-nowrap">{new Date(trace.timestamp).toLocaleString()}</td>
-                                                            <td className="p-4 text-[var(--accent)] tracking-widest uppercase font-bold text-[10px]">{trace.action}</td>
-                                                            <td className="p-4">
-                                                                <span className={`px-2 py-1 rounded text-[9px] font-black tracking-widest uppercase ${trace.severity === 'INFO' ? 'bg-blue-500/10 text-blue-500 border border-blue-500/20' : trace.severity === 'WARN' ? 'bg-yellow-500/10 text-yellow-500 border border-yellow-500/20' : 'bg-red-500/10 text-red-500 border border-red-500/20'}`}>{trace.severity}</span>
+                                                    {traces.slice(0, 5).map((trace, i) => (
+                                                        <tr key={trace.id || i} className="hover:bg-white/5 transition-colors group">
+                                                            <td className="p-4 text-white/40 whitespace-nowrap">{new Date(trace.timestamp).toLocaleString()}</td>
+                                                            <td className="p-4 font-bold tracking-widest uppercase">{trace.action}</td>
+                                                            <td className={`p-4 font-bold tracking-widest uppercase ${trace.severity === 'FATAL' || trace.severity === 'ERROR' || trace.severity === 'CRIT' ? 'text-[var(--accent)]' : trace.severity === 'WARN' ? 'text-yellow-500' : 'text-[var(--accent)]'}`}>
+                                                                {trace.severity}
                                                             </td>
-                                                            <td className="p-4 text-white/70">{trace.user}</td>
-                                                            <td className="p-4 w-1/3 min-w-[200px] max-w-[400px]">
-                                                                <div className="truncate text-white/50">{trace.message}</div>
+                                                            <td className="p-4 text-[var(--accent)] max-w-xs truncate">{trace.user}</td>
+                                                            <td className="p-4 text-white/60 w-1/3 min-w-[200px] max-w-[400px]">
+                                                                <div className="truncate">{trace.message}</div>
                                                             </td>
                                                         </tr>
                                                     ))}
                                                 </tbody>
                                             </table>
                                         </div>
-                                        {totalNodePages > 1 && (
-                                            <div className="p-4 border-t border-white/5 bg-white/5 flex justify-between items-center text-xs font-mono text-white/50">
-                                                <div>Showing {(nodePage - 1) * 50 + 1}-{Math.min(nodePage * 50, filteredNodes.length)} of {filteredNodes.length}</div>
-                                                <div className="flex gap-2">
-                                                    <button onClick={() => setNodePage(p => Math.max(1, p - 1))} disabled={nodePage === 1} className="px-3 py-1 bg-black/50 border border-white/10 rounded disabled:opacity-30 hover:bg-white/5 text-[10px] font-black tracking-widest uppercase text-white transition-colors">Prev</button>
-                                                    <button onClick={() => setNodePage(p => Math.min(totalNodePages, p + 1))} disabled={nodePage === totalNodePages} className="px-3 py-1 bg-black/50 border border-white/10 rounded disabled:opacity-30 hover:bg-white/5 text-[10px] font-black tracking-widest uppercase text-white transition-colors">Next</button>
-                                                </div>
-                                            </div>
-                                        )}
                                     </div>
                                 </motion.div>
                             )}
