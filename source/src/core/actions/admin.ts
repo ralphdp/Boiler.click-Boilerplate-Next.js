@@ -5,6 +5,22 @@ import { auth } from "@/core/auth";
 import { Resend } from "resend";
 import { cookies } from "next/headers";
 
+
+export async function logAuditTrace(action: string, severity: 'INFO' | 'WARN' | 'CRIT', message: string, user: string = "SYSTEM") {
+    try {
+        const db = getAdminDb();
+        await db.collection("omni_audit_traces").add({
+            action,
+            severity,
+            message,
+            timestamp: Date.now(),
+            user
+        });
+    } catch (e) {
+        console.error("Failed to log audit trace:", e);
+    }
+}
+
 export async function getSovereignNodes(maxResults = 100) {
     const session = await auth();
     const isRootAdmin = session?.user?.role === "ADMIN" || session?.user?.email === process.env.NEXT_PUBLIC_SUPER_ADMIN_EMAIL;
@@ -43,6 +59,7 @@ export async function setNodeRole(uid: string, role: "ADMIN" | "USER") {
     try {
         const authAdmin = getAdminAuth();
         await authAdmin.setCustomUserClaims(uid, { role });
+        await logAuditTrace("NODE_ESCALATION", "WARN", "Changed node role", session?.user?.email || "SYSTEM");
         return { success: true, message: `Node successfully updated to ${role}.` };
     } catch (e: any) {
         console.error("[Admin Escalation Fault]:", e);
@@ -94,6 +111,7 @@ export async function setSovereignWebGLVariant(variant: 'matrix' | 'fire' | 'gal
     try {
         const rootCookieStore = await cookies();
         rootCookieStore.set("sovereign_webgl_variant", variant, { path: "/", maxAge: 60 * 60 * 24 * 365, httpOnly: true, secure: process.env.NODE_ENV === "production", sameSite: "lax" });
+        await logAuditTrace("AESTHETIC_OVERRIDE", "INFO", "Updated WebGL variant", session?.user?.email || "SYSTEM");
         return { success: true };
     } catch (e: any) {
         console.error("[WebGL Global Override Fault]:", e);
@@ -112,6 +130,7 @@ export async function setGlobalBroadcast(message: string) {
     try {
         const db = getAdminDb();
         await db.collection("sovereign_config").doc("global").set({ broadcast: message || "" }, { merge: true });
+        await logAuditTrace("BROADCAST_UPDATE", "INFO", "Updated global broadcast message", session?.user?.email || "SYSTEM");
         return { success: true };
     } catch (e: any) {
         return { error: true, message: "Broadcast failed." };
@@ -129,6 +148,7 @@ export async function setContentOverride(tagline: string) {
     try {
         const db = getAdminDb();
         await db.collection("sovereign_config").doc("global").set({ typography: tagline || "" }, { merge: true });
+        await logAuditTrace("CONTENT_OVERRIDE", "INFO", "Updated content overrides", session?.user?.email || "SYSTEM");
         return { success: true };
     } catch (e: any) {
         return { error: true, message: "Content override failed." };
@@ -206,6 +226,7 @@ export async function setSandboxMode(mode: boolean) {
     try {
         const db = getAdminDb();
         await db.collection("sovereign_config").doc("global").set({ sandboxMode: mode }, { merge: true });
+        await logAuditTrace("MODE_CHANGE", "WARN", "Toggled sandbox mode", session?.user?.email || "SYSTEM");
         return { success: true };
     } catch (e: any) {
         return { error: true, message: "Sandbox mode toggle failed." };
@@ -223,6 +244,7 @@ export async function setSiteTitle(title: string) {
     try {
         const db = getAdminDb();
         await db.collection("sovereign_config").doc("global").set({ siteTitle: title || "" }, { merge: true });
+        await logAuditTrace("BRANDING_UPDATE", "INFO", "Updated site title", session?.user?.email || "SYSTEM");
         return { success: true };
     } catch (e: any) {
         return { error: true, message: "Site title override failed." };
@@ -240,6 +262,7 @@ export async function setContactEmail(email: string) {
     try {
         const db = getAdminDb();
         await db.collection("sovereign_config").doc("global").set({ contactEmail: email || "" }, { merge: true });
+        await logAuditTrace("BRANDING_UPDATE", "INFO", "Updated contact email", session?.user?.email || "SYSTEM");
         return { success: true };
     } catch (e: any) {
         return { error: true, message: "Contact email override failed." };
@@ -257,6 +280,7 @@ export async function setCommerceMode(mode: string) {
     try {
         const db = getAdminDb();
         await db.collection("sovereign_config").doc("global").set({ commerceMode: mode }, { merge: true });
+        await logAuditTrace("COMMERCE_UPDATE", "INFO", "Changed commerce mode", session?.user?.email || "SYSTEM");
         return { success: true };
     } catch (e: any) {
         return { error: true, message: "Commerce override failed." };
@@ -274,6 +298,7 @@ export async function setResendFrom(email: string) {
     try {
         const db = getAdminDb();
         await db.collection("sovereign_config").doc("global").set({ resendFrom: email }, { merge: true });
+        await logAuditTrace("EMAIL_CONFIG", "WARN", "Updated Resend origin email", session?.user?.email || "SYSTEM");
         return { success: true };
     } catch (e: any) {
         return { error: true, message: "Resend email override failed." };
@@ -288,6 +313,7 @@ export async function setHaltingProtocol(isActive: boolean) {
 
     try {
         await getAdminDb().collection("sovereign_config").doc("global").set({ haltingProtocol: isActive }, { merge: true });
+        await logAuditTrace("HALT_PROTOCOL", "CRIT", "Toggled global halting protocol", session?.user?.email || "SYSTEM");
         return { success: true };
     } catch (e: any) {
         return { error: true, message: "Halting protocol override failed." };
@@ -302,6 +328,7 @@ export async function setPreLaunchMode(isActive: boolean) {
 
     try {
         await getAdminDb().collection("sovereign_config").doc("global").set({ preLaunchMode: isActive }, { merge: true });
+        await logAuditTrace("MODE_CHANGE", "WARN", "Toggled pre-launch mode", session?.user?.email || "SYSTEM");
         return { success: true };
     } catch (e: any) {
         return { error: true, message: "Pre-Launch override failed." };
@@ -316,6 +343,7 @@ export async function setPrimaryColor(colorHex: string) {
 
     try {
         await getAdminDb().collection("sovereign_config").doc("global").set({ primaryColor: colorHex }, { merge: true });
+        await logAuditTrace("BRANDING_UPDATE", "INFO", "Updated primary brand color", session?.user?.email || "SYSTEM");
         return { success: true };
     } catch (e: any) {
         return { error: true, message: "Primary Color override failed." };
@@ -330,6 +358,7 @@ export async function setSocialLinks(socials: { socialX?: string, socialGithub?:
 
     try {
         await getAdminDb().collection("sovereign_config").doc("global").set(socials, { merge: true });
+        await logAuditTrace("BRANDING_UPDATE", "INFO", "Updated social navigation links", session?.user?.email || "SYSTEM");
         return { success: true };
     } catch (e: any) {
         return { error: true, message: "Social Link override failed." };
@@ -351,13 +380,7 @@ export async function getAuditTraces(limitCount = 20) {
             .limit(limitCount)
             .get();
 
-        if (snapshot.empty) {
-            // Fallback representation if no traces exist yet in the actual DB
-            return [
-                { id: "MOCK_TRACE_2", action: "SYSTEM_REBOOT", severity: "WARN", message: "Kernel subsystem diagnostic reboot.", timestamp: Date.now() - 3600000, user: "SYSTEM" },
-                { id: "MOCK_TRACE_1", action: "ROOT_SYNC", severity: "INFO", message: "Initialization of Sovereign Audit Transport.", timestamp: Date.now() - 7200000, user: session?.user?.email || "ROOT" }
-            ];
-        }
+        if (snapshot.empty) { return []; }
 
         return snapshot.docs.map(d => ({
             id: d.id,
@@ -379,6 +402,7 @@ export async function setSEOMetadata(data: { description: string, keywords: stri
     if (!isRootAdmin) throw new Error("UNAUTHORIZED");
     const db = getAdminDb();
     await db.collection("sovereign_config").doc("global").set({ seoDescription: data.description || "", seoKeywords: data.keywords || "", seoOgImage: data.ogUrl || "" }, { merge: true });
+    await logAuditTrace("SEO_UPDATE", "INFO", "Updated SEO metadata", session?.user?.email || "SYSTEM");
     return { success: true };
 }
 
@@ -388,6 +412,7 @@ export async function setRateLimitMode(mode: string) {
     if (!isRootAdmin) throw new Error("UNAUTHORIZED");
     const db = getAdminDb();
     await db.collection("sovereign_config").doc("global").set({ rateLimitMode: mode }, { merge: true });
+    await logAuditTrace("SECURITY_UPDATE", "CRIT", "Adjusted rate limit strictness", session?.user?.email || "SYSTEM");
     return { success: true };
 }
 
@@ -397,6 +422,7 @@ export async function setTelemetryKeys(data: { gaId: string, posthogId: string }
     if (!isRootAdmin) throw new Error("UNAUTHORIZED");
     const db = getAdminDb();
     await db.collection("sovereign_config").doc("global").set({ gaId: data.gaId || "", posthogId: data.posthogId || "" }, { merge: true });
+    await logAuditTrace("TELEMETRY_UPDATE", "WARN", "Updated analytics tracking keys", session?.user?.email || "SYSTEM");
     return { success: true };
 }
 
@@ -412,6 +438,7 @@ export async function setPricingMatrix(data: {
         pricingTiers: data.pricingTiers || [],
         recommendedPlan: data.recommendedPlan || ""
     }, { merge: true });
+    await logAuditTrace("COMMERCE_UPDATE", "INFO", "Updated pricing tiers matrix", session?.user?.email || "SYSTEM");
     return { success: true };
 }
 
@@ -432,6 +459,7 @@ export async function createStoreProduct(data: any) {
     const db = getAdminDb();
     const docRef = db.collection("store_products").doc();
     await docRef.set({ ...data, createdAt: new Date().toISOString() });
+    await logAuditTrace("COMMERCE_UPDATE", "INFO", "Created new store product", session?.user?.email || "SYSTEM");
     return { success: true, id: docRef.id };
 }
 
@@ -441,6 +469,7 @@ export async function updateStoreProduct(id: string, data: any) {
     if (!isRootAdmin) throw new Error("UNAUTHORIZED");
     const db = getAdminDb();
     await db.collection("store_products").doc(id).set(data, { merge: true });
+    await logAuditTrace("COMMERCE_UPDATE", "INFO", "Updated store product", session?.user?.email || "SYSTEM");
     return { success: true };
 }
 
@@ -450,5 +479,6 @@ export async function deleteStoreProduct(id: string) {
     if (!isRootAdmin) throw new Error("UNAUTHORIZED");
     const db = getAdminDb();
     await db.collection("store_products").doc(id).delete();
+    await logAuditTrace("COMMERCE_UPDATE", "WARN", "Deleted store product", session?.user?.email || "SYSTEM");
     return { success: true };
 }
