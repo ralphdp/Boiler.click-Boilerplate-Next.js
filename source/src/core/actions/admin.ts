@@ -40,11 +40,31 @@ export async function getSovereignNodes(maxResults = 100) {
             creationTime: u.metadata.creationTime,
             lastSignInTime: u.metadata.lastSignInTime,
             provider: u.providerData[0]?.providerId || "native",
-            customClaims: u.customClaims || {}
+            customClaims: u.customClaims || {},
+            disabled: u.disabled
         }));
     } catch (e: any) {
         console.error("[Admin Substrate Error]:", e);
         throw new Error("Failed to retrieve node mapping. See logs.");
+    }
+}
+
+export async function setNodeStatus(uid: string, disabled: boolean) {
+    const session = await auth();
+    const isRootAdmin = session?.user?.role === "ADMIN" || session?.user?.email === process.env.NEXT_PUBLIC_SUPER_ADMIN_EMAIL;
+
+    if (!isRootAdmin) {
+        throw new Error("UNAUTHORIZED_ACCESS: Only existing Root Administrators can alter node status.");
+    }
+
+    try {
+        const authAdmin = getAdminAuth();
+        await authAdmin.updateUser(uid, { disabled });
+        await logAuditTrace("NODE_STATUS_CHANGE", "CRIT", disabled ? "Node banned" : "Node authorized", session?.user?.email || "SYSTEM");
+        return { success: true, message: `Node successfully ${disabled ? 'banned' : 'authorized'}.` };
+    } catch (e: any) {
+        console.error("[Admin Node Status Fault]:", e);
+        return { error: true, message: "Status update failed. Node may not exist." };
     }
 }
 
@@ -182,7 +202,7 @@ export async function getGlobalOverrides() {
             rateLimitMode: data.rateLimitMode || "standard",
             gaId: data.gaId || "",
             posthogId: data.posthogId || "",
-                                                pricingTiers: data.pricingTiers || [{"id": "basic", "name": "Basic Node", "price": "9", "features": ["Standard Telemetry", "Email Support", "Priority Access"], "buttonText": "Initialize Basic"}, {"id": "pro", "name": "Pro Node", "price": "99", "features": ["Advanced Telemetry", "24/7 Priority Support", "Full Admin Access"], "buttonText": "Initialize Pro"}],
+            pricingTiers: data.pricingTiers || [{ "id": "basic", "name": "Basic Node", "price": "9", "features": ["Standard Telemetry", "Email Support", "Priority Access"], "buttonText": "Initialize Basic" }, { "id": "pro", "name": "Pro Node", "price": "99", "features": ["Advanced Telemetry", "24/7 Priority Support", "Full Admin Access"], "buttonText": "Initialize Pro" }],
             recommendedPlan: data.recommendedPlan || "pro",
             webglVariant: activeVariant,
             sandboxMode: !!data.sandboxMode
@@ -207,7 +227,7 @@ export async function getGlobalOverrides() {
             rateLimitMode: "standard",
             gaId: "",
             posthogId: "",
-                                                pricingTiers: [{"id": "basic", "name": "Basic Node", "price": "9", "features": ["Standard Telemetry", "Email Support", "Priority Access"], "buttonText": "Initialize Basic"}, {"id": "pro", "name": "Pro Node", "price": "99", "features": ["Advanced Telemetry", "24/7 Priority Support", "Full Admin Access"], "buttonText": "Initialize Pro"}],
+            pricingTiers: [{ "id": "basic", "name": "Basic Node", "price": "9", "features": ["Standard Telemetry", "Email Support", "Priority Access"], "buttonText": "Initialize Basic" }, { "id": "pro", "name": "Pro Node", "price": "99", "features": ["Advanced Telemetry", "24/7 Priority Support", "Full Admin Access"], "buttonText": "Initialize Pro" }],
             recommendedPlan: "pro",
             webglVariant: "fire",
             sandboxMode: false

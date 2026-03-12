@@ -7,7 +7,7 @@ import { GlassCard } from "@/components/ui/GlassCard";
 import { ShieldAlert, Users, Activity, Settings, ArrowLeft, ArrowRight, ShieldCheck, Palette, Radio, ShoppingCart, Trash2, Plus, Edit2, ArrowUp, ArrowDown, X, Check, Eye, EyeOff } from "lucide-react";
 import Link from "next/link";
 import { Button } from "@/components/ui/Button";
-import { getSovereignNodes, setNodeRole, getTelemetryData, setSovereignWebGLVariant, setGlobalBroadcast, setContentOverride, getGlobalOverrides, getAuditTraces, setCommerceMode, setResendFrom, setSiteTitle, setContactEmail, setHaltingProtocol as setHaltingProtocolAction, setPreLaunchMode as setPreLaunchModeAction, setSandboxMode as setSandboxModeAction, setPrimaryColor, setSocialLinks, setSEOMetadata, setRateLimitMode, setTelemetryKeys, setPricingMatrix, getStoreProducts, createStoreProduct, updateStoreProduct, deleteStoreProduct } from "@/core/actions/admin";
+import { getSovereignNodes, setNodeRole, setNodeStatus, getTelemetryData, setSovereignWebGLVariant, setGlobalBroadcast, setContentOverride, getGlobalOverrides, getAuditTraces, setCommerceMode, setResendFrom, setSiteTitle, setContactEmail, setHaltingProtocol as setHaltingProtocolAction, setPreLaunchMode as setPreLaunchModeAction, setSandboxMode as setSandboxModeAction, setPrimaryColor, setSocialLinks, setSEOMetadata, setRateLimitMode, setTelemetryKeys, setPricingMatrix, getStoreProducts, createStoreProduct, updateStoreProduct, deleteStoreProduct } from "@/core/actions/admin";
 import { useTranslation } from "@/core/i18n/LanguageProvider";
 import { useRouter } from "next/navigation";
 
@@ -152,6 +152,17 @@ export default function AdminPage() {
         setUpdatingNode(null);
     };
 
+    const handleStatusChange = async (uid: string, currentlyDisabled: boolean) => {
+        setUpdatingNode(uid);
+        const res = await setNodeStatus(uid, !currentlyDisabled);
+        if (res.success) {
+            setNodes(nodes.map(n => n.uid === uid ? { ...n, disabled: !currentlyDisabled } : n));
+        } else {
+            console.error(res.message);
+        }
+        setUpdatingNode(null);
+    };
+
     return (
         <main className="relative min-h-screen p-6 text-white overflow-y-auto">
             <div className="w-full max-w-5xl mx-auto space-y-6 pt-12 pb-24">
@@ -234,6 +245,7 @@ export default function AdminPage() {
                                                         <th className="p-4 font-normal tracking-widest uppercase">Name</th>
                                                         <th className="p-4 font-normal tracking-widest uppercase">Email Address</th>
                                                         <th className="p-4 font-normal tracking-widest uppercase">Role</th>
+                                                        <th className="p-4 font-normal tracking-widest uppercase">Status</th>
                                                         <th className="p-4 font-normal tracking-widest uppercase">Auth Type</th>
                                                         <th className="p-4 font-normal tracking-widest uppercase">Created</th>
                                                     </tr>
@@ -281,6 +293,19 @@ export default function AdminPage() {
                                                                         )}
                                                                     </div>
                                                                     {updatingNode === node.uid && <span className="ml-2 text-[10px] text-white/50 animate-pulse">Syncing...</span>}
+                                                                </td>
+                                                                <td className="p-4">
+                                                                    <button
+                                                                        type="button"
+                                                                        onClick={() => handleStatusChange(node.uid, node.disabled)}
+                                                                        className={`text-[10px] px-3 py-1 outline-none rounded min-w-[70px] uppercase tracking-widest font-black transition-colors ${node.disabled
+                                                                                ? "bg-red-500/10 text-red-500 border border-red-500/20 hover:bg-red-500 hover:text-white"
+                                                                                : "bg-green-500/10 text-green-500 border border-green-500/20 hover:bg-green-500 hover:text-white"
+                                                                            }`}
+                                                                        disabled={updatingNode === node.uid || node.email === process.env.NEXT_PUBLIC_SUPER_ADMIN_EMAIL || node.email === session?.user?.email}
+                                                                    >
+                                                                        {node.disabled ? "BANNED" : "ACTIVE"}
+                                                                    </button>
                                                                 </td>
                                                                 <td className="p-4 text-white/50 capitalize">{node.provider.replace('.com', '')}</td>
                                                                 <td className="p-4 text-white/30">{new Date(node.creationTime).toLocaleDateString()}</td>
