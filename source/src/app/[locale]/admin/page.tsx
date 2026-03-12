@@ -269,7 +269,7 @@ export default function AdminPage() {
                                                                             className="bg-black/50 border border-white/10 text-xs px-3 py-1 outline-none rounded focus:border-[var(--accent)] disabled:opacity-50 min-w-[70px] text-left uppercase tracking-widest font-bold text-white/80 transition-colors hover:bg-white/5"
                                                                             disabled={updatingNode === node.uid || node.email === process.env.NEXT_PUBLIC_SUPER_ADMIN_EMAIL || node.email === session?.user?.email}
                                                                         >
-                                                                            {node.customClaims?.role === "ADMIN" || node.email === process.env.NEXT_PUBLIC_SUPER_ADMIN_EMAIL ? "ROOT" : "USER"}
+                                                                            {updatingNode === node.uid ? "SYNC..." : (node.customClaims?.role === "ADMIN" || node.email === process.env.NEXT_PUBLIC_SUPER_ADMIN_EMAIL ? "ROOT" : "USER")}
                                                                         </button>
                                                                         {activeRoleNode === node.uid && (
                                                                             <>
@@ -292,7 +292,6 @@ export default function AdminPage() {
                                                                             </>
                                                                         )}
                                                                     </div>
-                                                                    {updatingNode === node.uid && <span className="ml-2 text-[10px] text-white/50 animate-pulse">Syncing...</span>}
                                                                 </td>
                                                                 <td className="p-4">
                                                                     <button
@@ -304,7 +303,7 @@ export default function AdminPage() {
                                                                             }`}
                                                                         disabled={updatingNode === node.uid || node.email === process.env.NEXT_PUBLIC_SUPER_ADMIN_EMAIL || node.email === session?.user?.email}
                                                                     >
-                                                                        {node.disabled ? "BANNED" : "ACTIVE"}
+                                                                        {updatingNode === node.uid ? "SYNC..." : (node.disabled ? "BANNED" : "ACTIVE")}
                                                                     </button>
                                                                 </td>
                                                                 <td className="p-4 text-white/50 capitalize">{node.provider.replace('.com', '')}</td>
