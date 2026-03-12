@@ -407,7 +407,7 @@ export async function getAuditTraces(limitCount = 20) {
             action: d.data().action || "UNKNOWN",
             severity: d.data().severity || "INFO",
             message: d.data().message || "",
-            timestamp: d.data().timestamp?.toMillis ? d.data().timestamp.toMillis() : Date.now(),
+            timestamp: typeof d.data().timestamp === "number" ? d.data().timestamp : (d.data().timestamp?.toMillis ? d.data().timestamp.toMillis() : Date.now()),
             user: d.data().user || "SYSTEM"
         }));
     } catch (e: any) {
