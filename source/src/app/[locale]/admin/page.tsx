@@ -282,7 +282,7 @@ export default function AdminPage() {
                                         </GlassCard>
                                         <GlassCard className="border border-white/5 bg-black/40 p-6 flex flex-col justify-between gap-4 relative overflow-hidden group">
                                             <div className="absolute -right-4 -top-4 opacity-5 group-hover:opacity-10 transition-opacity"><Activity size={120} /></div>
-                                            <h3 className="text-xs font-black uppercase tracking-[0.2em] text-white/50 relative z-10">System State</h3>
+                                            <h3 className="text-xs font-black uppercase tracking-[0.2em] text-white/50 relative z-10">Store Mode</h3>
                                             <div className="flex flex-col gap-2 relative z-10">
                                                 <div className="text-xl font-mono text-[var(--accent)] font-bold">{commerceMode ? commerceMode.toUpperCase() : "SYNCING..."}</div>
                                                 <div className="flex flex-wrap gap-2">
