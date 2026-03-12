@@ -143,7 +143,7 @@ export default function AdminPage() {
             telemetryInterval = setInterval(fetchTelemetry, 2500);
         }
 
-        if (tab === "config" || tab === "branding" || tab === "broadcast" || tab === "store") {
+        if (tab === "overview" || tab === "config" || tab === "branding" || tab === "broadcast" || tab === "store") {
             getGlobalOverrides()
                 .then(res => {
                     setBroadcastMessage(res.broadcast);
