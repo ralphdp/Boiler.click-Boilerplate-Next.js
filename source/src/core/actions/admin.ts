@@ -462,16 +462,48 @@ export async function setPricingMatrix(data: {
     return { success: true };
 }
 
-export async function getStoreProducts() {
+export async function getStoreProducts(searchStr: string = "", limitCount: number = 50, pageOff: number = 0) {
     const db = getAdminDb();
     try {
-        const snap = await db.collection("store_products").get();
-        return snap.docs.map(doc => ({ id: doc.id, ...doc.data() }));
+        let queryRef: any = db.collection("store_products");
+        if (searchStr) {
+            queryRef = queryRef.where("name", ">=", searchStr).where("name", "<=", searchStr + '\uf8ff');
+        } else {
+            queryRef = queryRef.orderBy("name");
+        }
+
+        const snap = await queryRef.limit(limitCount).offset(pageOff * limitCount).get();
+
+        let totalCount = 0;
+        try {
+            const countSnap = await db.collection("store_products").count().get();
+            totalCount = countSnap.data().count;
+        } catch { }
+
+        return {
+            items: snap.docs.map((doc: any) => ({ id: doc.id, ...doc.data() })),
+            totalCount
+        };
     } catch (e) {
-        return [];
+        return { items: [], totalCount: 0 };
     }
 }
 
+export async function bulkImportStoreProducts(products: any[]) {
+    const session = await auth();
+    const isRootAdmin = session?.user?.role === "ADMIN" || session?.user?.email === process.env.NEXT_PUBLIC_SUPER_ADMIN_EMAIL;
+    if (!isRootAdmin) throw new Error("UNAUTHORIZED");
+
+    const db = getAdminDb();
+    const batch = db.batch();
+    for (const p of products) {
+        const docRef = db.collection("store_products").doc();
+        batch.set(docRef, { ...p, createdAt: new Date().toISOString() });
+    }
+    await batch.commit();
+    await logAuditTrace("COMMERCE_UPDATE", "WARN", `Bulk imported ${products.length} products`, session?.user?.email || "SYSTEM");
+    return { success: true };
+}
 export async function createStoreProduct(data: any) {
     const session = await auth();
     const isRootAdmin = session?.user?.role === "ADMIN" || session?.user?.email === process.env.NEXT_PUBLIC_SUPER_ADMIN_EMAIL;

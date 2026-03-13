@@ -8,12 +8,14 @@ import { GlassCard } from "@/components/ui/GlassCard";
 import { ShieldAlert, Users, Activity, Settings, ArrowLeft, ArrowRight, ShieldCheck, Palette, Radio, ShoppingCart, Trash2, Plus, Edit2, ArrowUp, ArrowDown, X, Check, Eye, EyeOff, LayoutDashboard, Download, Search, Filter, ChevronUp, ChevronDown as ChevronDownIcon } from "lucide-react";
 import Link from "next/link";
 import { Button } from "@/components/ui/Button";
-import { getSovereignNodes, setNodeRole, setNodeStatus, getTelemetryData, setSovereignWebGLVariant, setGlobalBroadcast, setContentOverride, getGlobalOverrides, getAuditTraces, setCommerceMode, setResendFrom, setSiteTitle, setContactEmail, setHaltingProtocol as setHaltingProtocolAction, setPreLaunchMode as setPreLaunchModeAction, setSandboxMode as setSandboxModeAction, setPrimaryColor, setSocialLinks, setSEOMetadata, setRateLimitMode, setTelemetryKeys, setPricingMatrix, getStoreProducts, createStoreProduct, updateStoreProduct, deleteStoreProduct } from "@/core/actions/admin";
+import { getSovereignNodes, setNodeRole, setNodeStatus, getTelemetryData, setSovereignWebGLVariant, setGlobalBroadcast, setContentOverride, getGlobalOverrides, getAuditTraces, setCommerceMode, setResendFrom, setSiteTitle, setContactEmail, setHaltingProtocol as setHaltingProtocolAction, setPreLaunchMode as setPreLaunchModeAction, setSandboxMode as setSandboxModeAction, setPrimaryColor, setSocialLinks, setSEOMetadata, setRateLimitMode, setTelemetryKeys, setPricingMatrix, getStoreProducts, bulkImportStoreProducts, createStoreProduct, updateStoreProduct, deleteStoreProduct } from "@/core/actions/admin";
 import { useTranslation } from "@/core/i18n/LanguageProvider";
 import { useRouter } from "next/navigation";
+import { useToast } from "@/components/ui/Toast";
 
 export default function AdminPage() {
     const router = useRouter();
+    const { toast } = useToast();
     const { data: session } = useSession();
     const { language } = useTranslation();
     const [tab, setTab] = useState<"overview" | "nodes" | "audit" | "telemetry" | "config" | "branding" | "broadcast" | "store">("overview");
@@ -97,6 +99,13 @@ export default function AdminPage() {
     const [productForm, setProductForm] = useState<any>({ id: "", name: "", description: "", price: "", imageUrl: "", stripeLink: "" });
     const [isEditingProduct, setIsEditingProduct] = useState(false);
 
+    // Store Architectures
+    const [storeSearch, setStoreSearch] = useState("");
+    const [storeSearchInput, setStoreSearchInput] = useState("");
+    const [storePage, setStorePage] = useState(1);
+    const [totalStoreProducts, setTotalStoreProducts] = useState(0);
+    const [isStoreModalOpen, setIsStoreModalOpen] = useState(false);
+
     // Read inbound hash on initial render to preserve active tab
     useEffect(() => {
         if (typeof window !== "undefined") {
@@ -176,18 +185,24 @@ export default function AdminPage() {
                     setSandboxMode(res.sandboxMode || false);
                 })
                 .catch(e => console.error("Failed to load global overrides:", e));
-
-            setLoadingProducts(true);
-            getStoreProducts().then(prods => {
-                setStoreProducts(prods);
-                setLoadingProducts(false);
-            });
         }
 
         return () => {
             if (telemetryInterval) clearInterval(telemetryInterval);
         };
     }, [tab]);
+
+    // Independent Effect: Reactive Store Catalog Matrix Load
+    useEffect(() => {
+        if (tab === "overview" || tab === "store") {
+            setLoadingProducts(true);
+            getStoreProducts(storeSearch, 50, storePage - 1).then(res => {
+                setStoreProducts(res.items);
+                setTotalStoreProducts(res.totalCount);
+                setLoadingProducts(false);
+            }).catch(() => setLoadingProducts(false));
+        }
+    }, [tab, storeSearch, storePage]);
 
     const handleRoleChange = async (uid: string, newRole: "ADMIN" | "USER") => {
         setUpdatingNode(uid);
@@ -243,10 +258,10 @@ export default function AdminPage() {
                             { id: "overview", icon: LayoutDashboard, label: "Overview" },
                             { id: "branding", icon: Palette, label: "Branding" },
                             { id: "nodes", icon: Users, label: "Users" },
-                            { id: "audit", icon: ShieldCheck, label: "Audit Logs" },
                             { id: "store", icon: ShoppingCart, label: "Store" },
                             { id: "config", icon: Settings, label: "Configuration" },
                             { id: "broadcast", icon: Radio, label: "Announcements" },
+                            { id: "audit", icon: ShieldCheck, label: "Audit Logs" },
                             { id: "telemetry", icon: Activity, label: "System Health" }
                         ] as const).map(({ id, icon: Icon, label }) => (
                             <button
@@ -291,11 +306,11 @@ export default function AdminPage() {
                                                     {sandboxMode && <span className="px-2 py-0.5 text-[9px] bg-blue-500/20 text-blue-500 border border-blue-500/30 rounded uppercase tracking-widest font-bold">Sandbox</span>}
                                                 </div>
                                             </div>
-                                            <div className="text-[10px] text-white/30 uppercase tracking-widest relative z-10">{commerceMode === 'saas' ? `${pricingTiers.length} Active Tiers` : commerceMode === 'store' ? `${storeProducts.length} Active Products` : "Current Substrate Posture"}</div>
+                                            <div className="text-[10px] text-white/30 uppercase tracking-widest relative z-10">{commerceMode === 'saas' ? `${pricingTiers.length} Active Tiers` : commerceMode === 'store' ? `${totalStoreProducts} Active Products` : "Current Substrate Posture"}</div>
                                         </GlassCard>
                                         <GlassCard className="border border-white/5 bg-black/40 p-6 flex flex-col justify-between gap-4 relative overflow-hidden group">
                                             <div className="absolute -right-4 -top-4 opacity-5 group-hover:opacity-10 transition-opacity"><ShieldCheck size={120} /></div>
-                                            <h3 className="text-xs font-black uppercase tracking-[0.2em] text-white/50 relative z-10">Security Faults</h3>
+                                            <h3 className="text-xs font-black uppercase tracking-[0.2em] text-white/50 relative z-10">Critical Actions</h3>
                                             <div className="text-4xl font-mono text-red-500 font-bold relative z-10">{traces.filter(t => t.severity === "CRIT").length}</div>
                                             <div className="text-[10px] text-white/30 uppercase tracking-widest relative z-10">Critical Audit Traces</div>
                                         </GlassCard>
@@ -693,7 +708,7 @@ export default function AdminPage() {
                                                 onClick={async () => {
                                                     const res = await setResendFrom(resendFrom);
                                                     if (res.success) {
-                                                        alert("Email relay origin established.");
+                                                        toast({ title: "Configuration Updated", description: "Email relay origin established.", type: "success" });
                                                         router.refresh();
                                                     }
                                                 }}
@@ -755,7 +770,8 @@ export default function AdminPage() {
                                                                 name: "New Tier",
                                                                 price: "0",
                                                                 features: [{ name: "Feature 1", active: true }, { name: "Feature 2", active: true }],
-                                                                buttonText: "Get Access"
+                                                                buttonText: "Get Access",
+                                                                stripeLink: ""
                                                             }]);
                                                         }} className="text-xs bg-[var(--accent)]/20 text-[var(--accent)] hover:bg-[var(--accent)]/40 px-3 py-1 uppercase font-bold tracking-widest border border-[var(--accent)] rounded ml-auto sm:ml-0 flex items-center gap-2">
                                                             <Plus size={12} /> Add Tier
@@ -864,7 +880,13 @@ export default function AdminPage() {
                                                             }} className="w-full text-xs py-1.5 border border-dashed border-white/20 text-white/50 hover:bg-white/5 hover:text-white uppercase tracking-widest font-bold flex items-center justify-center gap-2 mt-1"><Plus size={12} /> Add Feature</button>
                                                         </div>
 
-                                                        <input type="text" placeholder="Button Text" className="bg-black/50 border border-white/10 text-xs px-4 py-2 outline-none focus:border-[var(--accent)] text-white w-full font-mono mt-auto" value={tier.buttonText} onChange={(e) => {
+                                                        <input type="text" placeholder="Stripe Checkout Link" className="bg-black/50 border border-white/10 text-xs px-4 py-2 outline-none focus:border-[var(--accent)] text-white w-full font-mono mt-auto" value={tier.stripeLink || ""} onChange={(e) => {
+                                                            const newTiers = [...pricingTiers];
+                                                            newTiers[tIdx].stripeLink = e.target.value;
+                                                            setPricingTiers(newTiers);
+                                                        }} />
+
+                                                        <input type="text" placeholder="Button Text" className="bg-black/50 border border-white/10 text-xs px-4 py-2 outline-none focus:border-[var(--accent)] text-white w-full font-mono" value={tier.buttonText} onChange={(e) => {
                                                             const newTiers = [...pricingTiers];
                                                             newTiers[tIdx].buttonText = e.target.value;
                                                             setPricingTiers(newTiers);
@@ -879,7 +901,7 @@ export default function AdminPage() {
                                                             pricingTiers, recommendedPlan
                                                         });
                                                         if (res.success) {
-                                                            alert("Pricing arrays recalibrated.");
+                                                            toast({ title: "Matrix Updated", description: "Pricing arrays recalibrated.", type: "success" });
                                                         }
                                                     }}
                                                     className="bg-[var(--accent)]/20 border border-[var(--accent)]/50 text-[var(--accent)] text-xs px-6 py-2 outline-none focus:border-white uppercase tracking-widest font-bold transition-colors hover:bg-[var(--accent)]/40 hover:text-white"
@@ -890,120 +912,234 @@ export default function AdminPage() {
                                         </GlassCard>
                                     )}
                                     {commerceMode === 'store' && (
-                                        <GlassCard className="border border-white/5 bg-black/40 p-6 flex flex-col gap-4 md:col-span-2">
-                                            <div className="space-y-2 text-left flex justify-between items-center w-full">
-                                                <div>
-                                                    <h3 className="text-sm font-bold uppercase tracking-widest text-[var(--accent)]">Product Catalog Manager</h3>
-                                                    <p className="text-xs font-serif italic text-white/50">Manage physical or digital products available when the site is in Store Mode.</p>
+                                        <div className="flex flex-col gap-4 md:col-span-2">
+                                            <GlassCard className="border border-white/5 bg-black/40 p-6 flex flex-col gap-4">
+                                                <div className="flex flex-col md:flex-row justify-between items-start md:items-center w-full gap-4">
+                                                    <div className="space-y-2 text-left">
+                                                        <h3 className="text-sm font-bold uppercase tracking-widest text-[var(--accent)]">Product Catalog Matrix</h3>
+                                                        <p className="text-xs font-serif italic text-white/50">Manage physical or digital store entities. Scale-hardened.</p>
+                                                    </div>
+                                                    <div className="flex flex-col items-end gap-2">
+                                                        <button
+                                                            onClick={() => { setIsEditingProduct(false); setProductForm({ id: "", name: "", description: "", price: "", imageUrl: "", stripeLink: "" }); setIsStoreModalOpen(true); }}
+                                                            className="bg-[var(--accent)] text-black px-3 py-1.5 text-xs font-bold uppercase tracking-widest flex items-center gap-2 transition-colors hover:bg-white"
+                                                        >
+                                                            <Plus size={14} /> Add Product
+                                                        </button>
+                                                        <div className="flex items-center gap-2 flex-wrap justify-end">
+                                                            <label className="bg-white/5 border border-white/10 text-white/70 hover:text-white px-3 py-1.5 text-xs uppercase tracking-widest flex items-center gap-2 cursor-pointer transition-colors">
+                                                                <ArrowUp size={14} /> Import CSV
+                                                                <input type="file" accept=".csv" className="hidden" onChange={async (e) => {
+                                                                    if (!e.target.files?.[0]) return;
+                                                                    const text = await e.target.files[0].text();
+                                                                    const rows = text.split("\n").slice(1).filter(r => r.trim());
+                                                                    // Very naive split for basic CSV
+                                                                    const prods = rows.map(Math.random() /* trigger reparse */ ? r => {
+                                                                        const parts = r.split(",");
+                                                                        const name = parts[0]?.replace(/"/g, '');
+                                                                        const price = parseFloat(parts[1]) || 0;
+                                                                        return { name, price, description: parts[2] || '', imageUrl: parts[3] || '', stripeLink: parts[4] || '' };
+                                                                    } : () => ({}));
+                                                                    if (confirm(`Bulk import ${prods.length} products?`)) {
+                                                                        setLoadingProducts(true);
+                                                                        const res = await bulkImportStoreProducts(prods);
+                                                                        if (res.success) {
+                                                                            toast({ title: "Import Successful", description: `Imported ${prods.length} products.`, type: "success" });
+                                                                            setStorePage(1);
+                                                                            const fresh = await getStoreProducts(storeSearch, 50, 0);
+                                                                            setStoreProducts(fresh.items);
+                                                                            setTotalStoreProducts(fresh.totalCount);
+                                                                            setLoadingProducts(false);
+                                                                        }
+                                                                    }
+                                                                    e.target.value = '';
+                                                                }} />
+                                                            </label>
+                                                            <button
+                                                                onClick={async () => {
+                                                                    const exportData = await getStoreProducts("", 10000, 0);
+                                                                    const csvContent = "data:text/csv;charset=utf-8,Name,Price,Description,ImageUrl,StripeLink\n" + exportData.items.map((p: any) => `"${p.name || ''}",${p.price || 0},"${p.description || ''}","${p.imageUrl || ''}","${p.stripeLink || ''}"`).join("\n");
+                                                                    const encodedUri = encodeURI(csvContent);
+                                                                    const link = document.createElement("a");
+                                                                    link.setAttribute("href", encodedUri);
+                                                                    link.setAttribute("download", `store_export_${new Date().toISOString()}.csv`);
+                                                                    document.body.appendChild(link);
+                                                                    link.click();
+                                                                    document.body.removeChild(link);
+                                                                }}
+                                                                className="bg-white/5 border border-white/10 text-white/70 hover:text-white px-3 py-1.5 text-xs uppercase tracking-widest flex items-center gap-2 transition-colors"
+                                                            >
+                                                                <Download size={14} /> Export CSV
+                                                            </button>
+                                                        </div>
+                                                    </div>
                                                 </div>
-                                                <button
-                                                    onClick={() => { setIsEditingProduct(false); setProductForm({ id: "", name: "", description: "", price: "", imageUrl: "", stripeLink: "" }); }}
-                                                    className="bg-white/10 hover:bg-white/20 p-2 rounded transition-colors"
-                                                >
-                                                    <Plus size={16} />
-                                                </button>
-                                            </div>
 
-                                            {/* Entry Form */}
-                                            <div className="flex flex-col gap-3 p-4 bg-white/5 border border-white/10 rounded">
-                                                <div className="grid grid-cols-1 md:grid-cols-2 gap-3">
-                                                    <input
-                                                        type="text"
-                                                        placeholder="Product Name"
-                                                        className="bg-black/50 border border-white/10 text-xs px-4 py-2 outline-none focus:border-[var(--accent)] text-white font-mono w-full"
-                                                        value={productForm.name}
-                                                        onChange={e => setProductForm({ ...productForm, name: e.target.value })}
-                                                    />
-                                                    <input
-                                                        type="number"
-                                                        step="0.01"
-                                                        placeholder="Price (e.g. 19.99)"
-                                                        className="bg-black/50 border border-white/10 text-xs px-4 py-2 outline-none focus:border-[var(--accent)] text-white font-mono w-full"
-                                                        value={productForm.price}
-                                                        onChange={e => setProductForm({ ...productForm, price: e.target.value })}
-                                                    />
-                                                    <input
-                                                        type="text"
-                                                        placeholder="Product Image URL"
-                                                        className="bg-black/50 border border-white/10 text-xs px-4 py-2 outline-none focus:border-[var(--accent)] text-white font-mono w-full md:col-span-2"
-                                                        value={productForm.imageUrl}
-                                                        onChange={e => setProductForm({ ...productForm, imageUrl: e.target.value })}
-                                                    />
-                                                    <input
-                                                        type="text"
-                                                        placeholder="Description"
-                                                        className="bg-black/50 border border-white/10 text-xs px-4 py-2 outline-none focus:border-[var(--accent)] text-white font-mono w-full md:col-span-2"
-                                                        value={productForm.description}
-                                                        onChange={e => setProductForm({ ...productForm, description: e.target.value })}
-                                                    />
-                                                    <input
-                                                        type="text"
-                                                        placeholder="Stripe Checkout Link"
-                                                        className="bg-black/50 border border-white/10 text-xs px-4 py-2 outline-none focus:border-[var(--accent)] text-white font-mono w-full md:col-span-2"
-                                                        value={productForm.stripeLink}
-                                                        onChange={e => setProductForm({ ...productForm, stripeLink: e.target.value })}
-                                                    />
+                                                {/* Matrix Filters */}
+                                                <div className="flex flex-col md:flex-row gap-4 justify-between items-center bg-white/5 p-4 border border-white/5">
+                                                    <div className="relative w-full md:w-96 flex">
+                                                        <div className="absolute left-3 top-1/2 -translate-y-1/2 text-white/30"><Search size={14} /></div>
+                                                        <input
+                                                            type="text"
+                                                            placeholder="Search products by prefix..."
+                                                            value={storeSearchInput}
+                                                            onChange={(e) => setStoreSearchInput(e.target.value)}
+                                                            onKeyDown={(e) => {
+                                                                if (e.key === 'Enter') {
+                                                                    setStorePage(1);
+                                                                    setStoreSearch(storeSearchInput);
+                                                                }
+                                                            }}
+                                                            className="w-full bg-black/50 border border-white/10 text-xs text-white pl-9 pr-4 py-2 outline-none focus:border-[var(--accent)] transition-colors font-mono"
+                                                        />
+                                                    </div>
+                                                    <div className="text-xs font-mono text-white/50">{totalStoreProducts} matching records</div>
                                                 </div>
-                                                <button
-                                                    onClick={async () => {
-                                                        if (!productForm.name || !productForm.price) return alert("Name and price required");
-                                                        if (isEditingProduct && productForm.id) {
-                                                            const res = await updateStoreProduct(productForm.id, productForm);
-                                                            if (res.success) {
-                                                                setStoreProducts(storeProducts.map(p => p.id === productForm.id ? productForm : p));
-                                                                setIsEditingProduct(false);
-                                                                setProductForm({ id: "", name: "", description: "", price: "", imageUrl: "", stripeLink: "" });
-                                                            }
-                                                        } else {
-                                                            const res = await createStoreProduct(productForm);
-                                                            if (res.success) {
-                                                                setStoreProducts([...storeProducts, { ...productForm, id: res.id }]);
-                                                                setProductForm({ id: "", name: "", description: "", price: "", imageUrl: "", stripeLink: "" });
-                                                            }
-                                                        }
-                                                    }}
-                                                    className="bg-[var(--accent)]/20 border border-[var(--accent)]/50 text-[var(--accent)] text-xs px-6 py-2 outline-none focus:border-white uppercase tracking-widest font-bold transition-colors hover:bg-[var(--accent)]/40 hover:text-white mt-2 self-start"
-                                                >
-                                                    {isEditingProduct ? "Update Product" : "Save New Product"}
-                                                </button>
-                                            </div>
 
-                                            {/* Product List */}
-                                            <div className="flex flex-col gap-2 mt-4">
-                                                {loadingProducts ? <div className="text-xs font-mono text-white/50">Loading products...</div> :
-                                                    storeProducts.length === 0 ? <div className="text-xs font-mono text-white/50">No products configured.</div> :
-                                                        storeProducts.map((p, idx) => (
-                                                            <div key={p.id || idx} className="flex justify-between items-center p-3 bg-white/5 border border-white/10 rounded">
-                                                                <div>
-                                                                    <div className="text-sm font-bold text-white">{p.name} <span className="text-[var(--accent)] ml-2">${p.price}</span></div>
-                                                                    <div className="text-xs text-white/50 truncate max-w-xs">{p.description}</div>
-                                                                </div>
-                                                                <div className="flex items-center gap-2">
-                                                                    <button
-                                                                        onClick={() => { setIsEditingProduct(true); setProductForm(p); }}
-                                                                        className="p-2 hover:bg-white/10 rounded text-white/70 hover:text-white transition-colors"
-                                                                    >
-                                                                        <Edit2 size={14} />
-                                                                    </button>
-                                                                    <button
-                                                                        onClick={async () => {
-                                                                            if (!confirm("Are you sure?")) return;
-                                                                            const res = await deleteStoreProduct(p.id);
-                                                                            if (res.success) {
-                                                                                setStoreProducts(storeProducts.filter(prod => prod.id !== p.id));
-                                                                            }
-                                                                        }}
-                                                                        className="p-2 hover:bg-red-500/20 rounded text-red-400 hover:text-red-300 transition-colors"
-                                                                    >
-                                                                        <Trash2 size={14} />
-                                                                    </button>
-                                                                </div>
+                                                {/* Dense Data Table */}
+                                                <div className="overflow-x-auto border border-white/10 bg-black/40">
+                                                    <table className="w-full text-left text-xs text-white/70">
+                                                        <thead className="bg-white/5 text-xs uppercase tracking-widest text-white/40 border-b border-white/10">
+                                                            <tr>
+                                                                <th className="px-4 py-3 font-medium">Product ID</th>
+                                                                <th className="px-4 py-3 font-medium">Name</th>
+                                                                <th className="px-4 py-3 font-medium">Price</th>
+                                                                <th className="px-4 py-3 font-medium text-right">Actions</th>
+                                                            </tr>
+                                                        </thead>
+                                                        <tbody className="divide-y divide-white/5 font-mono">
+                                                            {loadingProducts ? (
+                                                                <tr><td colSpan={4} className="px-4 py-8 text-center text-white/30">Syncing Substrate Matrix...</td></tr>
+                                                            ) : storeProducts.length === 0 ? (
+                                                                <tr><td colSpan={4} className="px-4 py-8 text-center text-white/30">No logic objects found.</td></tr>
+                                                            ) : storeProducts.map((p: any) => (
+                                                                <tr key={p.id} className="hover:bg-white/5 transition-colors">
+                                                                    <td className="px-4 py-3 text-white/30 tracking-widest">{p.id?.slice(0, 8)}</td>
+                                                                    <td className="px-4 py-3 text-white font-sans">{p.name}</td>
+                                                                    <td className="px-4 py-3 text-[var(--accent)]">${p.price}</td>
+                                                                    <td className="px-4 py-3 text-right">
+                                                                        <div className="flex justify-end gap-2">
+                                                                            <button onClick={() => { setIsEditingProduct(true); setProductForm(p); setIsStoreModalOpen(true); }} className="p-1.5 hover:bg-white/10 rounded text-white/50 hover:text-white transition-colors"><Edit2 size={14} /></button>
+                                                                            <button onClick={async () => {
+                                                                                if (!confirm("Are you sure?")) return;
+                                                                                const res = await deleteStoreProduct(p.id);
+                                                                                if (res.success) {
+                                                                                    setStoreProducts(storeProducts.filter((prod: any) => prod.id !== p.id));
+                                                                                    setTotalStoreProducts(prev => prev - 1);
+                                                                                }
+                                                                            }} className="p-1.5 hover:bg-red-500/20 rounded text-red-500/50 hover:text-red-500 transition-colors"><Trash2 size={14} /></button>
+                                                                        </div>
+                                                                    </td>
+                                                                </tr>
+                                                            ))}
+                                                        </tbody>
+                                                    </table>
+                                                </div>
+
+                                                {/* Pagination */}
+                                                {totalStoreProducts > 0 && (
+                                                    <div className="flex justify-between items-center p-4 border-t border-white/5 bg-white/5">
+                                                        <div className="text-xs text-white/50 font-mono tracking-widest">
+                                                            PAGE {storePage} OF {Math.max(1, Math.ceil(totalStoreProducts / 50))}
+                                                        </div>
+                                                        <div className="flex gap-2">
+                                                            <button
+                                                                onClick={() => setStorePage(Math.max(1, storePage - 1))}
+                                                                disabled={storePage === 1}
+                                                                className="bg-black/50 border border-white/10 hover:bg-white/10 disabled:opacity-50 disabled:cursor-not-allowed p-2 text-white transition-colors"
+                                                            >
+                                                                <ArrowLeft size={16} />
+                                                            </button>
+                                                            <button
+                                                                onClick={() => setStorePage(Math.min(Math.ceil(totalStoreProducts / 50), storePage + 1))}
+                                                                disabled={storePage >= Math.ceil(totalStoreProducts / 50)}
+                                                                className="bg-black/50 border border-white/10 hover:bg-white/10 disabled:opacity-50 disabled:cursor-not-allowed p-2 text-white transition-colors"
+                                                            >
+                                                                <ArrowRight size={16} />
+                                                            </button>
+                                                        </div>
+                                                    </div>
+                                                )}
+                                            </GlassCard>
+
+                                            {/* Modal Editor */}
+                                            {isStoreModalOpen && (
+                                                <div className="fixed inset-0 z-[100] flex items-center justify-center p-4 bg-black/80 backdrop-blur-sm">
+                                                    <GlassCard className="w-full max-w-2xl border border-white/10 bg-black p-6 flex flex-col gap-6 relative shadow-[0_0_100px_rgba(0,0,0,0.8)]">
+                                                        <button onClick={() => setIsStoreModalOpen(false)} className="absolute top-4 right-4 text-white/50 hover:text-white"><X size={20} /></button>
+                                                        <div>
+                                                            <h3 className="text-sm font-bold uppercase tracking-widest text-[var(--accent)]">{isEditingProduct ? "Edit Logistics Node" : "Instantiate New Node"}</h3>
+                                                        </div>
+
+                                                        <div className="flex flex-col gap-3">
+                                                            <div className="grid grid-cols-1 md:grid-cols-2 gap-3">
+                                                                <input
+                                                                    type="text"
+                                                                    placeholder="Product Name"
+                                                                    className="bg-white/5 border border-white/10 text-xs px-4 py-3 outline-none focus:border-[var(--accent)] text-white font-mono w-full"
+                                                                    value={productForm.name}
+                                                                    onChange={e => setProductForm({ ...productForm, name: e.target.value })}
+                                                                />
+                                                                <input
+                                                                    type="number"
+                                                                    step="0.01"
+                                                                    placeholder="Price (e.g. 19.99)"
+                                                                    className="bg-white/5 border border-white/10 text-xs px-4 py-3 outline-none focus:border-[var(--accent)] text-white font-mono w-full"
+                                                                    value={productForm.price}
+                                                                    onChange={e => setProductForm({ ...productForm, price: e.target.value })}
+                                                                />
+                                                                <input
+                                                                    type="text"
+                                                                    placeholder="Product Image URL"
+                                                                    className="bg-white/5 border border-white/10 text-xs px-4 py-3 outline-none focus:border-[var(--accent)] text-white font-mono w-full md:col-span-2"
+                                                                    value={productForm.imageUrl}
+                                                                    onChange={e => setProductForm({ ...productForm, imageUrl: e.target.value })}
+                                                                />
+                                                                <input
+                                                                    type="text"
+                                                                    placeholder="Description"
+                                                                    className="bg-white/5 border border-white/10 text-xs px-4 py-3 outline-none focus:border-[var(--accent)] text-white font-mono w-full md:col-span-2"
+                                                                    value={productForm.description}
+                                                                    onChange={e => setProductForm({ ...productForm, description: e.target.value })}
+                                                                />
+                                                                <input
+                                                                    type="text"
+                                                                    placeholder="Stripe Checkout Link"
+                                                                    className="bg-white/5 border border-white/10 text-xs px-4 py-3 outline-none focus:border-[var(--accent)] text-white font-mono w-full md:col-span-2"
+                                                                    value={productForm.stripeLink}
+                                                                    onChange={e => setProductForm({ ...productForm, stripeLink: e.target.value })}
+                                                                />
                                                             </div>
-                                                        ))
-                                                }
-                                            </div>
-
-                                        </GlassCard>
+                                                            <button
+                                                                onClick={async () => {
+                                                                    if (!productForm.name || !productForm.price) return toast({ title: "Validation Error", description: "Name and price required", type: "error" });
+                                                                    if (isEditingProduct && productForm.id) {
+                                                                        const res = await updateStoreProduct(productForm.id, productForm);
+                                                                        if (res.success) {
+                                                                            setStoreProducts(storeProducts.map((p: any) => p.id === productForm.id ? productForm : p));
+                                                                            setIsEditingProduct(false);
+                                                                            setProductForm({ id: "", name: "", description: "", price: "", imageUrl: "", stripeLink: "" });
+                                                                            setIsStoreModalOpen(false);
+                                                                        }
+                                                                    } else {
+                                                                        const res = await createStoreProduct(productForm);
+                                                                        if (res.success) {
+                                                                            setStoreProducts([...storeProducts, { ...productForm, id: res.id }]);
+                                                                            setProductForm({ id: "", name: "", description: "", price: "", imageUrl: "", stripeLink: "" });
+                                                                            setTotalStoreProducts(prev => prev + 1);
+                                                                            setIsStoreModalOpen(false);
+                                                                        }
+                                                                    }
+                                                                }}
+                                                                className="bg-[var(--accent)]/20 border border-[var(--accent)]/50 text-[var(--accent)] text-xs px-6 py-3 outline-none focus:border-white uppercase tracking-widest font-bold transition-colors hover:bg-[var(--accent)] hover:text-black w-full"
+                                                            >
+                                                                {isEditingProduct ? "Update Logic Node" : "Commit Node"}
+                                                            </button>
+                                                        </div>
+                                                    </GlassCard>
+                                                </div>
+                                            )}
+                                        </div>
                                     )}
                                     <GlassCard className="border border-white/5 bg-black/40 p-6 flex flex-col justify-between gap-4 md:col-span-2">
                                         <div className="space-y-2 text-left">
@@ -1056,7 +1192,7 @@ export default function AdminPage() {
                                                 onClick={async () => {
                                                     const res = await setGlobalBroadcast(broadcastMessage);
                                                     if (res.success) {
-                                                        alert("Broadcast injected globally.");
+                                                        toast({ title: "Broadcast Active", description: "Broadcast injected globally.", type: "success" });
                                                         router.refresh();
                                                     }
                                                 }}
@@ -1096,7 +1232,7 @@ export default function AdminPage() {
                                                 onClick={async () => {
                                                     const res = await setSiteTitle(siteTitle);
                                                     if (res.success) {
-                                                        alert("Site Title override established.");
+                                                        toast({ title: "Branding Updated", description: "Site Title override established.", type: "success" });
                                                         router.refresh();
                                                     }
                                                 }}
@@ -1124,7 +1260,7 @@ export default function AdminPage() {
                                                 onClick={async () => {
                                                     const res = await setContentOverride(typographyOverride);
                                                     if (res.success) {
-                                                        alert("Typography override established.");
+                                                        toast({ title: "Branding Updated", description: "Typography override established.", type: "success" });
                                                         router.refresh();
                                                     }
                                                 }}
@@ -1152,7 +1288,7 @@ export default function AdminPage() {
                                                 onClick={async () => {
                                                     const res = await setContactEmail(contactEmail);
                                                     if (res.success) {
-                                                        alert("Support Relay vector established.");
+                                                        toast({ title: "Configuration Updated", description: "Support Relay vector established.", type: "success" });
                                                         router.refresh();
                                                     }
                                                 }}
@@ -1180,7 +1316,7 @@ export default function AdminPage() {
                                                 onClick={async () => {
                                                     const res = await setPrimaryColor(primaryColor);
                                                     if (res.success) {
-                                                        alert("Global Accent Hue established.");
+                                                        toast({ title: "Branding Updated", description: "Global Accent Hue established.", type: "success" });
                                                         router.refresh();
                                                     }
                                                 }}
@@ -1224,7 +1360,7 @@ export default function AdminPage() {
                                                 onClick={async () => {
                                                     const res = await setSEOMetadata({ description: seoDescription, keywords: seoKeywords, ogUrl: seoOgImage });
                                                     if (res.success) {
-                                                        alert("Search Index Protocols synchronized.");
+                                                        toast({ title: "Configuration Updated", description: "Search Index Protocols synchronized.", type: "success" });
                                                         router.refresh();
                                                     }
                                                 }}
@@ -1269,7 +1405,7 @@ export default function AdminPage() {
                                                 onClick={async () => {
                                                     const res = await setSocialLinks({ socialX, socialGithub, socialDiscord });
                                                     if (res.success) {
-                                                        alert("Social Relays synchronized.");
+                                                        toast({ title: "Configuration Updated", description: "Social Relays synchronized.", type: "success" });
                                                         router.refresh();
                                                     }
                                                 }}

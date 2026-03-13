@@ -138,11 +138,11 @@ function TronGrid({ themeColorHex }: { themeColorHex: string }) {
     );
 }
 
-export default function GalaxyEngine({ color = "var(--accent)" }: { color?: string }) {
+export default function GalaxyEngine({ color = "var(--accent)", zIndex = 0 }: { color?: string, zIndex?: number }) {
     const hex = useThemeColor(color);
 
     return (
-        <div className="fixed inset-0 z-0 pointer-events-none overflow-hidden bg-black transition-opacity duration-1000">
+        <div className="fixed inset-0 pointer-events-none overflow-hidden bg-black transition-opacity duration-1000" style={{ zIndex }}>
             <motion.div
                 initial={{ scale: 1.1, opacity: 0.45 }}
                 animate={{

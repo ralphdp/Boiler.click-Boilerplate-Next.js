@@ -1,16 +1,49 @@
 "use client";
 
 import { useEffect, useState } from "react";
-import { motion } from "framer-motion";
+import { motion, AnimatePresence } from "framer-motion";
 import { GlassCard } from "@/components/ui/GlassCard";
 import { Button } from "@/components/ui/Button";
 import Link from "next/link";
-import { ArrowLeft, CheckCircle2, ShoppingCart, ShieldAlert, X, TerminalSquare, User, Key, Activity, Database, Cpu } from "lucide-react";
+import { ArrowLeft, CheckCircle2, ShoppingCart, ShieldAlert, X, TerminalSquare, User, Key, Activity, Database, Cpu, ChevronDown, Palette, Loader2, Maximize, Eye, EyeOff, Copy, FileUp, Sparkles, SlidersHorizontal, Settings, Layers } from "lucide-react";
+import { SovereignWebGL } from "@/components/ui/SovereignWebGL";
 import { getGlobalOverrides, getStoreProducts } from "@/core/actions/admin";
 import { useTranslation } from "@/core/i18n/LanguageProvider";
+import { useToast } from "@/components/ui/Toast";
+
+function FAQItem({ faq }: { faq: { q: string; a: string } }) {
+    const [isOpen, setIsOpen] = useState(false);
+    return (
+        <div className="flex flex-col group p-6">
+            <button
+                onClick={() => setIsOpen(!isOpen)}
+                className="flex items-center justify-between outline-none text-left w-full hover:text-[var(--accent)] transition-colors"
+            >
+                <span className="font-bold text-lg">{faq.q}</span>
+                <ChevronDown size={20} className={`transform transition-transform duration-300 text-white/50 group-hover:text-[var(--accent)] ${isOpen ? "rotate-180 text-[var(--accent)]" : ""}`} />
+            </button>
+            <AnimatePresence>
+                {isOpen && (
+                    <motion.div
+                        initial={{ height: 0, opacity: 0 }}
+                        animate={{ height: "auto", opacity: 1 }}
+                        exit={{ height: 0, opacity: 0 }}
+                        transition={{ duration: 0.3, ease: "easeInOut" }}
+                        className="overflow-hidden"
+                    >
+                        <p className="pt-4 text-white/60 font-mono text-sm leading-relaxed">
+                            {faq.a}
+                        </p>
+                    </motion.div>
+                )}
+            </AnimatePresence>
+        </div>
+    );
+}
 
 export default function DemoPage() {
     const { language } = useTranslation();
+    const { toast } = useToast();
     const [loading, setLoading] = useState(true);
     const [commerceMode, setCommerceMode] = useState<string>("none");
     const [pricingTiers, setPricingTiers] = useState<any[]>([
@@ -31,6 +64,37 @@ export default function DemoPage() {
     ]);
     const [recommendedPlan, setRecommendedPlan] = useState<string>("pro");
     const [products, setProducts] = useState<any[]>([]);
+    const [baseTheme, setBaseTheme] = useState<string>('#a855f7');
+
+    // Live Data Simulation State
+    const [reqRate, setReqRate] = useState(1402);
+    const [terminalLines, setTerminalLines] = useState<string[]>([
+        "Establishing secure handshake...",
+        "Node connection verified.",
+        "Retrieving state vectors from Firebase... OK"
+    ]);
+
+    // Modal Simulation State
+    const [isModalOpen, setIsModalOpen] = useState(false);
+
+    // Showcase Addition State
+    const [microToggle, setMicroToggle] = useState(false);
+    const [sliderValue, setSliderValue] = useState(50);
+    const [btnLoading, setBtnLoading] = useState(false);
+    const [showSecret, setShowSecret] = useState(false);
+    const [isDragging, setIsDragging] = useState(false);
+    const [tempWebGl, setTempWebGl] = useState<'matrix' | 'galaxy' | 'fire' | 'none'>('none');
+    const [mousePos, setMousePos] = useState({ x: -1000, y: -1000 });
+
+    const handleCopy = () => {
+        navigator.clipboard.writeText("sk_live_vanguard_8F92A2B3D4C5E6");
+        toast({ title: "Copied to Clipboard", description: "API Secret copied to clipboard.", type: "success" });
+    }
+
+    // Dynamic Theme Sandbox Engine
+    const setTempTheme = (hex: string) => {
+        document.documentElement.style.setProperty('--accent', hex);
+    };
 
     useEffect(() => {
         Promise.all([
@@ -48,20 +112,112 @@ export default function DemoPage() {
                 setPricingTiers(processedTiers.filter((t: any) => !t.hidden));
             }
             if (overrides.recommendedPlan) setRecommendedPlan(overrides.recommendedPlan);
-            setProducts(prods);
+            if (overrides.primaryColor) setBaseTheme(overrides.primaryColor);
+            setProducts(prods.items || []);
         }).finally(() => setLoading(false));
+
+        const handleMouseMove = (e: MouseEvent) => {
+            setMousePos({ x: e.clientX, y: e.clientY });
+        };
+        window.addEventListener('mousemove', handleMouseMove);
+
+        // Start Live Telemetry Simulation Loop
+        const simInterval = setInterval(() => {
+            setReqRate(prev => Math.max(1200, prev + Math.floor(Math.random() * 80) - 40));
+            if (Math.random() > 0.6) {
+                const logs = [
+                    "Re-syncing parity checks...",
+                    "Flushing telemetry to Upstash...",
+                    "Client handshake [OK]",
+                    "GC execution completed cleanly.",
+                    "Refreshing distributed memory vectors...",
+                    "Sovereign node ALIVE and transmitting.",
+                ];
+                setTerminalLines(prev => {
+                    const next = [...prev, logs[Math.floor(Math.random() * logs.length)]];
+                    return next.length > 8 ? next.slice(next.length - 8) : next;
+                });
+            }
+        }, 1500);
+
+        return () => {
+            clearInterval(simInterval);
+            window.removeEventListener('mousemove', handleMouseMove);
+        };
     }, []);
 
     if (loading) {
         return (
-            <main className="min-h-screen flex items-center justify-center p-6 text-white">
+            <main className="min-h-screen flex flex-col items-center justify-center p-6 text-white space-y-8">
+                <div className="w-full max-w-4xl grid grid-cols-1 md:grid-cols-3 gap-6">
+                    {[1, 2, 3].map(i => (
+                        <div key={i} className="bg-white/5 border border-white/10 p-6 space-y-4 animate-pulse">
+                            <div className="h-6 bg-white/10 w-1/3"></div>
+                            <div className="h-12 bg-white/10 w-1/2"></div>
+                            <div className="space-y-2 mt-8">
+                                <div className="h-2 bg-white/10 w-full"></div>
+                                <div className="h-2 bg-white/10 w-5/6"></div>
+                                <div className="h-2 bg-white/10 w-4/6"></div>
+                            </div>
+                        </div>
+                    ))}
+                </div>
                 <div className="text-xs text-[var(--accent)] font-mono animate-pulse tracking-widest">[ COMPILING DEMO MATRIX ]</div>
             </main>
         );
     }
 
     return (
-        <main className="relative min-h-screen p-6 text-white overflow-hidden flex flex-col items-center">
+        <main className="relative z-10 min-h-screen p-6 text-white overflow-hidden flex flex-col items-center">
+            {/* Global Cursor Glow effect */}
+            <div
+                className="pointer-events-none fixed inset-0 z-50 transition-opacity duration-300"
+                style={{
+                    background: `radial-gradient(400px circle at ${mousePos.x}px ${mousePos.y}px, var(--accent) 0%, transparent 40%)`,
+                    opacity: 0.08
+                }}
+            />
+
+            {/* Background WebGL Override */}
+            {tempWebGl !== 'none' && (
+                <div className="fixed inset-0 z-[-1] pointer-events-none">
+                    <SovereignWebGL variant={tempWebGl} opacity={0.3} zIndex={-1} color="var(--accent)" />
+                </div>
+            )}
+
+            {/* Modal Overlay Override */}
+            <AnimatePresence>
+                {isModalOpen && (
+                    <div className="fixed inset-0 z-[999] flex items-center justify-center p-4">
+                        <motion.div
+                            initial={{ opacity: 0 }} animate={{ opacity: 1 }} exit={{ opacity: 0 }}
+                            className="absolute inset-0 bg-black/60 backdrop-blur-sm"
+                            onClick={() => setIsModalOpen(false)}
+                        />
+                        <motion.div
+                            initial={{ scale: 0.95, opacity: 0, y: 20 }}
+                            animate={{ scale: 1, opacity: 1, y: 0 }}
+                            exit={{ scale: 0.95, opacity: 0, y: 20 }}
+                            className="relative w-full max-w-lg bg-black/80 backdrop-blur-xl border border-white/10 p-8 shadow-2xl overflow-hidden"
+                        >
+                            <div className="absolute top-0 inset-x-0 h-1 bg-gradient-to-r from-transparent via-[var(--accent)] to-transparent opacity-50"></div>
+                            <button onClick={() => setIsModalOpen(false)} className="absolute top-4 right-4 text-white/50 hover:text-white transition-colors">
+                                <X size={20} />
+                            </button>
+                            <div className="flex items-center gap-3 mb-6">
+                                <Maximize className="text-[var(--accent)]" size={24} />
+                                <h3 className="text-xl font-bold uppercase tracking-widest leading-none mt-1">Modal Override</h3>
+                            </div>
+                            <p className="text-white/70 font-mono text-sm leading-relaxed mb-6">
+                                The architectural modal system supports deeply nested z-indexes, glassmorphism, and instant framer-motion dismissal.
+                            </p>
+                            <Button className="w-full bg-[var(--accent)] text-white hover:bg-white hover:text-black transition-colors uppercase tracking-widest font-bold" onClick={() => { setIsModalOpen(false); toast({ title: "Command Acknowledged", description: "Modal logic closed successfully.", type: "success" }) }}>
+                                Affirm Directive
+                            </Button>
+                        </motion.div>
+                    </div>
+                )}
+            </AnimatePresence>
 
             <div className="w-full max-w-6xl mt-12 mb-6">
                 <Button as={Link} href={`/${language}`} variant="ghost" className="w-fit text-white/50 px-0">
@@ -83,6 +239,23 @@ export default function DemoPage() {
                 <p className="text-white/50 font-serif italic text-lg md:text-xl max-w-2xl mx-auto">
                     Experience the dynamic capabilities of the Sovereign boilerplate. This view reacts in real-time to your Admin Panel configuration.
                 </p>
+
+                {/* Theme Sandbox */}
+                <div className="pt-8 flex flex-col items-center gap-4">
+                    <p className="text-[10px] uppercase tracking-widest text-[var(--accent)] font-bold font-mono">Temporary Sandbox Override</p>
+                    <div className="flex items-center gap-3 bg-white/5 border border-white/10 p-2">
+                        <Palette size={14} className="text-white/50 ml-2" />
+                        {[baseTheme, '#00F0FF', '#FF003C', '#00FF41', '#FF007F'].map(hex => (
+                            <button
+                                key={hex}
+                                onClick={() => setTempTheme(hex)}
+                                className="w-6 h-6 border border-white/20 hover:scale-110 active:scale-95 transition-all outline-none"
+                                style={{ backgroundColor: hex }}
+                                title={`Set Theme to ${hex}`}
+                            />
+                        ))}
+                    </div>
+                </div>
             </motion.div>
 
             {/* Shape-Shifting Commerce Matrix */}
@@ -172,7 +345,7 @@ export default function DemoPage() {
                                             <a
                                                 href={product.stripeLink || "#"}
                                                 target="_blank"
-                                                className="w-full bg-white/5 border border-white/10 hover:bg-[var(--accent)] hover:text-white hover:border-[var(--accent)] uppercase tracking-widest text-xs font-bold transition-all p-2 text-center rounded block"
+                                                className="w-full bg-white/5 border border-white/10 hover:bg-[var(--accent)] hover:text-white hover:border-[var(--accent)] uppercase tracking-widest text-xs font-bold transition-all p-2 text-center block"
                                             >
                                                 Acquire Asset
                                             </a>
@@ -190,7 +363,7 @@ export default function DemoPage() {
                         className="text-center"
                     >
                         <GlassCard className="max-w-xl mx-auto p-12 flex flex-col items-center justify-center border border-white/5">
-                            <div className="w-16 h-16 rounded-full glass border border-[var(--accent)]/30 text-[var(--accent)] flex items-center justify-center mb-6">
+                            <div className="w-16 h-16 glass border border-[var(--accent)]/30 text-[var(--accent)] flex items-center justify-center mb-6">
                                 <ShieldAlert size={24} />
                             </div>
                             <h2 className="text-xl font-bold uppercase tracking-widest mb-2">Commerce Matrix Offline</h2>
@@ -202,7 +375,10 @@ export default function DemoPage() {
 
 
             {/* Vanguard Component Showcase */}
-            <div className="w-full max-w-6xl z-10 space-y-24 mb-32">
+            <motion.div
+                initial={{ opacity: 0, y: 40 }} whileInView={{ opacity: 1, y: 0 }} viewport={{ once: true }} transition={{ duration: 0.8 }}
+                className="w-full max-w-6xl z-10 space-y-24 mb-32"
+            >
 
                 {/* Section Header */}
                 <div className="text-center space-y-4">
@@ -219,20 +395,14 @@ export default function DemoPage() {
                             <TerminalSquare className="text-[var(--accent)]" size={20} />
                             <h3 className="text-lg font-bold uppercase tracking-widest">Audit Terminal</h3>
                         </div>
-                        <div className="bg-black/80 rounded p-4 font-mono text-xs text-[var(--accent)]/80 space-y-2 flex-grow border border-white/5">
-                            <div className="flex gap-2">
-                                <span className="text-white/30">[SYS]</span>
-                                <span>Establishing secure handshake...</span>
-                            </div>
-                            <div className="flex gap-2">
-                                <span className="text-white/30">[AUTH]</span>
-                                <span>Node connection verified.</span>
-                            </div>
-                            <div className="flex gap-2">
-                                <span className="text-white/30">[DB]</span>
-                                <span>Retrieving state vectors from Firebase... OK</span>
-                            </div>
-                            <div className="flex gap-2 text-white/50 animate-pulse mt-4">
+                        <div className="bg-black/80 p-4 font-mono text-xs text-[var(--accent)]/80 gap-2 flex-grow border border-white/5 flex flex-col justify-end overflow-hidden h-64">
+                            {terminalLines.map((line, idx) => (
+                                <motion.div key={idx} initial={{ opacity: 0, x: -10 }} animate={{ opacity: 1, x: 0 }} className="flex gap-2">
+                                    <span className="text-white/30 shrink-0">[SYS]</span>
+                                    <span>{line}</span>
+                                </motion.div>
+                            ))}
+                            <div className="flex gap-2 text-white/50 animate-pulse mt-2">
                                 <span className="text-[var(--accent)]">root@vanguard:~#</span> <span className="w-2 h-4 bg-white/50 inline-block animate-ping" />
                             </div>
                         </div>
@@ -247,20 +417,157 @@ export default function DemoPage() {
                         <div className="space-y-4 w-full max-w-sm mx-auto flex-grow flex flex-col justify-center">
                             <div className="space-y-1">
                                 <label className="text-[10px] uppercase tracking-widest text-white/50 font-bold ml-1">Sovereign Identifier / Email</label>
-                                <input type="text" placeholder="node@protocol.cx" className="w-full bg-black/50 border border-white/10 text-sm px-4 py-3 outline-none focus:border-[var(--accent)] focus:bg-[var(--accent)]/5 text-white font-mono transition-all rounded hover:border-white/20" />
+                                <input type="text" placeholder="node@protocol.cx" className="w-full bg-black/50 border border-white/10 text-sm px-4 py-3 outline-none focus:border-[var(--accent)] focus:bg-[var(--accent)]/5 text-white font-mono transition-all hover:border-white/20" />
                             </div>
                             <div className="space-y-1">
                                 <label className="text-[10px] uppercase tracking-widest text-white/50 font-bold ml-1">Cryptographic Key / Password</label>
                                 <div className="relative">
-                                    <input type="password" placeholder="••••••••••••" className="w-full bg-black/50 border border-white/10 text-sm px-4 py-3 outline-none focus:border-[var(--accent)] focus:bg-[var(--accent)]/5 text-white font-mono transition-all rounded hover:border-white/20" />
+                                    <input type="password" placeholder="••••••••••••" className="w-full bg-black/50 border border-white/10 text-sm px-4 py-3 outline-none focus:border-[var(--accent)] focus:bg-[var(--accent)]/5 text-white font-mono transition-all hover:border-white/20" />
                                     <Key size={14} className="absolute right-4 top-1/2 -translate-y-1/2 text-white/30" />
                                 </div>
                             </div>
-                            <Button className="w-full uppercase tracking-widest mt-2">Transmit Identity</Button>
+                            <Button
+                                onClick={() => toast({ title: "Identification Rejected", description: "Node signature mismatch. The Vanguard protocol refused your access.", type: "error" })}
+                                className="w-full uppercase tracking-widest mt-2 hover:bg-[var(--accent)] hover:text-black transition-colors"
+                            >
+                                Transmit Identity
+                            </Button>
+                        </div>
+                    </GlassCard>
+
+                    {/* NEW: API Key Vault */}
+                    <GlassCard className="p-8 flex flex-col gap-6">
+                        <div className="flex items-center gap-3 border-b border-white/5 pb-4">
+                            <Key className="text-[var(--accent)]" size={20} />
+                            <h3 className="text-lg font-bold uppercase tracking-widest">Sovereign Webhook Secret</h3>
+                        </div>
+                        <div className="space-y-4 w-full flex-grow flex flex-col justify-center max-w-sm mx-auto">
+                            <p className="text-white/50 text-xs font-mono">Roll your live API secret. Store it securely, Vanguard will only show this once.</p>
+                            <div className="flex items-center bg-black/50 border border-white/10 group">
+                                <div className="p-4 flex-grow font-mono text-sm tracking-wider text-[var(--accent)] select-none">
+                                    {showSecret ? "sk_live_v8F92A2B3D4C5E6" : "sk_live_v****************"}
+                                </div>
+                                <button onClick={() => setShowSecret(!showSecret)} className="p-4 text-white/30 hover:text-white transition-colors bg-white/5 border-l border-white/10 group-hover:bg-[var(--accent)] group-hover:text-black group-hover:border-[var(--accent)]">
+                                    {showSecret ? <EyeOff size={16} /> : <Eye size={16} />}
+                                </button>
+                                <button onClick={handleCopy} className="p-4 text-white/30 hover:text-white transition-colors bg-white/5 border-l border-white/10 group-hover:bg-[var(--accent)] group-hover:text-black group-hover:border-[var(--accent)]">
+                                    <Copy size={16} />
+                                </button>
+                            </div>
+                        </div>
+                    </GlassCard>
+
+                    {/* NEW: UI Micro-Tokens */}
+                    <GlassCard className="p-8 flex flex-col gap-6">
+                        <div className="flex items-center gap-3 border-b border-white/5 pb-4">
+                            <Settings className="text-[var(--accent)]" size={20} />
+                            <h3 className="text-lg font-bold uppercase tracking-widest">Micro-Interaction Tokens</h3>
+                        </div>
+                        <div className="flex flex-col gap-8 flex-grow justify-center w-full max-w-sm mx-auto">
+                            {/* Toggle */}
+                            <div className="flex items-center justify-between">
+                                <span className="text-xs uppercase tracking-widest text-white/50 font-bold">Strict Parity Mode</span>
+                                <button
+                                    onClick={() => setMicroToggle(!microToggle)}
+                                    className={`w-12 h-6 flex items-center p-1 transition-colors ${microToggle ? 'bg-[var(--accent)]' : 'bg-white/10'}`}
+                                >
+                                    <motion.div
+                                        className="w-4 h-4 bg-white shadow-sm"
+                                        animate={{ x: microToggle ? 24 : 0 }}
+                                        transition={{ type: "spring", stiffness: 500, damping: 30 }}
+                                    />
+                                </button>
+                            </div>
+
+                            {/* Slider */}
+                            <div className="space-y-3">
+                                <div className="flex items-center justify-between">
+                                    <span className="text-xs uppercase tracking-widest text-white/50 font-bold">Node Allocation</span>
+                                    <span className="text-xs font-mono text-[var(--accent)]">{sliderValue}%</span>
+                                </div>
+                                <input
+                                    type="range" min="0" max="100" value={sliderValue} onChange={(e) => setSliderValue(parseInt(e.target.value))}
+                                    className="w-full h-1 bg-white/10 appearance-none outline-none accent-[var(--accent)] hover:accent-white transition-all cursor-pointer"
+                                />
+                            </div>
+
+                            {/* Button loader */}
+                            <Button
+                                onClick={() => { setBtnLoading(true); setTimeout(() => { setBtnLoading(false); toast({ title: "Operation Complete", description: "Async resolution executed.", type: "success" }) }, 2000) }}
+                                className="w-full bg-white/5 border border-white/10 hover:bg-[var(--accent)] hover:border-[var(--accent)] text-white hover:text-black uppercase tracking-widest font-bold transition-all relative overflow-hidden rounded-none"
+                            >
+                                {btnLoading ? <Loader2 size={16} className="animate-spin mx-auto" /> : "Deploy Architecture"}
+                            </Button>
+                        </div>
+                    </GlassCard>
+
+                    {/* NEW: File Drop */}
+                    <GlassCard className="p-8 flex flex-col gap-6">
+                        <div className="flex items-center gap-3 border-b border-white/5 pb-4">
+                            <FileUp className="text-[var(--accent)]" size={20} />
+                            <h3 className="text-lg font-bold uppercase tracking-widest">Encrypted Substrate Drop</h3>
+                        </div>
+                        <div
+                            className={`flex flex-col items-center justify-center border-2 border-dashed transition-all duration-300 w-full flex-grow p-12 relative overflow-hidden cursor-pointer ${isDragging ? 'border-[var(--accent)] bg-[var(--accent)]/10' : 'border-white/10 hover:border-white/30 bg-black/40'}`}
+                            onDragOver={(e) => { e.preventDefault(); setIsDragging(true); }}
+                            onDragLeave={() => setIsDragging(false)}
+                            onDrop={(e) => { e.preventDefault(); setIsDragging(false); toast({ title: "Payload Injected", description: "1 File securely encrypted and synced.", type: "success" }) }}
+                        >
+                            <FileUp size={32} className={`mb-4 transition-colors ${isDragging ? 'text-[var(--accent)]' : 'text-white/20'}`} />
+                            <p className="text-sm font-bold uppercase tracking-widest text-center text-white/80">Drop Payload Here</p>
+                            <p className="text-[10px] font-mono text-white/40 mt-2 text-center">Simulates Vanguard async file parsing.</p>
+                        </div>
+                    </GlassCard>
+
+                    {/* NEW: WebGL Switcher */}
+                    <GlassCard className="p-8 flex flex-col gap-6">
+                        <div className="flex items-center gap-3 border-b border-white/5 pb-4">
+                            <Layers className="text-[var(--accent)]" size={20} />
+                            <h3 className="text-lg font-bold uppercase tracking-widest">Environment Directives</h3>
+                        </div>
+                        <div className="flex flex-col gap-4 flex-grow justify-center w-full max-w-sm mx-auto">
+                            <p className="text-white/50 text-xs font-mono text-center mb-2">Simulate root-level WebGL background architectural shifting.</p>
+                            <Button
+                                onClick={() => { setTempWebGl('matrix'); toast({ title: "Environment Shifted", description: "Kinetic Matrix rendered.", type: "success" }) }}
+                                className={`w-full uppercase tracking-widest font-bold rounded-none ${tempWebGl === 'matrix' ? 'bg-[var(--accent)] text-black' : 'bg-transparent border border-white/20 hover:border-[var(--accent)] hover:text-[var(--accent)]'}`}
+                            >
+                                <Cpu size={14} className="mr-2" /> KINETIC MATRIX
+                            </Button>
+                            <Button
+                                onClick={() => { setTempWebGl('galaxy'); toast({ title: "Environment Shifted", description: "Galaxy Dust rendered.", type: "success" }) }}
+                                className={`w-full uppercase tracking-widest font-bold rounded-none ${tempWebGl === 'galaxy' ? 'bg-[var(--accent)] text-black' : 'bg-transparent border border-white/20 hover:border-[var(--accent)] hover:text-[var(--accent)]'}`}
+                            >
+                                <Sparkles size={14} className="mr-2" /> GALAXY DUST
+                            </Button>
+                            <Button
+                                onClick={() => { setTempWebGl('fire'); toast({ title: "Environment Shifted", description: "Plasma Fire rendered.", type: "success" }) }}
+                                className={`w-full uppercase tracking-widest font-bold rounded-none ${tempWebGl === 'fire' ? 'bg-[var(--accent)] text-black' : 'bg-transparent border border-white/20 hover:border-[var(--accent)] hover:text-[var(--accent)]'}`}
+                            >
+                                <Activity size={14} className="mr-2" /> PLASMA FIRE
+                            </Button>
+                            {tempWebGl !== 'none' && (
+                                <button onClick={() => { setTempWebGl('none'); toast({ title: "Environment Halted", description: "Background GPU rendering disabled.", type: "info" }) }} className="text-[10px] uppercase font-mono tracking-widest text-red-500 hover:text-red-400 mt-2 hover:underline text-center w-full outline-none">
+                                    [ Halt active rendering ]
+                                </button>
+                            )}
                         </div>
                     </GlassCard>
 
                 </div>
+
+                {/* Button Matrix */}
+                <GlassCard className="p-8 border-dashed border-white/10 bg-transparent">
+                    <div className="flex items-center gap-3 border-b border-white/5 pb-4 mb-8">
+                        <Activity className="text-[var(--accent)]" size={20} />
+                        <h3 className="text-lg font-bold uppercase tracking-widest text-white/50">Interaction States</h3>
+                    </div>
+                    <div className="flex flex-wrap gap-6 justify-center">
+                        <Button className="px-8 bg-[var(--accent)] text-white hover:bg-[var(--accent)]/80 hover:scale-105 active:scale-95 transition-all">PRIMARY NODE</Button>
+                        <Button onClick={() => setIsModalOpen(true)} variant="ghost" className="px-8 border border-[var(--accent)]/50 text-[var(--accent)] bg-[var(--accent)]/10 hover:bg-[var(--accent)] hover:text-black uppercase tracking-widest font-bold font-mono hover:-translate-y-1 transition-all">TRIGGER OVERRIDE MODAL</Button>
+                        <Button onClick={() => { setLoading(true); setTimeout(() => setLoading(false), 2500); }} variant="ghost" className="px-8 border border-[var(--accent)]/50 text-[var(--accent)] bg-[var(--accent)]/10 hover:bg-[var(--accent)] hover:text-black uppercase tracking-widest font-bold font-mono hover:-translate-y-1 transition-all">SIMULATE NETWORK DELAY</Button>
+                        <Button className="px-8 bg-red-500/10 border border-red-500/50 text-red-500 hover:bg-red-500 hover:text-white transition-all shadow-[0_0_15px_rgba(239,68,68,0.1)]">HALT PROTOCOL</Button>
+                    </div>
+                </GlassCard>
 
                 {/* State Vectors / Data Table */}
                 <GlassCard className="p-8 overflow-x-auto">
@@ -280,19 +587,19 @@ export default function DemoPage() {
                         <tbody className="text-white/80">
                             <tr className="border-b border-white/5 hover:bg-white/5 transition-colors">
                                 <td className="py-4 px-4 flex items-center gap-2"><Cpu size={14} className="text-[var(--accent)]" /> ALPHA-01</td>
-                                <td className="py-4 px-4"><span className="text-xs bg-green-500/10 text-green-400 border border-green-500/20 px-2 py-0.5 rounded">ONLINE</span></td>
-                                <td className="py-4 px-4">1,402 req/s</td>
+                                <td className="py-4 px-4"><span className="text-xs bg-green-500/10 text-green-400 border border-green-500/20 px-2 py-0.5">ONLINE</span></td>
+                                <td className="py-4 px-4 font-bold text-[var(--accent)] transition-all duration-300">{reqRate.toLocaleString()} req/s</td>
                                 <td className="py-4 px-4 text-right">99.99%</td>
                             </tr>
                             <tr className="border-b border-white/5 hover:bg-white/5 transition-colors">
                                 <td className="py-4 px-4 flex items-center gap-2"><Cpu size={14} className="text-white/30" /> BETA-02</td>
-                                <td className="py-4 px-4"><span className="text-xs bg-white/10 text-white/50 border border-white/20 px-2 py-0.5 rounded">STANDBY</span></td>
+                                <td className="py-4 px-4"><span className="text-xs bg-white/10 text-white/50 border border-white/20 px-2 py-0.5">STANDBY</span></td>
                                 <td className="py-4 px-4">0 req/s</td>
                                 <td className="py-4 px-4 text-right">--</td>
                             </tr>
                             <tr className="hover:bg-white/5 transition-colors text-white/30">
                                 <td className="py-4 px-4 flex items-center gap-2"><Cpu size={14} className="text-red-500/50" /> DELTA-09</td>
-                                <td className="py-4 px-4"><span className="text-xs bg-red-500/10 text-red-500/80 border border-red-500/20 px-2 py-0.5 rounded line-through">HALTED</span></td>
+                                <td className="py-4 px-4"><span className="text-xs bg-red-500/10 text-red-500/80 border border-red-500/20 px-2 py-0.5 line-through">HALTED</span></td>
                                 <td className="py-4 px-4">0 req/s</td>
                                 <td className="py-4 px-4 text-right">ERR_SYNC</td>
                             </tr>
@@ -300,20 +607,73 @@ export default function DemoPage() {
                     </table>
                 </GlassCard>
 
-                {/* Button Matrix */}
-                <GlassCard className="p-8 border-dashed border-white/10 bg-transparent">
-                    <div className="flex items-center gap-3 border-b border-white/5 pb-4 mb-8">
+                {/* Notification Banner System */}
+                <GlassCard className="p-8 border border-white/10 bg-black/40 max-w-4xl mx-auto w-full">
+                    <div className="flex items-center gap-3 border-b border-white/5 pb-4 mb-6">
                         <Activity className="text-[var(--accent)]" size={20} />
-                        <h3 className="text-lg font-bold uppercase tracking-widest text-white/50">Interaction States</h3>
+                        <h3 className="text-lg font-bold uppercase tracking-widest">Notification & Alert Interface</h3>
                     </div>
-                    <div className="flex flex-wrap gap-6 justify-center">
-                        <Button className="px-8 bg-[var(--accent)] text-white hover:bg-[var(--accent)]/80 hover:scale-105 active:scale-95 transition-all">PRIMARY NODE</Button>
-                        <Button variant="ghost" className="px-8 border border-white/20 text-white/80 hover:bg-white/10 hover:text-white uppercase tracking-widest font-bold font-mono hover:-translate-y-1 transition-all">GHOST NODE</Button>
-                        <Button className="px-8 bg-red-500/10 border border-red-500/50 text-red-500 hover:bg-red-500 hover:text-white transition-all shadow-[0_0_15px_rgba(239,68,68,0.1)]">HALT PROTOCOL</Button>
+                    <div className="text-white/50 text-sm font-mono mb-8">
+                        The Substrate provides a unified notification architecture out of the box. Execute the directives below to interface with the global message matrix.
+                    </div>
+                    <div className="flex flex-wrap gap-4">
+                        <Button
+                            onClick={() => toast({ title: "Operation Triumphant", description: "The neural handshake was executed successfully.", type: "success" })}
+                            className="bg-green-500/20 text-green-400 border border-green-500/30 hover:bg-green-500 hover:text-black uppercase tracking-widest font-bold"
+                        >
+                            Trigger Success
+                        </Button>
+                        <Button
+                            onClick={() => toast({ title: "Integrity Warning", description: "Node redundancy checks are reporting fluctuations.", type: "warning" })}
+                            className="bg-yellow-500/20 text-yellow-500 border border-yellow-500/30 hover:bg-yellow-500 hover:text-black uppercase tracking-widest font-bold"
+                        >
+                            Trigger Warning
+                        </Button>
+                        <Button
+                            onClick={() => toast({ title: "Fatal Exception", description: "A massive desynchronization has corrupted the core matrix.", type: "error" })}
+                            className="bg-red-500/20 text-red-500 border border-red-500/30 hover:bg-red-500 hover:text-white uppercase tracking-widest font-bold shadow-[0_0_15px_rgba(239,68,68,0.1)]"
+                        >
+                            Trigger Error
+                        </Button>
+                        <Button
+                            onClick={() => toast({ title: "Substrate Info", description: "Standard calibration processes are running normally.", type: "info" })}
+                            className="bg-blue-500/20 text-blue-400 border border-blue-500/30 hover:bg-blue-500 hover:text-white uppercase tracking-widest font-bold"
+                        >
+                            Trigger Info
+                        </Button>
                     </div>
                 </GlassCard>
 
-            </div>
+                {/* Animated FAQ Matrix */}
+                <GlassCard className="border border-white/10 bg-transparent flex flex-col gap-8 p-0 overflow-hidden max-w-4xl mx-auto w-full">
+                    <div className="p-8 pb-0 flex flex-col items-center text-center">
+                        <h3 className="text-2xl font-bold uppercase tracking-widest text-[var(--accent)] mb-4">Protocol Directives</h3>
+                        <p className="text-white/50 text-sm font-mono max-w-2xl">
+                            Standard queries regarding the architecture are parameterized below. Utilizing AnimatePresence for stateful height transitions.
+                        </p>
+                    </div>
+
+                    <div className="border-t border-white/5 divide-y divide-white/5 w-full">
+                        {[
+                            {
+                                q: "What is Vanguard Architecture?",
+                                a: "Vanguard Architecture represents the apex of structural software design. Born from Ethos intelligence paradigms, it is a boilerplate prioritizing immutability, zero-halting, and extremely aggressive aesthetic consistency."
+                            },
+                            {
+                                q: "How is telemetry persisted?",
+                                a: "Telemetry is captured at the edge utilizing a serverless Redis substrate (Upstash) to guarantee sub-10ms latencies, before aggressively batch-flushing asynchronous payloads into a durable Firebase cluster."
+                            },
+                            {
+                                q: "Are the visual aesthetics configurable?",
+                                a: "Entirely. You can invoke root admin privileges to alter specific UI vectors, primary brand accents, fonts, structural wireframes, commerce models, and security fault strictness in real-time."
+                            }
+                        ].map((faq, i) => (
+                            <FAQItem key={i} faq={faq} />
+                        ))}
+                    </div>
+                </GlassCard>
+
+            </motion.div>
             {/* Grid Backdrop */}
             <div className="fixed inset-0 z-[-1] opacity-5 pointer-events-none" aria-hidden="true">
                 <div className="w-full h-full bg-[radial-gradient(circle_at_center,var(--accent)_1px,transparent_1px)] [background-size:32px_32px]" />

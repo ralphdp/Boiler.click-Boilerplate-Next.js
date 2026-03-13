@@ -13,6 +13,7 @@ import { CookieConsent } from "@/components/ui/CookieConsent";
 import { StructuredData } from "@/components/ui/StructuredData";
 import { ScrollToTop } from "@/components/ui/ScrollToTop";
 import { BroadcastBanner } from "@/components/ui/BroadcastBanner";
+import { ToastProvider } from "@/components/ui/Toast";
 
 const inter = Inter({
     subsets: ["latin"],
@@ -108,32 +109,34 @@ export default async function RootLayout({
                 <SovereignWebGL variant={activeVariant} opacity={0.15} />
                 <BroadcastBanner />
                 <ScrollToTop />
-                <ClientProviders locale={locale} taglineOverride={typographyOverride} siteTitleOverride={siteTitleOverride}>
-                    <nav className="fixed top-8 right-8 z-50">
-                        <AuthButton />
-                    </nav>
-                    {isSystemHalted ? (
-                        <div className="flex flex-col items-center justify-center min-h-screen text-center p-8 space-y-6">
-                            <h1 className="text-4xl md:text-6xl font-black text-red-500 tracking-tighter uppercase font-mono">SYSTEM HALTED</h1>
-                            <p className="text-white/50 text-sm md:text-base font-mono max-w-lg leading-relaxed uppercase tracking-widest">
-                                The Universal Boilerplate Architecture is currently offline for critical administrative maintenance.
-                                <br /><br />
-                                Please standby for redeployment.
-                            </p>
-                        </div>
-                    ) : overrides.preLaunchMode && !isRootAdmin ? (
-                        <div className="flex flex-col items-center justify-center min-h-screen text-center p-8 space-y-6">
-                            <h1 className="text-3xl md:text-5xl font-black text-white tracking-widest uppercase">Initializing...</h1>
-                            <p className="text-[var(--accent)] text-sm md:text-base font-serif italic max-w-lg leading-relaxed">
-                                Our architecture is undergoing final calibration sequences. Access will be granted shortly.
-                            </p>
-                        </div>
-                    ) : (
-                        children
-                    )}
-                    <FooterTimestamp contactEmail={contactEmail} socials={socials} activeAccentColor={activeAccentColor} />
-                    <CookieConsent />
-                </ClientProviders>
+                <ToastProvider>
+                    <ClientProviders locale={locale} taglineOverride={typographyOverride} siteTitleOverride={siteTitleOverride}>
+                        <nav className="fixed top-8 right-8 z-50">
+                            <AuthButton />
+                        </nav>
+                        {isSystemHalted ? (
+                            <div className="flex flex-col items-center justify-center min-h-screen text-center p-8 space-y-6">
+                                <h1 className="text-4xl md:text-6xl font-black text-red-500 tracking-tighter uppercase font-mono">SYSTEM HALTED</h1>
+                                <p className="text-white/50 text-sm md:text-base font-mono max-w-lg leading-relaxed uppercase tracking-widest">
+                                    The Universal Boilerplate Architecture is currently offline for critical administrative maintenance.
+                                    <br /><br />
+                                    Please standby for redeployment.
+                                </p>
+                            </div>
+                        ) : overrides.preLaunchMode && !isRootAdmin ? (
+                            <div className="flex flex-col items-center justify-center min-h-screen text-center p-8 space-y-6">
+                                <h1 className="text-3xl md:text-5xl font-black text-white tracking-widest uppercase">Initializing...</h1>
+                                <p className="text-[var(--accent)] text-sm md:text-base font-serif italic max-w-lg leading-relaxed">
+                                    Our architecture is undergoing final calibration sequences. Access will be granted shortly.
+                                </p>
+                            </div>
+                        ) : (
+                            children
+                        )}
+                        <FooterTimestamp contactEmail={contactEmail} socials={socials} activeAccentColor={activeAccentColor} />
+                        <CookieConsent />
+                    </ClientProviders>
+                </ToastProvider>
             </body>
         </html>
     );

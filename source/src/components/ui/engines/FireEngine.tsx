@@ -6,38 +6,38 @@ import * as THREE from "three";
 import { shaderMaterial } from "@react-three/drei";
 
 function useThemeColor(defaultColor: string) {
-    const [hex, setHex] = useState(defaultColor.includes("var(") ? "#FFFFFF" : defaultColor);
-    useEffect(() => {
-        if (!defaultColor.includes("var(")) return;
-        const update = () => {
-            const computed = window.getComputedStyle(document.documentElement).getPropertyValue("--accent").trim();
-            if (computed) setHex(computed);
-        };
-        update();
-        const obs = new MutationObserver(update);
-        obs.observe(document.documentElement, { attributes: true, attributeFilter: ["style"] });
-        return () => obs.disconnect();
-    }, [defaultColor]);
-    return hex;
+  const [hex, setHex] = useState(defaultColor.includes("var(") ? "#FFFFFF" : defaultColor);
+  useEffect(() => {
+    if (!defaultColor.includes("var(")) return;
+    const update = () => {
+      const computed = window.getComputedStyle(document.documentElement).getPropertyValue("--accent").trim();
+      if (computed) setHex(computed);
+    };
+    update();
+    const obs = new MutationObserver(update);
+    obs.observe(document.documentElement, { attributes: true, attributeFilter: ["style"] });
+    return () => obs.disconnect();
+  }, [defaultColor]);
+  return hex;
 }
 
 const ThemeFireMaterial = shaderMaterial(
-    {
-        uTime: 0,
-        uResolution: new THREE.Vector2(1, 1),
-        uColor1: new THREE.Color("#111111"),
-        uColor2: new THREE.Color("#FF003C"),
-        uColor3: new THREE.Color("#FFFFFF"),
-        uSmokeColor: new THREE.Color("#0a0a0a"),
-    },
-    `
+  {
+    uTime: 0,
+    uResolution: new THREE.Vector2(1, 1),
+    uColor1: new THREE.Color("#111111"),
+    uColor2: new THREE.Color("#FF003C"),
+    uColor3: new THREE.Color("#FFFFFF"),
+    uSmokeColor: new THREE.Color("#0a0a0a"),
+  },
+  `
   varying vec2 vUv;
   void main() {
     vUv = uv;
     gl_Position = projectionMatrix * modelViewMatrix * vec4(position, 1.0);
   }
   `,
-    `
+  `
   uniform float uTime;
   uniform vec2 uResolution;
   uniform vec3 uColor1;
@@ -122,38 +122,38 @@ const ThemeFireMaterial = shaderMaterial(
 extend({ ThemeFireMaterial });
 
 function FireMesh({ themeColorHex }: { themeColorHex: string }) {
-    const meshRef = useRef<THREE.Mesh>(null);
-    const { size } = useThree();
+  const meshRef = useRef<THREE.Mesh>(null);
+  const { size } = useThree();
 
-    useFrame((state) => {
-        if (meshRef.current) {
-            const material = meshRef.current.material as any;
-            material.uTime = state.clock.getElapsedTime();
-            material.uResolution.set(size.width, size.height);
-            // Sync theme color dynamically:
-            material.uColor2.set(themeColorHex);
-        }
-    });
+  useFrame((state) => {
+    if (meshRef.current) {
+      const material = meshRef.current.material as any;
+      material.uTime = state.clock.getElapsedTime();
+      material.uResolution.set(size.width, size.height);
+      // Sync theme color dynamically:
+      material.uColor2.set(themeColorHex);
+    }
+  });
 
-    return (
-        <mesh ref={meshRef} scale={[25, 25, 1]}>
-            <planeGeometry args={[1, 1, 64, 64]} />
-            {/* @ts-ignore */}
-            <themeFireMaterial transparent depthWrite={false} blending={THREE.AdditiveBlending} />
-        </mesh>
-    );
+  return (
+    <mesh ref={meshRef} scale={[25, 25, 1]}>
+      <planeGeometry args={[1, 1, 64, 64]} />
+      {/* @ts-ignore */}
+      <themeFireMaterial transparent depthWrite={false} blending={THREE.AdditiveBlending} />
+    </mesh>
+  );
 }
 
-export default function FireEngine({ color = "var(--accent)" }: { color?: string }) {
-    const hex = useThemeColor(color);
+export default function FireEngine({ color = "var(--accent)", zIndex = 0 }: { color?: string, zIndex?: number }) {
+  const hex = useThemeColor(color);
 
-    return (
-        <div className="fixed inset-0 z-0 pointer-events-none opacity-90 transition-opacity duration-1000">
-            <Canvas camera={{ position: [0, 0, 5], fov: 45 }}>
-                <color attach="background" args={["#050505"]} />
-                <FireMesh themeColorHex={hex} />
-            </Canvas>
-            <div className="absolute inset-0 z-10 pointer-events-none" style={{ background: 'radial-gradient(circle at center, transparent 0%, black 80%)' }} />
-        </div>
-    );
+  return (
+    <div className="fixed inset-0 pointer-events-none opacity-90 transition-opacity duration-1000" style={{ zIndex }}>
+      <Canvas camera={{ position: [0, 0, 5], fov: 45 }}>
+        <color attach="background" args={["#050505"]} />
+        <FireMesh themeColorHex={hex} />
+      </Canvas>
+      <div className="absolute inset-0 z-10 pointer-events-none" style={{ background: 'radial-gradient(circle at center, transparent 0%, black 80%)' }} />
+    </div>
+  );
 }

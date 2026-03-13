@@ -11,6 +11,7 @@
     "dependencies": {
         "@auth/prisma-adapter": "^2.11.1",
         "@prisma/client": "^7.4.1",
+        "@react-email/components": "^1.0.9",
         "@react-three/drei": "^10.7.7",
         "@react-three/fiber": "^9.5.0",
         "@stripe/stripe-js": "^8.8.0",

@@ -90,9 +90,11 @@ function MatrixEngine({ opacity = 0.15, zIndex = -1, color = "#0F0" }) {
     }, [color]);
 
     return (
-        <div className="fixed inset-0 pointer-events-none transition-opacity duration-1000" style={{ opacity, zIndex }}>
-            <canvas ref={canvasRef} className="block w-full h-full" style={{ width: "100%", height: "100%" }} />
-            <div className="absolute inset-0 z-10 pointer-events-none" style={{ background: 'radial-gradient(circle at center, transparent 0%, black 80%)' }} />
+        <div className="fixed inset-0 pointer-events-none bg-black transition-opacity duration-1000" style={{ zIndex }}>
+            <div className="absolute inset-0" style={{ opacity }}>
+                <canvas ref={canvasRef} className="block w-full h-full" style={{ width: "100%", height: "100%" }} />
+                <div className="absolute inset-0 z-10 pointer-events-none" style={{ background: 'radial-gradient(circle at center, transparent 0%, black 80%)' }} />
+            </div>
         </div>
     );
 }
@@ -117,11 +119,11 @@ export function SovereignWebGL({ variant = 'none', opacity = 0.15, zIndex = -1, 
     }
 
     if (variant === 'fire') {
-        return <FireEngine color={color || 'var(--accent)'} />;
+        return <FireEngine color={color || 'var(--accent)'} zIndex={zIndex} />;
     }
 
     if (variant === 'galaxy') {
-        return <GalaxyEngine color={color || 'var(--accent)'} />;
+        return <GalaxyEngine color={color || 'var(--accent)'} zIndex={zIndex} />;
     }
 
     return null;
