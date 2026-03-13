@@ -6,7 +6,6 @@ import Link from "next/link";
 import { ChevronRight, ArrowUpRight, Shield, Box, Network, Globe, Database, Lock, CreditCard, Image, Key, Search, Layers, Terminal } from "lucide-react";
 import { Button } from "@/components/ui/Button";
 import { IdentityBadge } from "@/components/ui/IdentityBadge";
-import SovereignCanvas from "@/components/ui/SovereignCanvas";
 import { useState } from "react";
 import { useTranslation } from "@/core/i18n/LanguageProvider";
 
@@ -119,11 +118,6 @@ export default function HomePage() {
             {/* Grid Backdrop */}
             <div className="absolute inset-0 z-[-1] opacity-5 pointer-events-none" aria-hidden="true">
                 <div className="w-full h-full bg-[radial-gradient(circle_at_center,var(--accent)_1px,transparent_1px)] [background-size:32px_32px]" />
-            </div>
-
-            {/* Sovereign WebGL Canvas Backdrop */}
-            <div className="absolute inset-0 z-[-2] opacity-40 mix-blend-screen pointer-events-none" aria-hidden="true">
-                <SovereignCanvas />
             </div>
         </main>
     );
