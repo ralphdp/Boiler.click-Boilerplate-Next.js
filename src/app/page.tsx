@@ -3,6 +3,7 @@
 import { motion } from "framer-motion";
 import { Flame, Monitor, Tablet, Smartphone, Terminal, Layout, Share2, ExternalLink, Mail, Twitter, Github, Linkedin, ChevronLeft, ChevronRight } from "lucide-react";
 import FireBackground from "@/components/FireBackground";
+import SovereignCanvas from "@/components/SovereignCanvas";
 import { useState, useEffect } from "react";
 
 export default function Home() {
@@ -19,9 +20,13 @@ export default function Home() {
       <motion.div
         initial={{ opacity: 0, y: 20 }}
         animate={{ opacity: 1, y: 0 }}
-        className="z-10 flex flex-col items-center max-w-6xl w-full"
+        className="z-10 flex flex-col items-center max-w-6xl w-full relative"
       >
-        <div className="flex items-center gap-4 md:gap-8 mb-8">
+        <div className="absolute top-[-200px] left-1/2 -translate-x-1/2 w-[800px] h-[800px] opacity-60 mix-blend-screen pointer-events-none z-0">
+          <SovereignCanvas />
+        </div>
+
+        <div className="flex items-center gap-4 md:gap-8 mb-8 z-10 relative">
           <Flame className="w-12 h-12 md:w-24 md:h-24 text-purple-500 drop-shadow-[0_0_15px_rgba(168,85,247,0.8)]" strokeWidth={1.5} />
           <h1 className="text-5xl md:text-[6rem] font-fustat font-black tracking-tighter uppercase leading-none">
             BOILER™
