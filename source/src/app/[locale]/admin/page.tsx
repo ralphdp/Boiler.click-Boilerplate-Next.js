@@ -1012,7 +1012,7 @@ export default function AdminPage() {
                                                                     onClick={() => setIsStoreDropdownOpen(!isStoreDropdownOpen)}
                                                                     className="px-4 flex items-center justify-center hover:bg-white/20 transition-colors h-full text-black hover:text-black"
                                                                 >
-                                                                    <ChevronDown size={14} className={`transition-transform duration-300 ${isStoreDropdownOpen ? 'rotate-180' : ''}`} />
+                                                                    <ChevronDownIcon size={14} className={`transition-transform duration-300 ${isStoreDropdownOpen ? 'rotate-180' : ''}`} />
                                                                 </button>
                                                             </div>
                                                             <AnimatePresence>
