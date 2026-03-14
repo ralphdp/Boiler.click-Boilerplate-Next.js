@@ -394,7 +394,7 @@ export default function AdminPage() {
                                                         icon={<Search size={14} />}
                                                     />
                                                 </div>
-                                                <button onClick={exportNodesCSV} className="shrink-0 flex items-center justify-center gap-2 bg-white/5 hover:bg-white/10 border border-white/10 px-6 h-[54px] rounded text-[10px] font-black uppercase tracking-widest transition-colors text-white/70 hover:text-white">
+                                                <button onClick={exportNodesCSV} className="shrink-0 flex items-center justify-center gap-2 bg-white/5 hover:bg-white/10 border border-white/10 px-6 h-[54px] text-[10px] font-black uppercase tracking-widest transition-colors text-white/70 hover:text-white">
                                                     <Download size={14} /> <span className="hidden sm:inline">Export</span>
                                                 </button>
                                             </div>
@@ -554,7 +554,7 @@ export default function AdminPage() {
                                                         icon={<Search size={14} />}
                                                     />
                                                 </div>
-                                                <button onClick={exportAuditCSV} className="shrink-0 flex items-center justify-center gap-2 bg-white/5 hover:bg-white/10 border border-white/10 px-6 h-[54px] rounded text-[10px] font-black uppercase tracking-widest transition-colors text-white/70 hover:text-white">
+                                                <button onClick={exportAuditCSV} className="shrink-0 flex items-center justify-center gap-2 bg-white/5 hover:bg-white/10 border border-white/10 px-6 h-[54px] text-[10px] font-black uppercase tracking-widest transition-colors text-white/70 hover:text-white">
                                                     <Download size={14} /> <span className="hidden sm:inline">Export</span>
                                                 </button>
                                             </div>
@@ -1000,7 +1000,7 @@ export default function AdminPage() {
                                                     </div>
                                                     <div className="flex flex-col items-end gap-2">
                                                         <div className="relative group">
-                                                            <div className="flex bg-[var(--accent)] text-white font-bold uppercase tracking-widest text-xs h-[54px] rounded border border-[var(--accent)]/50 items-stretch">
+                                                            <div className="flex bg-[var(--accent)] text-white font-bold uppercase tracking-widest text-xs h-[54px] border border-[var(--accent)]/50 items-stretch">
                                                                 <button
                                                                     onClick={() => { setIsEditingProduct(false); setProductForm({ id: "", name: "", description: "", price: "", imageUrl: "", stripeLink: "" }); setIsStoreModalOpen(true); }}
                                                                     className="px-6 flex items-center justify-center gap-2 hover:bg-black/20 transition-colors h-full text-white hover:text-white"
@@ -1021,7 +1021,7 @@ export default function AdminPage() {
                                                                         initial={{ opacity: 0, y: -4, scaleY: 0.95 }}
                                                                         animate={{ opacity: 1, y: 0, scaleY: 1 }}
                                                                         exit={{ opacity: 0, y: -4, scaleY: 0.95 }}
-                                                                        className="absolute right-0 top-[60px] z-50 w-48 bg-black border border-white/10 shadow-2xl flex flex-col items-start origin-top-right overflow-hidden rounded"
+                                                                        className="absolute right-0 top-[60px] z-50 w-48 bg-black border border-white/10 shadow-2xl flex flex-col items-start origin-top-right overflow-hidden"
                                                                     >
                                                                         <label className="w-full text-left px-4 py-4 text-[10px] technical tracking-widest hover:bg-white/5 cursor-pointer uppercase text-white/70 hover:text-white transition-colors flex items-center gap-2">
                                                                             <ArrowUp size={14} /> Import CSV
