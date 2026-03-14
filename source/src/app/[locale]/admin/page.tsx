@@ -10,6 +10,7 @@ import Link from "next/link";
 import { Button } from "@/components/ui/Button";
 import { Input } from "@/components/ui/Input";
 import { Select } from "@/components/ui/Select";
+import { Textarea } from "@/components/ui/Textarea";
 import { getSovereignNodes, setNodeRole, setNodeStatus, getTelemetryData, setSovereignWebGLVariant, setGlobalBroadcast, setContentOverride, getGlobalOverrides, getAuditTraces, setCommerceMode, setResendFrom, setSiteTitle, setContactEmail, setHaltingProtocol as setHaltingProtocolAction, setPreLaunchMode as setPreLaunchModeAction, setSandboxMode as setSandboxModeAction, setMFAEnforced as setMFAEnforcedAction, setPrimaryColor, setSocialLinks, setSEOMetadata, setRateLimitMode, setTelemetryKeys, setPricingMatrix, getStoreProducts, bulkImportStoreProducts, createStoreProduct, updateStoreProduct, deleteStoreProduct } from "@/core/actions/admin";
 import { useTranslation } from "@/core/i18n/LanguageProvider";
 import { useRouter } from "next/navigation";
@@ -313,9 +314,9 @@ export default function AdminPage() {
                                             <div className="flex flex-col gap-2 relative z-10">
                                                 <div className="text-xl font-mono text-[var(--accent)] font-bold">{commerceMode ? commerceMode.toUpperCase() : "SYNCING..."}</div>
                                                 <div className="flex flex-wrap gap-2">
-                                                    {haltingProtocol && <span className="px-2 py-0.5 text-[9px] bg-red-500/20 text-red-500 border border-red-500/30 rounded uppercase tracking-widest font-bold">Maintenance</span>}
-                                                    {preLaunchMode && <span className="px-2 py-0.5 text-[9px] bg-yellow-500/20 text-yellow-500 border border-yellow-500/30 rounded uppercase tracking-widest font-bold">Early Access</span>}
-                                                    {sandboxMode && <span className="px-2 py-0.5 text-[9px] bg-blue-500/20 text-blue-500 border border-blue-500/30 rounded uppercase tracking-widest font-bold">Sandbox</span>}
+                                                    {haltingProtocol && <span className="px-2 py-0.5 text-[9px] bg-red-500/20 text-red-500 border border-red-500/30 uppercase tracking-widest font-bold">Maintenance</span>}
+                                                    {preLaunchMode && <span className="px-2 py-0.5 text-[9px] bg-yellow-500/20 text-yellow-500 border border-yellow-500/30 uppercase tracking-widest font-bold">Early Access</span>}
+                                                    {sandboxMode && <span className="px-2 py-0.5 text-[9px] bg-blue-500/20 text-blue-500 border border-blue-500/30 uppercase tracking-widest font-bold">Sandbox</span>}
                                                 </div>
                                             </div>
                                             <div className="text-[10px] text-white/30 uppercase tracking-widest relative z-10">{commerceMode === 'saas' ? `${pricingTiers.length} Active Tiers` : commerceMode === 'store' ? `${totalStoreProducts} Active Products` : "Current Substrate Posture"}</div>
@@ -349,7 +350,7 @@ export default function AdminPage() {
                                                             <td className="p-4 text-white/40 whitespace-nowrap">{new Date(trace.timestamp).toLocaleString()}</td>
                                                             <td className="p-4 font-bold tracking-widest uppercase">{trace.action}</td>
                                                             <td className="p-4">
-                                                                <div className={`text-[10px] px-3 py-1 rounded min-w-[70px] uppercase tracking-widest font-black inline-block text-center ${trace.severity === 'FATAL' || trace.severity === 'ERROR' || trace.severity === 'CRIT' ? 'bg-red-500/10 text-red-500 border border-red-500/20' : trace.severity === 'WARN' ? 'bg-yellow-500/10 text-yellow-500 border border-yellow-500/20' : 'bg-blue-500/10 text-blue-500 border border-blue-500/20'}`}>
+                                                                <div className={`text-[10px] px-3 py-1 min-w-[70px] uppercase tracking-widest font-black inline-block text-center ${trace.severity === 'FATAL' || trace.severity === 'ERROR' || trace.severity === 'CRIT' ? 'bg-red-500/10 text-red-500 border border-red-500/20' : trace.severity === 'WARN' ? 'bg-yellow-500/10 text-yellow-500 border border-yellow-500/20' : 'bg-blue-500/10 text-blue-500 border border-blue-500/20'}`}>
                                                                     {trace.severity}
                                                                 </div>
                                                             </td>
@@ -384,10 +385,15 @@ export default function AdminPage() {
                                             <h3 className="text-xs font-black uppercase tracking-[0.2em] shrink-0">Active Users</h3>
                                             <div className="flex items-center gap-3 w-full md:w-auto">
                                                 <div className="relative w-full md:w-64">
-                                                    <Search size={14} className="absolute left-3 top-1/2 -translate-y-1/2 text-white/30" />
-                                                    <input type="text" placeholder="Search by ID or Email..." value={nodeSearch} onChange={(e) => { setNodeSearch(e.target.value); setNodePage(1); }} className="w-full bg-black/50 border border-white/10 text-xs py-2 pl-9 pr-3 rounded focus:border-[var(--accent)] outline-none text-white font-mono placeholder:text-white/20 transition-colors" />
+                                                    <Input
+                                                        type="text"
+                                                        placeholder="SEARCH BY ID OR EMAIL..."
+                                                        value={nodeSearch}
+                                                        onChange={(e) => { setNodeSearch(e.target.value); setNodePage(1); }}
+                                                        icon={<Search size={14} />}
+                                                    />
                                                 </div>
-                                                <button onClick={exportNodesCSV} className="shrink-0 flex items-center justify-center gap-2 bg-white/5 hover:bg-white/10 border border-white/10 px-3 py-2 rounded text-[10px] font-black uppercase tracking-widest transition-colors text-white/70 hover:text-white">
+                                                <button onClick={exportNodesCSV} className="shrink-0 flex items-center justify-center gap-2 bg-white/5 hover:bg-white/10 border border-white/10 px-3 py-2 text-[10px] font-black uppercase tracking-widest transition-colors text-white/70 hover:text-white">
                                                     <Download size={14} /> <span className="hidden sm:inline">Export</span>
                                                 </button>
                                             </div>
@@ -429,7 +435,7 @@ export default function AdminPage() {
                                                                                     setActiveRoleNode(node.uid);
                                                                                 }
                                                                             }}
-                                                                            className="bg-black/50 border border-white/10 text-[10px] px-3 py-2 outline-none rounded focus:border-[var(--accent)] disabled:opacity-50 min-w-[70px] text-left uppercase tracking-widest font-black text-white/80 transition-colors hover:bg-white/5 hover:text-white"
+                                                                            className="bg-black/50 border border-white/10 text-[10px] px-3 py-2 outline-none focus:border-[var(--accent)] disabled:opacity-50 min-w-[70px] text-left uppercase tracking-widest font-black text-white/80 transition-colors hover:bg-white/5 hover:text-white"
                                                                             disabled={updatingNode === node.uid || node.email === process.env.NEXT_PUBLIC_SUPER_ADMIN_EMAIL || node.email === session?.user?.email}
                                                                         >
                                                                             {updatingNode === node.uid ? "SYNC..." : (node.customClaims?.role === "ADMIN" || node.email === process.env.NEXT_PUBLIC_SUPER_ADMIN_EMAIL ? "ROOT" : "USER")}
@@ -470,7 +476,7 @@ export default function AdminPage() {
                                                                     <button
                                                                         type="button"
                                                                         onClick={() => handleStatusChange(node.uid, node.disabled)}
-                                                                        className={`text-[10px] px-3 py-1 outline-none rounded min-w-[70px] uppercase tracking-widest font-black transition-colors ${node.disabled
+                                                                        className={`text-[10px] px-3 py-1 outline-none min-w-[70px] uppercase tracking-widest font-black transition-colors ${node.disabled
                                                                             ? "bg-red-500/10 text-red-500 border border-red-500/20 hover:bg-red-500 hover:text-white"
                                                                             : "bg-green-500/10 text-green-500 border border-green-500/20 hover:bg-green-500 hover:text-white"
                                                                             }`}
@@ -494,7 +500,7 @@ export default function AdminPage() {
                                                                                 impersonateRole: node.customClaims?.role || "USER"
                                                                             }).then(() => router.push('/'));
                                                                         }}
-                                                                        className="bg-white/5 border border-white/10 text-[10px] px-3 py-2 uppercase font-bold tracking-widest hover:bg-[var(--accent)] hover:text-black transition-colors rounded disabled:opacity-30 disabled:hover:bg-white/5 disabled:hover:text-white"
+                                                                        className="bg-white/5 border border-white/10 text-[10px] px-3 py-2 uppercase font-bold tracking-widest hover:bg-[var(--accent)] hover:text-black transition-colors disabled:opacity-30 disabled:hover:bg-white/5 disabled:hover:text-white"
                                                                         disabled={node.email === session?.user?.email || node.email === process.env.NEXT_PUBLIC_SUPER_ADMIN_EMAIL}
                                                                     >
                                                                         <Eye size={14} />
@@ -510,8 +516,8 @@ export default function AdminPage() {
                                             <div className="p-4 border-t border-white/5 bg-white/5 flex justify-between items-center text-xs font-mono text-white/50">
                                                 <div>Showing {(nodePage - 1) * 50 + 1}-{Math.min(nodePage * 50, filteredNodes.length)} of {filteredNodes.length}</div>
                                                 <div className="flex gap-2">
-                                                    <button onClick={() => setNodePage(p => Math.max(1, p - 1))} disabled={nodePage === 1} className="px-3 py-1 bg-black/50 border border-white/10 rounded disabled:opacity-30 hover:bg-white/5 text-[10px] font-black tracking-widest uppercase text-white transition-colors">Prev</button>
-                                                    <button onClick={() => setNodePage(p => Math.min(totalNodePages, p + 1))} disabled={nodePage === totalNodePages} className="px-3 py-1 bg-black/50 border border-white/10 rounded disabled:opacity-30 hover:bg-white/5 text-[10px] font-black tracking-widest uppercase text-white transition-colors">Next</button>
+                                                    <button onClick={() => setNodePage(p => Math.max(1, p - 1))} disabled={nodePage === 1} className="px-3 py-1 bg-black/50 border border-white/10 disabled:opacity-30 hover:bg-white/5 text-[10px] font-black tracking-widest uppercase text-white transition-colors">Prev</button>
+                                                    <button onClick={() => setNodePage(p => Math.min(totalNodePages, p + 1))} disabled={nodePage === totalNodePages} className="px-3 py-1 bg-black/50 border border-white/10 disabled:opacity-30 hover:bg-white/5 text-[10px] font-black tracking-widest uppercase text-white transition-colors">Next</button>
                                                 </div>
                                             </div>
                                         )}
@@ -533,16 +539,21 @@ export default function AdminPage() {
                                         <div className="p-4 border-b border-white/5 bg-white/5 flex flex-col md:flex-row justify-between items-start md:items-center gap-4">
                                             <h3 className="text-xs font-black uppercase tracking-[0.2em] shrink-0">System Audit Logs</h3>
                                             <div className="flex flex-wrap items-center gap-3 w-full md:w-auto">
-                                                <div className="flex items-center gap-1 bg-black/50 border border-white/10 rounded overflow-hidden">
+                                                <div className="flex items-center gap-1 bg-black/50 border border-white/10 overflow-hidden">
                                                     {["ALL", "INFO", "WARN", "CRIT"].map(f => (
                                                         <button key={f} onClick={() => setAuditFilter(f as any)} className={`px-3 py-2 text-[10px] font-black tracking-widest uppercase transition-colors ${auditFilter === f ? 'bg-white/10 text-white' : 'text-white/40 hover:text-white hover:bg-white/5'}`}>{f}</button>
                                                     ))}
                                                 </div>
-                                                <div className="relative flex-1 md:w-48">
-                                                    <Search size={14} className="absolute left-3 top-1/2 -translate-y-1/2 text-white/30" />
-                                                    <input type="text" placeholder="Search logs..." value={auditSearch} onChange={(e) => setAuditSearch(e.target.value)} className="w-full bg-black/50 border border-white/10 text-xs py-2 pl-9 pr-3 rounded focus:border-[var(--accent)] outline-none text-white font-mono placeholder:text-white/20 transition-colors" />
+                                                <div className="relative w-full md:w-48">
+                                                    <Input
+                                                        type="text"
+                                                        placeholder="SEARCH LOGS..."
+                                                        value={auditSearch}
+                                                        onChange={(e) => setAuditSearch(e.target.value)}
+                                                        icon={<Search size={14} />}
+                                                    />
                                                 </div>
-                                                <button onClick={exportAuditCSV} className="shrink-0 flex items-center justify-center gap-2 bg-white/5 hover:bg-white/10 border border-white/10 px-3 py-2 rounded text-[10px] font-black uppercase tracking-widest transition-colors text-white/70 hover:text-white">
+                                                <button onClick={exportAuditCSV} className="shrink-0 flex items-center justify-center gap-2 bg-white/5 hover:bg-white/10 border border-white/10 px-3 py-2 text-[10px] font-black uppercase tracking-widest transition-colors text-white/70 hover:text-white">
                                                     <Download size={14} /> <span className="hidden sm:inline">Export</span>
                                                 </button>
                                             </div>
@@ -569,7 +580,7 @@ export default function AdminPage() {
                                                                 <td className="p-4 text-white/40 whitespace-nowrap">{new Date(trace.timestamp).toLocaleString()}</td>
                                                                 <td className="p-4 font-bold tracking-widest">{trace.action}</td>
                                                                 <td className="p-4">
-                                                                    <div className={`text-[10px] px-3 py-1 rounded min-w-[70px] uppercase tracking-widest font-black inline-block text-center ${trace.severity === 'FATAL' || trace.severity === 'ERROR' || trace.severity === 'CRIT' ? 'bg-red-500/10 text-red-500 border border-red-500/20' : trace.severity === 'WARN' ? 'bg-yellow-500/10 text-yellow-500 border border-yellow-500/20' : 'bg-blue-500/10 text-blue-500 border border-blue-500/20'}`}>
+                                                                    <div className={`text-[10px] px-3 py-1 min-w-[70px] uppercase tracking-widest font-black inline-block text-center ${trace.severity === 'FATAL' || trace.severity === 'ERROR' || trace.severity === 'CRIT' ? 'bg-red-500/10 text-red-500 border border-red-500/20' : trace.severity === 'WARN' ? 'bg-yellow-500/10 text-yellow-500 border border-yellow-500/20' : 'bg-blue-500/10 text-blue-500 border border-blue-500/20'}`}>
                                                                         {trace.severity}
                                                                     </div>
                                                                 </td>
@@ -585,8 +596,8 @@ export default function AdminPage() {
                                             <div className="p-4 border-t border-white/5 bg-white/5 flex justify-between items-center text-xs font-mono text-white/50">
                                                 <div>Showing {(auditPage - 1) * 50 + 1}-{Math.min(auditPage * 50, filteredTraces.length)} of {filteredTraces.length}</div>
                                                 <div className="flex gap-2">
-                                                    <button onClick={() => setAuditPage(p => Math.max(1, p - 1))} disabled={auditPage === 1} className="px-3 py-1 bg-black/50 border border-white/10 rounded disabled:opacity-30 hover:bg-white/5 text-[10px] font-black tracking-widest uppercase text-white transition-colors">Prev</button>
-                                                    <button onClick={() => setAuditPage(p => Math.min(totalAuditPages, p + 1))} disabled={auditPage === totalAuditPages} className="px-3 py-1 bg-black/50 border border-white/10 rounded disabled:opacity-30 hover:bg-white/5 text-[10px] font-black tracking-widest uppercase text-white transition-colors">Next</button>
+                                                    <button onClick={() => setAuditPage(p => Math.max(1, p - 1))} disabled={auditPage === 1} className="px-3 py-1 bg-black/50 border border-white/10 disabled:opacity-30 hover:bg-white/5 text-[10px] font-black tracking-widest uppercase text-white transition-colors">Prev</button>
+                                                    <button onClick={() => setAuditPage(p => Math.min(totalAuditPages, p + 1))} disabled={auditPage === totalAuditPages} className="px-3 py-1 bg-black/50 border border-white/10 disabled:opacity-30 hover:bg-white/5 text-[10px] font-black tracking-widest uppercase text-white transition-colors">Next</button>
                                                 </div>
                                             </div>
                                         )}
@@ -725,13 +736,13 @@ export default function AdminPage() {
                                                             router.refresh();
                                                         }
                                                     }}
-                                                    className={`border text-xs px-6 py-2 outline-none rounded min-w-[100px] uppercase tracking-widest font-bold transition-colors shadow-2xl ${rateLimitMode === variant ? 'bg-[var(--accent)] border-[var(--accent)] text-white' : 'bg-black/50 border-white/10 text-white/80 hover:bg-white/5 focus:border-[var(--accent)]'}`}
+                                                    className={`border text-xs px-6 py-2 outline-none min-w-[100px] uppercase tracking-widest font-bold transition-colors shadow-2xl ${rateLimitMode === variant ? 'bg-[var(--accent)] border-[var(--accent)] text-white' : 'bg-black/50 border-white/10 text-white/80 hover:bg-white/5 focus:border-[var(--accent)]'}`}
                                                 >
                                                     {variant}
                                                 </button>
                                             ))}
                                         </div>
-                                        <div className="text-xs text-white/70 bg-black/50 p-4 rounded border border-white/5 font-mono mt-2">
+                                        <div className="text-xs text-white/70 bg-black/50 p-4 border border-white/5 font-mono mt-2">
                                             {rateLimitMode === 'relaxed' && "Relaxed: High threshold context. Allows high volume of requests before blocking. Best for heavy APIs or preventing false positives."}
                                             {rateLimitMode === 'standard' && "Standard: Recommended baseline. Balanced protection against common spam and light scraping."}
                                             {rateLimitMode === 'strict' && "Strict: Aggressive rate limits. Drops connections quickly for repeated rapid requests. Use if experiencing anomalous spikes."}
@@ -747,10 +758,9 @@ export default function AdminPage() {
                                             <p className="text-xs font-serif italic text-white/50">Sets the 'From' email address used for sending all automated emails.</p>
                                         </div>
                                         <div className="flex flex-col gap-3 w-full justify-start">
-                                            <input
+                                            <Input
                                                 type="text"
-                                                placeholder="noreply@domain.com"
-                                                className="bg-black/50 border border-white/10 text-xs px-4 py-2 outline-none focus:border-[var(--accent)] text-white font-mono w-full"
+                                                placeholder="NOREPLY@DOMAIN.COM"
                                                 value={resendFrom}
                                                 onChange={(e) => setResendFromUI(e.target.value)}
                                             />
@@ -779,10 +789,10 @@ export default function AdminPage() {
                                             <p className="text-xs font-serif italic text-white/50 leading-relaxed">
                                                 Your Vanguard Substrate contains two powerful Edge integrations that do not require UI management here:<br /><br />
                                                 <strong>1. Zero-Latency Feature Flags:</strong> Located natively in your Upstash Redis console. The Edge proxy pulls `flags:global` instantly before render.<br />
-                                                <strong>2. Command Matrix (CMD+K):</strong> Embedded globally for all users. Type <code className="bg-white/10 px-1 rounded text-[10px]">&quot;Galaxy&quot;</code> or <code className="bg-white/10 px-1 rounded text-[10px]">&quot;None&quot;</code> to jump themes instantly.
+                                                <strong>2. Command Matrix (CMD+K):</strong> Embedded globally for all users. Type <code className="bg-white/10 px-1 text-[10px]">&quot;Galaxy&quot;</code> or <code className="bg-white/10 px-1 text-[10px]">&quot;None&quot;</code> to jump themes instantly.
                                             </p>
                                         </div>
-                                        <div className="z-10 mt-2 p-3 bg-black/50 border border-white/10 rounded font-mono text-[9px] uppercase tracking-[0.2em] text-white/40 shadow-inner">
+                                        <div className="z-10 mt-2 p-3 bg-black/50 border border-white/10 font-mono text-[9px] uppercase tracking-[0.2em] text-white/40 shadow-inner">
                                             Manage Edge configurations directly in standard deployment consoles.
                                         </div>
                                     </GlassCard>
@@ -815,7 +825,7 @@ export default function AdminPage() {
                                                             router.refresh();
                                                         }
                                                     }}
-                                                    className={`border text-xs px-6 py-2 outline-none rounded min-w-[100px] uppercase tracking-widest font-bold transition-colors shadow-2xl ${commerceMode === variant ? 'bg-[var(--accent)] border-[var(--accent)] text-white' : 'bg-black/50 border-white/10 text-white/80 hover:bg-white/5 focus:border-[var(--accent)]'}`}
+                                                    className={`border text-xs px-6 py-2 outline-none min-w-[100px] uppercase tracking-widest font-bold transition-colors shadow-2xl ${commerceMode === variant ? 'bg-[var(--accent)] border-[var(--accent)] text-white' : 'bg-black/50 border-white/10 text-white/80 hover:bg-white/5 focus:border-[var(--accent)]'}`}
                                                 >
                                                     {variant}
                                                 </button>
@@ -841,14 +851,14 @@ export default function AdminPage() {
                                                                 buttonText: "Get Access",
                                                                 stripeLink: ""
                                                             }]);
-                                                        }} className="text-xs bg-[var(--accent)]/20 text-[var(--accent)] hover:bg-[var(--accent)]/40 px-3 py-1 uppercase font-bold tracking-widest border border-[var(--accent)] rounded ml-auto sm:ml-0 flex items-center gap-2">
+                                                        }} className="text-xs bg-[var(--accent)]/20 text-[var(--accent)] hover:bg-[var(--accent)]/40 px-3 py-1 uppercase font-bold tracking-widest border border-[var(--accent)] ml-auto sm:ml-0 flex items-center gap-2">
                                                             <Plus size={12} /> Add Tier
                                                         </button>
                                                     )}
                                                 </div>
                                                 <div className="flex flex-col sm:flex-row items-start sm:items-center gap-3 pt-2">
                                                     <span className="text-xs font-mono text-white/50">Recommended:</span>
-                                                    <div className="flex flex-wrap border border-white/10 rounded overflow-hidden">
+                                                    <div className="flex flex-wrap border border-white/10 overflow-hidden">
                                                         {pricingTiers.map(tier => (
                                                             <button key={tier.id} onClick={() => setRecommendedPlan(tier.id)} className={`px-3 py-1 text-xs font-bold uppercase ${recommendedPlan === tier.id ? 'bg-[var(--accent)] text-white' : 'bg-black/50 text-white/50 hover:bg-white/5'}`}>{tier.name || 'Tier'}</button>
                                                         ))}
@@ -857,8 +867,8 @@ export default function AdminPage() {
                                             </div>
                                             <div className="grid grid-cols-1 md:grid-cols-2 gap-6 w-full mt-2">
                                                 {pricingTiers.map((tier, tIdx) => (
-                                                    <div key={tier.id} className={`space-y-4 bg-white/5 border p-5 rounded relative flex flex-col ${recommendedPlan === tier.id ? 'border-[var(--accent)]/50 shadow-[0_0_15px_rgba(var(--accent-rgb),0.1)]' : 'border-white/10'}`}>
-                                                        {recommendedPlan === tier.id && <div className="absolute -top-2.5 right-4 bg-[var(--accent)] text-[10px] text-white px-2 py-0.5 font-bold uppercase tracking-widest rounded-sm">Recommended</div>}
+                                                    <div key={tier.id} className={`space-y-4 bg-white/5 border p-5 relative flex flex-col ${recommendedPlan === tier.id ? 'border-[var(--accent)]/50 shadow-[0_0_15px_rgba(var(--accent-rgb),0.1)]' : 'border-white/10'}`}>
+                                                        {recommendedPlan === tier.id && <div className="absolute -top-2.5 right-4 bg-[var(--accent)] text-[10px] text-white px-2 py-0.5 font-bold uppercase tracking-widest">Recommended</div>}
 
                                                         <div className="text-xs font-bold text-white mb-2 uppercase tracking-widest flex justify-between items-center">
                                                             Tier {tIdx + 1}
@@ -867,7 +877,7 @@ export default function AdminPage() {
                                                                     const newTiers = [...pricingTiers];
                                                                     newTiers[tIdx].hidden = !newTiers[tIdx].hidden;
                                                                     setPricingTiers(newTiers);
-                                                                }} className={`p-1 rounded ${tier.hidden ? 'text-white/30 hover:text-white/50' : 'text-green-500 hover:text-green-400'}`}>
+                                                                }} className={`p-1 ${tier.hidden ? 'text-white/30 hover:text-white/50' : 'text-green-500 hover:text-green-400'}`}>
                                                                     {tier.hidden ? <EyeOff size={14} /> : <Eye size={14} />}
                                                                 </button>
                                                                 <button onClick={() => {
@@ -877,13 +887,13 @@ export default function AdminPage() {
                                                             </div>
                                                         </div>
 
-                                                        <input type="text" placeholder="Plan Name" className="bg-black/50 border border-white/10 text-xs px-4 py-2 outline-none focus:border-[var(--accent)] text-white w-full font-mono font-bold" value={tier.name} onChange={(e) => {
+                                                        <Input type="text" placeholder="PLAN NAME" className="font-mono font-bold w-full" value={tier.name} onChange={(e) => {
                                                             const newTiers = [...pricingTiers];
                                                             newTiers[tIdx].name = e.target.value;
                                                             setPricingTiers(newTiers);
                                                         }} />
 
-                                                        <input type="text" placeholder="Price (e.g. 9)" className="bg-black/50 border border-white/10 text-xs px-4 py-2 outline-none focus:border-[var(--accent)] text-white w-full font-mono text-lg" value={tier.price} onChange={(e) => {
+                                                        <Input type="text" placeholder="PRICE (E.G. 9)" className="font-mono text-lg w-full" value={tier.price} onChange={(e) => {
                                                             const newTiers = [...pricingTiers];
                                                             newTiers[tIdx].price = e.target.value;
                                                             setPricingTiers(newTiers);
@@ -905,10 +915,10 @@ export default function AdminPage() {
                                                                                 newTiers[tIdx].features[fIdx].active = !newTiers[tIdx].features[fIdx].active;
                                                                             }
                                                                             setPricingTiers(newTiers);
-                                                                        }} className={`w-5 h-5 rounded flex items-center justify-center shrink-0 border ${isActive ? 'bg-[var(--accent)] border-[var(--accent)] text-white' : 'bg-black/50 border-white/20 text-transparent hover:border-white/40'}`}>
+                                                                        }} className={`w-5 h-5 flex items-center justify-center shrink-0 border ${isActive ? 'bg-[var(--accent)] border-[var(--accent)] text-white' : 'bg-black/50 border-white/20 text-transparent hover:border-white/40'}`}>
                                                                             <Check size={12} className={isActive ? 'opacity-100' : 'opacity-0'} />
                                                                         </button>
-                                                                        <input type="text" placeholder="Feature" className={`bg-black/50 border border-white/10 text-xs px-3 py-1.5 outline-none focus:border-[var(--accent)] w-full font-mono ${isActive ? 'text-white' : 'text-white/30 line-through'}`} value={featureName} onChange={(e) => {
+                                                                        <Input type="text" placeholder="FEATURE" className={`w-full font-mono ${isActive ? 'text-white' : 'text-white/30 line-through'}`} value={featureName} onChange={(e) => {
                                                                             const newTiers = [...pricingTiers];
                                                                             if (typeof newTiers[tIdx].features[fIdx] === 'string') {
                                                                                 newTiers[tIdx].features[fIdx] = { name: e.target.value, active: true };
@@ -924,20 +934,20 @@ export default function AdminPage() {
                                                                                 newTiers[tIdx].features[fIdx] = newTiers[tIdx].features[fIdx - 1];
                                                                                 newTiers[tIdx].features[fIdx - 1] = temp;
                                                                                 setPricingTiers(newTiers);
-                                                                            }} className="w-5 h-5 flex items-center justify-center bg-white/5 hover:bg-white/20 rounded disabled:opacity-20 disabled:hover:bg-white/5"><ArrowUp size={10} /></button>
+                                                                            }} className="w-5 h-5 flex items-center justify-center bg-white/5 hover:bg-white/20 disabled:opacity-20 disabled:hover:bg-white/5"><ArrowUp size={10} /></button>
                                                                             <button disabled={fIdx === tier.features.length - 1} onClick={() => {
                                                                                 const newTiers = [...pricingTiers];
                                                                                 const temp = newTiers[tIdx].features[fIdx];
                                                                                 newTiers[tIdx].features[fIdx] = newTiers[tIdx].features[fIdx + 1];
                                                                                 newTiers[tIdx].features[fIdx + 1] = temp;
                                                                                 setPricingTiers(newTiers);
-                                                                            }} className="w-5 h-5 flex items-center justify-center bg-white/5 hover:bg-white/20 rounded disabled:opacity-20 disabled:hover:bg-white/5"><ArrowDown size={10} /></button>
+                                                                            }} className="w-5 h-5 flex items-center justify-center bg-white/5 hover:bg-white/20 disabled:opacity-20 disabled:hover:bg-white/5"><ArrowDown size={10} /></button>
                                                                         </div>
                                                                         <button onClick={() => {
                                                                             const newTiers = [...pricingTiers];
                                                                             newTiers[tIdx].features.splice(fIdx, 1);
                                                                             setPricingTiers(newTiers);
-                                                                        }} className="w-5 h-5 flex items-center justify-center bg-red-500/10 border border-red-500/20 text-red-500 hover:bg-red-500/20 rounded shrink-0"><Trash2 size={12} /></button>
+                                                                        }} className="w-5 h-5 flex items-center justify-center bg-red-500/10 border border-red-500/20 text-red-500 hover:bg-red-500/20 shrink-0"><Trash2 size={12} /></button>
                                                                     </div>
                                                                 )
                                                             })}
@@ -948,13 +958,13 @@ export default function AdminPage() {
                                                             }} className="w-full text-xs py-1.5 border border-dashed border-white/20 text-white/50 hover:bg-white/5 hover:text-white uppercase tracking-widest font-bold flex items-center justify-center gap-2 mt-1"><Plus size={12} /> Add Feature</button>
                                                         </div>
 
-                                                        <input type="text" placeholder="Stripe Checkout Link" className="bg-black/50 border border-white/10 text-xs px-4 py-2 outline-none focus:border-[var(--accent)] text-white w-full font-mono mt-auto" value={tier.stripeLink || ""} onChange={(e) => {
+                                                        <Input type="text" placeholder="STRIPE CHECKOUT LINK" className="font-mono mt-auto w-full" value={tier.stripeLink || ""} onChange={(e) => {
                                                             const newTiers = [...pricingTiers];
                                                             newTiers[tIdx].stripeLink = e.target.value;
                                                             setPricingTiers(newTiers);
                                                         }} />
 
-                                                        <input type="text" placeholder="Button Text" className="bg-black/50 border border-white/10 text-xs px-4 py-2 outline-none focus:border-[var(--accent)] text-white w-full font-mono" value={tier.buttonText} onChange={(e) => {
+                                                        <Input type="text" placeholder="BUTTON TEXT" className="font-mono w-full" value={tier.buttonText} onChange={(e) => {
                                                             const newTiers = [...pricingTiers];
                                                             newTiers[tIdx].buttonText = e.target.value;
                                                             setPricingTiers(newTiers);
@@ -990,7 +1000,7 @@ export default function AdminPage() {
                                                     <div className="flex flex-col items-end gap-2">
                                                         <button
                                                             onClick={() => { setIsEditingProduct(false); setProductForm({ id: "", name: "", description: "", price: "", imageUrl: "", stripeLink: "" }); setIsStoreModalOpen(true); }}
-                                                            className="bg-[var(--accent)] text-black px-3 py-1.5 text-xs font-bold uppercase tracking-widest flex items-center gap-2 transition-colors hover:bg-white"
+                                                            className="bg-[var(--accent)] text-white px-3 py-1.5 text-xs font-bold uppercase tracking-widest flex items-center gap-2 transition-colors hover:bg-white/10 border border-[var(--accent)]"
                                                         >
                                                             <Plus size={14} /> Add Product
                                                         </button>
@@ -1046,10 +1056,9 @@ export default function AdminPage() {
                                                 {/* Matrix Filters */}
                                                 <div className="flex flex-col md:flex-row gap-4 justify-between items-center bg-white/5 p-4 border border-white/5">
                                                     <div className="relative w-full md:w-96 flex">
-                                                        <div className="absolute left-3 top-1/2 -translate-y-1/2 text-white/30"><Search size={14} /></div>
-                                                        <input
+                                                        <Input
                                                             type="text"
-                                                            placeholder="Search products by prefix..."
+                                                            placeholder="SEARCH PRODUCTS BY PREFIX..."
                                                             value={storeSearchInput}
                                                             onChange={(e) => setStoreSearchInput(e.target.value)}
                                                             onKeyDown={(e) => {
@@ -1058,7 +1067,7 @@ export default function AdminPage() {
                                                                     setStoreSearch(storeSearchInput);
                                                                 }
                                                             }}
-                                                            className="w-full bg-black/50 border border-white/10 text-xs text-white pl-9 pr-4 py-2 outline-none focus:border-[var(--accent)] transition-colors font-mono"
+                                                            icon={<Search size={14} />}
                                                         />
                                                     </div>
                                                     <div className="text-xs font-mono text-white/50">{totalStoreProducts} matching records</div>
@@ -1087,7 +1096,7 @@ export default function AdminPage() {
                                                                     <td className="px-4 py-3 text-[var(--accent)]">${p.price}</td>
                                                                     <td className="px-4 py-3 text-right">
                                                                         <div className="flex justify-end gap-2">
-                                                                            <button onClick={() => { setIsEditingProduct(true); setProductForm(p); setIsStoreModalOpen(true); }} className="p-1.5 hover:bg-white/10 rounded text-white/50 hover:text-white transition-colors"><Edit2 size={14} /></button>
+                                                                            <button onClick={() => { setIsEditingProduct(true); setProductForm(p); setIsStoreModalOpen(true); }} className="p-1.5 hover:bg-white/10 text-white/50 hover:text-white transition-colors"><Edit2 size={14} /></button>
                                                                             <button onClick={async () => {
                                                                                 if (!confirm("Are you sure?")) return;
                                                                                 const res = await deleteStoreProduct(p.id);
@@ -1095,7 +1104,7 @@ export default function AdminPage() {
                                                                                     setStoreProducts(storeProducts.filter((prod: any) => prod.id !== p.id));
                                                                                     setTotalStoreProducts(prev => prev - 1);
                                                                                 }
-                                                                            }} className="p-1.5 hover:bg-red-500/20 rounded text-red-500/50 hover:text-red-500 transition-colors"><Trash2 size={14} /></button>
+                                                                            }} className="p-1.5 hover:bg-red-500/20 text-red-500/50 hover:text-red-500 transition-colors"><Trash2 size={14} /></button>
                                                                         </div>
                                                                     </td>
                                                                 </tr>
@@ -1141,42 +1150,43 @@ export default function AdminPage() {
 
                                                         <div className="flex flex-col gap-3">
                                                             <div className="grid grid-cols-1 md:grid-cols-2 gap-3">
-                                                                <input
+                                                                <Input
                                                                     type="text"
-                                                                    placeholder="Product Name"
-                                                                    className="bg-white/5 border border-white/10 text-xs px-4 py-3 outline-none focus:border-[var(--accent)] text-white font-mono w-full"
+                                                                    placeholder="PRODUCT NAME"
                                                                     value={productForm.name}
                                                                     onChange={e => setProductForm({ ...productForm, name: e.target.value })}
                                                                 />
-                                                                <input
+                                                                <Input
                                                                     type="number"
                                                                     step="0.01"
-                                                                    placeholder="Price (e.g. 19.99)"
-                                                                    className="bg-white/5 border border-white/10 text-xs px-4 py-3 outline-none focus:border-[var(--accent)] text-white font-mono w-full"
+                                                                    placeholder="PRICE (E.G. 19.99)"
                                                                     value={productForm.price}
                                                                     onChange={e => setProductForm({ ...productForm, price: e.target.value })}
                                                                 />
-                                                                <input
-                                                                    type="text"
-                                                                    placeholder="Product Image URL"
-                                                                    className="bg-white/5 border border-white/10 text-xs px-4 py-3 outline-none focus:border-[var(--accent)] text-white font-mono w-full md:col-span-2"
-                                                                    value={productForm.imageUrl}
-                                                                    onChange={e => setProductForm({ ...productForm, imageUrl: e.target.value })}
-                                                                />
-                                                                <input
-                                                                    type="text"
-                                                                    placeholder="Description"
-                                                                    className="bg-white/5 border border-white/10 text-xs px-4 py-3 outline-none focus:border-[var(--accent)] text-white font-mono w-full md:col-span-2"
-                                                                    value={productForm.description}
-                                                                    onChange={e => setProductForm({ ...productForm, description: e.target.value })}
-                                                                />
-                                                                <input
-                                                                    type="text"
-                                                                    placeholder="Stripe Checkout Link"
-                                                                    className="bg-white/5 border border-white/10 text-xs px-4 py-3 outline-none focus:border-[var(--accent)] text-white font-mono w-full md:col-span-2"
-                                                                    value={productForm.stripeLink}
-                                                                    onChange={e => setProductForm({ ...productForm, stripeLink: e.target.value })}
-                                                                />
+                                                                <div className="md:col-span-2">
+                                                                    <Input
+                                                                        type="text"
+                                                                        placeholder="PRODUCT IMAGE URL"
+                                                                        value={productForm.imageUrl}
+                                                                        onChange={e => setProductForm({ ...productForm, imageUrl: e.target.value })}
+                                                                    />
+                                                                </div>
+                                                                <div className="md:col-span-2">
+                                                                    <Input
+                                                                        type="text"
+                                                                        placeholder="DESCRIPTION"
+                                                                        value={productForm.description}
+                                                                        onChange={e => setProductForm({ ...productForm, description: e.target.value })}
+                                                                    />
+                                                                </div>
+                                                                <div className="md:col-span-2">
+                                                                    <Input
+                                                                        type="text"
+                                                                        placeholder="STRIPE CHECKOUT LINK"
+                                                                        value={productForm.stripeLink}
+                                                                        onChange={e => setProductForm({ ...productForm, stripeLink: e.target.value })}
+                                                                    />
+                                                                </div>
                                                             </div>
                                                             <button
                                                                 onClick={async () => {
@@ -1249,10 +1259,9 @@ export default function AdminPage() {
                                             <p className="text-xs font-serif italic text-white/50">Displays an urgent alert banner at the top of the screen for all logged-in users. Leave blank to remove.</p>
                                         </div>
                                         <div className="flex flex-col gap-3 w-full justify-start">
-                                            <input
+                                            <Input
                                                 type="text"
-                                                placeholder="Enter announcement message..."
-                                                className="bg-black/50 border border-white/10 text-xs px-4 py-2 outline-none focus:border-[var(--accent)] text-white font-mono w-full"
+                                                placeholder="ENTER ANNOUNCEMENT MESSAGE..."
                                                 value={broadcastMessage}
                                                 onChange={(e) => setBroadcastMessage(e.target.value)}
                                             />
@@ -1289,10 +1298,9 @@ export default function AdminPage() {
                                             <p className="text-xs font-serif italic text-white/50">Changes the main title of your website, shown in the browser tab and navigation bar.</p>
                                         </div>
                                         <div className="flex flex-col gap-3 w-full justify-start">
-                                            <input
+                                            <Input
                                                 type="text"
-                                                placeholder="Nexus Vanguard"
-                                                className="bg-black/50 border border-white/10 text-xs px-4 py-2 outline-none focus:border-[var(--accent)] text-white font-mono w-full"
+                                                placeholder="NEXUS VANGUARD"
                                                 value={siteTitle}
                                                 onChange={(e) => setSiteTitleUI(e.target.value)}
                                             />
@@ -1317,10 +1325,9 @@ export default function AdminPage() {
                                             <p className="text-xs font-serif italic text-white/50">Changes the main tagline or subtitle displayed on the public landing page.</p>
                                         </div>
                                         <div className="flex flex-col gap-3 w-full justify-start">
-                                            <input
+                                            <Input
                                                 type="text"
-                                                placeholder="The Ultimate Sovereign Identity Matrix."
-                                                className="bg-black/50 border border-white/10 text-xs px-4 py-2 outline-none focus:border-[var(--accent)] text-white font-mono w-full"
+                                                placeholder="THE ULTIMATE SOVEREIGN IDENTITY MATRIX."
                                                 value={typographyOverride}
                                                 onChange={(e) => setTypographyOverride(e.target.value)}
                                             />
@@ -1345,10 +1352,9 @@ export default function AdminPage() {
                                             <p className="text-xs font-serif italic text-white/50">Sets the contact email address shown in the footer of the website.</p>
                                         </div>
                                         <div className="flex flex-col gap-3 w-full justify-start">
-                                            <input
+                                            <Input
                                                 type="text"
-                                                placeholder="hi+nextjs@boiler.click"
-                                                className="bg-black/50 border border-white/10 text-xs px-4 py-2 outline-none focus:border-[var(--accent)] text-white font-mono w-full"
+                                                placeholder="HI+NEXTJS@BOILER.CLICK"
                                                 value={contactEmail}
                                                 onChange={(e) => setContactEmailUI(e.target.value)}
                                             />
@@ -1373,10 +1379,9 @@ export default function AdminPage() {
                                             <p className="text-xs font-serif italic text-white/50">Changes the primary color used for buttons and highlights across the website (e.g. #a855f7).</p>
                                         </div>
                                         <div className="flex flex-col gap-3 w-full justify-start">
-                                            <input
+                                            <Input
                                                 type="text"
-                                                placeholder="#a855f7"
-                                                className="bg-black/50 border border-white/10 text-xs px-4 py-2 outline-none focus:border-[var(--accent)] text-white font-mono w-full"
+                                                placeholder="#A855F7"
                                                 value={primaryColor}
                                                 onChange={(e) => setPrimaryColorUI(e.target.value)}
                                             />
@@ -1400,28 +1405,26 @@ export default function AdminPage() {
                                             <h3 className="text-sm font-bold uppercase tracking-widest text-[var(--accent)]">SEO & Marketing Meta Tags</h3>
                                             <p className="text-xs font-serif italic text-white/50">Configure how your website appears on Google search results and when shared on social media.</p>
                                         </div>
-                                        <div className="grid grid-cols-1 sm:grid-cols-3 gap-4 w-full">
-                                            <input
-                                                type="text"
-                                                placeholder="Website Meta Description"
-                                                className="bg-black/50 border border-white/10 text-xs px-4 py-2 outline-none focus:border-[var(--accent)] text-white font-mono w-full"
+                                        <div className="flex flex-col gap-4 w-full">
+                                            <Textarea
+                                                placeholder="WEBSITE META DESCRIPTION"
                                                 value={seoDescription}
                                                 onChange={(e) => setSeoDescriptionUI(e.target.value)}
                                             />
-                                            <input
-                                                type="text"
-                                                placeholder="SEO Keywords (comma separated)"
-                                                className="bg-black/50 border border-white/10 text-xs px-4 py-2 outline-none focus:border-[var(--accent)] text-white font-mono w-full"
-                                                value={seoKeywords}
-                                                onChange={(e) => setSeoKeywordsUI(e.target.value)}
-                                            />
-                                            <input
-                                                type="text"
-                                                placeholder="Social Share Image URL (e.g. /og.png)"
-                                                className="bg-black/50 border border-white/10 text-xs px-4 py-2 outline-none focus:border-[var(--accent)] text-white font-mono w-full"
-                                                value={seoOgImage}
-                                                onChange={(e) => setSeoOgImageUI(e.target.value)}
-                                            />
+                                            <div className="grid grid-cols-1 sm:grid-cols-2 gap-4 w-full">
+                                                <Input
+                                                    type="text"
+                                                    placeholder="SEO KEYWORDS (COMMA SEPARATED)"
+                                                    value={seoKeywords}
+                                                    onChange={(e) => setSeoKeywordsUI(e.target.value)}
+                                                />
+                                                <Input
+                                                    type="text"
+                                                    placeholder="SOCIAL SHARE IMAGE URL (E.G. /OG.PNG)"
+                                                    value={seoOgImage}
+                                                    onChange={(e) => setSeoOgImageUI(e.target.value)}
+                                                />
+                                            </div>
                                         </div>
                                         <div className="flex w-full justify-start">
                                             <button
@@ -1446,24 +1449,21 @@ export default function AdminPage() {
                                             <p className="text-xs font-serif italic text-white/50">Configure the social media URLs displayed in the website footer.</p>
                                         </div>
                                         <div className="grid grid-cols-1 sm:grid-cols-3 gap-4 w-full">
-                                            <input
+                                            <Input
                                                 type="text"
-                                                placeholder="X / Twitter URL"
-                                                className="bg-black/50 border border-white/10 text-xs px-4 py-2 outline-none focus:border-[var(--accent)] text-white font-mono w-full"
+                                                placeholder="X / TWITTER URL"
                                                 value={socialX}
                                                 onChange={(e) => setSocialXUI(e.target.value)}
                                             />
-                                            <input
+                                            <Input
                                                 type="text"
-                                                placeholder="GitHub URL"
-                                                className="bg-black/50 border border-white/10 text-xs px-4 py-2 outline-none focus:border-[var(--accent)] text-white font-mono w-full"
+                                                placeholder="GITHUB URL"
                                                 value={socialGithub}
                                                 onChange={(e) => setSocialGithubUI(e.target.value)}
                                             />
-                                            <input
+                                            <Input
                                                 type="text"
-                                                placeholder="Discord URL"
-                                                className="bg-black/50 border border-white/10 text-xs px-4 py-2 outline-none focus:border-[var(--accent)] text-white font-mono w-full"
+                                                placeholder="DISCORD URL"
                                                 value={socialDiscord}
                                                 onChange={(e) => setSocialDiscordUI(e.target.value)}
                                             />
@@ -1499,7 +1499,7 @@ export default function AdminPage() {
                                                             router.refresh();
                                                         }
                                                     }}
-                                                    className={`border text-xs px-6 py-2 outline-none rounded min-w-[100px] uppercase tracking-widest font-bold transition-colors shadow-2xl ${webglVariantUI === variant ? 'bg-[var(--accent)] border-[var(--accent)] text-white' : 'bg-black/50 border-white/10 text-white/80 hover:bg-white/5 focus:border-[var(--accent)]'}`}
+                                                    className={`border text-xs px-6 py-2 outline-none min-w-[100px] uppercase tracking-widest font-bold transition-colors shadow-2xl ${webglVariantUI === variant ? 'bg-[var(--accent)] border-[var(--accent)] text-white' : 'bg-black/50 border-white/10 text-white/80 hover:bg-white/5 focus:border-[var(--accent)]'}`}
                                                 >
                                                     {variant}
                                                 </button>
