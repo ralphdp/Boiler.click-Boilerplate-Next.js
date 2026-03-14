@@ -58,6 +58,17 @@ export const dictionary = {
             invalidMatch: "INVALID_IDENTITY_MATCH",
             registrationError: "REGISTRATION_FAULT",
             placeholderEmail: "ARCHITECT@ETHOS.LOG",
+        },
+        dashboard: {
+            title: "DASHBOARD",
+            accessAuthorized: "Access Authorized",
+            backToHome: "Back to Homepage",
+            accountSettings: "Account Settings",
+            billingIdentity: "Billing & Identity",
+            manageWorkspaces: "Manage Workspaces",
+            developerApi: "Developer / API",
+            rootAdmin: "ROOT ADMIN MATRIX",
+            handshakeConfirmed: "HANDSHAKE_CONFIRMED",
         }
     },
     es: {
@@ -119,6 +130,17 @@ export const dictionary = {
             invalidMatch: "COINCIDENCIA_IDENTIDAD_INVALIDA",
             registrationError: "FALLO_DE_REGISTRO",
             placeholderEmail: "ARQUITECTO@ETHOS.LOG",
+        },
+        dashboard: {
+            title: "PANEL DE CONTROL",
+            accessAuthorized: "Acceso Autorizado",
+            backToHome: "Volver al Inicio",
+            accountSettings: "Configuración de Cuenta",
+            billingIdentity: "Facturación E Identidad",
+            manageWorkspaces: "Gestionar Espacios",
+            developerApi: "Desarrollador / API",
+            rootAdmin: "MATRIZ DE ADMIN",
+            handshakeConfirmed: "CONEXION_CONFIRMADA",
         }
     },
     it: {
@@ -180,6 +202,17 @@ export const dictionary = {
             invalidMatch: "CORRISPONDENZA_IDENTITA_INVALIDA",
             registrationError: "ERRORE_DI_REGISTRAZIONE",
             placeholderEmail: "ARCHITETTO@ETHOS.LOG",
+        },
+        dashboard: {
+            title: "DASHBOARD",
+            accessAuthorized: "Accesso Autorizzato",
+            backToHome: "Torna alla Home",
+            accountSettings: "Impostazioni Account",
+            billingIdentity: "Fatturazione e Identità",
+            manageWorkspaces: "Gestisci Aree Lavoro",
+            developerApi: "Sviluppatore / API",
+            rootAdmin: "MATRICE ROOT ADMIN",
+            handshakeConfirmed: "CONNESSIONE_CONFERMATA",
         }
     }
 };
