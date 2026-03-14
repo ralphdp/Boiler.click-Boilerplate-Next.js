@@ -31,6 +31,12 @@ export const dictionary = {
                 { title: "SEO & Crawl Architecture", desc: "Dynamic Next.js SiteMaps and rigorous robots.txt crawler directives." },
                 { title: "WebGL Shader Matrix", desc: "Native Three.js & React-Fiber injection for complex topological backgrounds." },
                 { title: "TypeScript Hardening", desc: "Strict Server-to-Client typing with explicit React 19 interface boundaries." },
+                { title: "Cryptographic MFA Substrate", desc: "Native Google Cloud Identity Platform integration with TOTP (Authenticator) & SMS enforcement pathways." },
+                { title: "Omni-Search Control Palette", desc: "System-wide CMD+K interceptor mapping instant navigation, user lookup, and administrative overrides." },
+                { title: "B2B Workspace Architecture", desc: "Robust multi-tenancy model isolating user boundaries, resources, and billing nodes per organization." },
+                { title: "Vanguard Offline Licensing", desc: "Custom cryptographic voucher minting for offline hardware activations or B2B subscription bypassing." },
+                { title: "Immutable Audit Traces", desc: "Centralized systemic logging grid tracking master administrative modifications and security escalations." },
+                { title: "Global Administrative Nexus", desc: "Live systemic controls governing database schemas, typography injection, RBAC, and store matrices." },
             ]
         },
         auth: {
@@ -86,6 +92,12 @@ export const dictionary = {
                 { title: "Arquitectura de SEO y Rastreo", desc: "SiteMaps dinámicos de Next.js y directivas rigurosas de robots.txt." },
                 { title: "Matriz de Shaders WebGL", desc: "Inyección nativa de Three.js y React-Fiber para fondos topológicos complejos." },
                 { title: "Endurecimiento de TypeScript", desc: "Tipado estricto de Servidor a Cliente con límites de interfaz explícitos de React 19." },
+                { title: "Sustrato Criptográfico MFA", desc: "Integración nativa con Google Cloud Identity Platform y rutas de aplicación TOTP (Authenticator) y SMS." },
+                { title: "Paleta de Control y Omni-Búsqueda", desc: "Interceptor CMD+K en todo el sistema que mapea navegación instantánea, búsqueda de usuarios y anulaciones administrativas." },
+                { title: "Arquitectura de Espacio de Trabajo B2B", desc: "Modelo multi-inquilino robusto que aísla los límites del usuario, los recursos y los nodos de facturación por organización." },
+                { title: "Licenciamiento Vanguard Offline", desc: "Acuñación de vales criptográficos personalizados para activaciones de hardware fuera de línea o elusión de suscripciones B2B." },
+                { title: "Trazas de Auditoría Inmutables", desc: "Cuadrícula centralizada de registro sistémico que rastrea modificaciones administrativas maestras y escaladas de seguridad." },
+                { title: "Nexo Administrativo Global", desc: "Controles sistémicos en vivo que rigen esquemas de bases de datos, inyección de tipografía, RBAC y matrices de tiendas." },
             ]
         },
         auth: {
@@ -141,6 +153,12 @@ export const dictionary = {
                 { title: "Architettura SEO e Crawl", desc: "SiteMap Next.js dinamiche e direttive rigorose di robots.txt." },
                 { title: "Matrice Shader WebGL", desc: "Iniezione nativa di Three.js e React-Fiber per complessi sfondi topologici." },
                 { title: "Indurimento TypeScript", desc: "Tipizzazione rigorosa da Server a Client con limiti di interfaccia espliciti di React 19." },
+                { title: "Substrato Crittografico MFA", desc: "Integrazione nativa con Google Cloud Identity Platform e percorsi di applicazione TOTP (Authenticator) e SMS." },
+                { title: "Tavolozza di Controllo Omni-Search", desc: "Intercettatore CMD+K di sistema che mappa navigazione istantanea, ricerca utenti e override amministrativi." },
+                { title: "Architettura dell'Area di Lavoro B2B", desc: "Robusto modello multi-tenant che isola i confini degli utenti, le risorse e i nodi di fatturazione per organizzazione." },
+                { title: "Licenze Vanguard Offline", desc: "Conio di voucher crittografici personalizzati per attivazioni hardware offline o esclusione di abbonamenti B2B." },
+                { title: "Tracce di Controllo Immutabili", desc: "Griglia centralizzata di registrazione sistemica che traccia modifiche amministrative master ed escalation di sicurezza." },
+                { title: "Nexus Amministrativo Globale", desc: "Controlli sistemici live che governano schemi di database, iniezione di tipografia, RBAC e matrici di negozi." },
             ]
         },
         auth: {
