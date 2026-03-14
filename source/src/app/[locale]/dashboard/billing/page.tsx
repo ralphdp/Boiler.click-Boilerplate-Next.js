@@ -3,6 +3,7 @@
 import { useSession } from "next-auth/react";
 import { GlassCard } from "@/components/ui/GlassCard";
 import { Button } from "@/components/ui/Button";
+import { Input } from "@/components/ui/Input";
 import Link from "next/link";
 import { ArrowLeft, CreditCard, ShieldAlert, Sparkles, CheckCircle } from "lucide-react";
 import { useTranslation } from "@/core/i18n/LanguageProvider";
@@ -177,15 +178,17 @@ export default function BillingPage() {
 
                 <div className="space-y-4">
                     <h2 className="text-[10px] font-bold tracking-widest uppercase text-white/70">Hardware Licensing</h2>
-                    <form onSubmit={handleRedeemVoucher} className="flex flex-col sm:flex-row gap-4 max-w-xl">
-                        <input
-                            type="text"
-                            value={voucherCode}
-                            onChange={(e) => setVoucherCode(e.target.value)}
-                            placeholder="VGRD-XXXX-XXXX"
-                            className="flex-1 bg-black/50 border border-white/10 p-3 text-xs tracking-[0.2em] font-mono text-white focus:border-[var(--accent)] outline-none transition-colors"
-                        />
-                        <Button type="submit" variant="glass" disabled={voucherLoading || !voucherCode.trim()} className="whitespace-nowrap cursor-pointer">
+                    <form onSubmit={handleRedeemVoucher} className="flex flex-col sm:flex-row gap-4 max-w-xl items-center">
+                        <div className="flex-1 w-full">
+                            <Input
+                                type="text"
+                                value={voucherCode}
+                                onChange={(e) => setVoucherCode(e.target.value)}
+                                placeholder="VGRD-XXXX-XXXX"
+                                className="tracking-[0.2em] font-mono text-white h-[52px]"
+                            />
+                        </div>
+                        <Button type="submit" variant="glass" disabled={voucherLoading || !voucherCode.trim()} className="whitespace-nowrap cursor-pointer h-[52px]">
                             {voucherLoading ? "VERIFYING CRYPTOGRAPHY..." : "REDEEM VOUCHER"}
                         </Button>
                     </form>

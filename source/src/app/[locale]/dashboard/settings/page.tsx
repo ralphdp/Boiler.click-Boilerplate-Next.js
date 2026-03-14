@@ -3,6 +3,7 @@
 import { useSession } from "next-auth/react";
 import { GlassCard } from "@/components/ui/GlassCard";
 import { Button } from "@/components/ui/Button";
+import { Input } from "@/components/ui/Input";
 import Link from "next/link";
 import { ArrowLeft, Save, LogOut, Upload, KeyRound, ShieldAlert, Smartphone, Loader2, X, ServerCrash } from "lucide-react";
 import { useState, useRef, useEffect } from "react";
@@ -182,30 +183,22 @@ export default function SettingsPage() {
 
                         <div className="w-full h-px bg-white/5 my-4" />
 
-                        <div className="space-y-2">
-                            <label className="text-[10px] font-bold tracking-widest uppercase text-white/70">
-                                Email
-                            </label>
-                            <input
-                                type="text"
-                                value={session?.user?.email || "UNKNOWN"}
-                                disabled
-                                className="w-full bg-white/5 border border-white/10 p-3 text-xs tracking-widest opacity-50 cursor-not-allowed outline-none"
-                            />
-                        </div>
+                        <Input
+                            label="Email"
+                            type="text"
+                            value={session?.user?.email || "UNKNOWN"}
+                            disabled
+                            className="opacity-50 cursor-not-allowed uppercase"
+                        />
 
-                        <div className="space-y-2">
-                            <label className="text-[10px] font-bold tracking-widest uppercase text-[var(--accent)]">
-                                Display Handle
-                            </label>
-                            <input
-                                type="text"
-                                value={name}
-                                onChange={(e) => setName(e.target.value)}
-                                placeholder="ENTER NEW HANDLE"
-                                className="w-full bg-black/50 border border-white/20 p-3 text-xs uppercase tracking-widest hover:border-[var(--accent)] focus:border-[var(--accent)] outline-none transition-colors text-white"
-                            />
-                        </div>
+                        <Input
+                            label="Display Handle"
+                            type="text"
+                            value={name}
+                            onChange={(e) => setName(e.target.value)}
+                            placeholder="ENTER NEW HANDLE"
+                            className="uppercase transition-colors text-white"
+                        />
 
                         <div className="w-full h-px bg-white/5 my-4" />
 
@@ -328,12 +321,12 @@ export default function SettingsPage() {
                                 )}
 
                                 <div className="w-full space-y-4">
-                                    <input
+                                    <Input
                                         type="text"
                                         value={verificationCode}
                                         onChange={(e) => setVerificationCode(e.target.value)}
                                         placeholder="000000"
-                                        className="w-full bg-black/50 border border-white/20 p-3 text-center text-xl tracking-[0.5em] hover:border-[var(--accent)] focus:border-[var(--accent)] outline-none transition-colors text-white"
+                                        className="text-center text-xl tracking-[0.5em] transition-colors text-white p-4"
                                         maxLength={6}
                                     />
                                     {mfaError && <p className="text-red-500 text-[10px] uppercase tracking-widest text-center">{mfaError}</p>}

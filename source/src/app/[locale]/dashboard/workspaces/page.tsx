@@ -4,6 +4,8 @@ import { useSession } from "next-auth/react";
 import { GlassCard } from "@/components/ui/GlassCard";
 import { Button } from "@/components/ui/Button";
 import { DataGrid } from "@/components/ui/DataGrid";
+import { Input } from "@/components/ui/Input";
+import { Select } from "@/components/ui/Select";
 import Link from "next/link";
 import { ArrowLeft, LayoutGrid, Plus, Users, ShieldAlert, Activity, Webhook, FileText } from "lucide-react";
 import { useTranslation } from "@/core/i18n/LanguageProvider";
@@ -134,13 +136,16 @@ export default function WorkspacesPage() {
                     <div>
                         <h2 className="text-[10px] font-bold tracking-widest uppercase text-white/70 mb-4">Initialize New Substrate</h2>
                         <div className="flex flex-col sm:flex-row gap-4">
-                            <input
-                                value={newWsName}
-                                onChange={(e) => setNewWsName(e.target.value)}
-                                placeholder="WORKSPACE TITLE"
-                                className="flex-1 bg-black/50 border border-white/20 p-3 text-xs uppercase tracking-widest hover:border-[var(--accent)] focus:border-[var(--accent)] outline-none transition-colors text-white"
-                            />
-                            <Button onClick={handleCreate} disabled={!newWsName || isCreating} variant="glass-accent" className="shrink-0">
+                            <div className="flex-1">
+                                <Input
+                                    type="text"
+                                    value={newWsName}
+                                    onChange={(e) => setNewWsName(e.target.value)}
+                                    placeholder="WORKSPACE TITLE"
+                                    className="uppercase tracking-widest"
+                                />
+                            </div>
+                            <Button onClick={handleCreate} disabled={!newWsName || isCreating} variant="glass-accent" className="shrink-0 h-[54px]">
                                 <Plus size={14} className="mr-2" /> CREATE
                             </Button>
                         </div>
@@ -215,27 +220,32 @@ export default function WorkspacesPage() {
                                                 </div>
 
                                                 {activeWsIdForInvite === ws.id && (
-                                                    <div className="flex flex-col sm:flex-row gap-2 animate-in fade-in slide-in-from-top-2">
-                                                        <input
-                                                            type="email"
-                                                            value={inviteEmail}
-                                                            onChange={(e) => setInviteEmail(e.target.value)}
-                                                            placeholder="TARGET EMAIL"
-                                                            className="flex-1 bg-black border border-white/20 p-2 text-xs uppercase tracking-widest outline-none text-white focus:border-[var(--accent)]"
-                                                        />
-                                                        <select
-                                                            value={inviteRole}
-                                                            onChange={(e: any) => setInviteRole(e.target.value)}
-                                                            className="bg-black border border-white/20 p-2 text-xs uppercase font-mono tracking-widest outline-none text-white focus:border-[var(--accent)]"
-                                                        >
-                                                            <option value="VIEWER">VIEWER</option>
-                                                            <option value="EDITOR">EDITOR</option>
-                                                            <option value="ADMIN">ADMIN</option>
-                                                        </select>
-                                                        <Button variant="glass" onClick={() => handleInvite(ws.id)} disabled={!inviteEmail || isCreating} className="text-xs shrink-0 py-2 border-[var(--accent)]/30 hover:border-[var(--accent)]">
+                                                    <div className="flex flex-col sm:flex-row gap-2 animate-in fade-in slide-in-from-top-2 items-start">
+                                                        <div className="flex-1 w-full">
+                                                            <Input
+                                                                type="email"
+                                                                value={inviteEmail}
+                                                                onChange={(e) => setInviteEmail(e.target.value)}
+                                                                placeholder="TARGET EMAIL"
+                                                                className="uppercase tracking-widest"
+                                                            />
+                                                        </div>
+                                                        <div className="w-full sm:w-48">
+                                                            <Select
+                                                                options={[
+                                                                    { value: "VIEWER", label: "VIEWER" },
+                                                                    { value: "EDITOR", label: "EDITOR" },
+                                                                    { value: "ADMIN", label: "ADMIN" }
+                                                                ]}
+                                                                value={inviteRole}
+                                                                onChange={(val) => setInviteRole(val as any)}
+                                                                className="w-full"
+                                                            />
+                                                        </div>
+                                                        <Button variant="glass" onClick={() => handleInvite(ws.id)} disabled={!inviteEmail || isCreating} className="text-xs shrink-0 py-[17px] border-[var(--accent)]/30 hover:border-[var(--accent)]">
                                                             SEND
                                                         </Button>
-                                                        <Button variant="ghost" onClick={() => setActiveWsIdForInvite(null)} className="shrink-0 px-2 text-white/50">
+                                                        <Button variant="ghost" onClick={() => setActiveWsIdForInvite(null)} className="shrink-0 px-2 py-[17px] text-white/50">
                                                             CANCEL
                                                         </Button>
                                                     </div>
@@ -246,25 +256,27 @@ export default function WorkspacesPage() {
                                                         <div className="text-[10px] uppercase tracking-widest text-[#00E676] font-bold mb-2 flex items-center gap-2">
                                                             <Webhook size={12} /> Edge Event Sourcing
                                                         </div>
-                                                        <input
+                                                        <Input
                                                             type="url"
                                                             value={webhookUrl}
                                                             onChange={(e) => setWebhookUrl(e.target.value)}
                                                             placeholder="https://your-webhook-endpoint.com/api/v1"
-                                                            className="w-full bg-black border border-white/20 p-2 text-xs font-mono tracking-widest outline-none text-white focus:border-[var(--accent)]"
+                                                            className="font-mono tracking-widest"
                                                         />
-                                                        <div className="flex flex-col sm:flex-row gap-2">
-                                                            <input
-                                                                type="text"
-                                                                value={webhookDesc}
-                                                                onChange={(e) => setWebhookDesc(e.target.value)}
-                                                                placeholder="DESCRIPTION (optional)"
-                                                                className="flex-1 bg-black border border-white/20 p-2 text-xs uppercase tracking-widest outline-none text-white focus:border-[var(--accent)]"
-                                                            />
-                                                            <Button variant="glass-accent" onClick={() => handleRegisterWebhook(ws.id)} disabled={!webhookUrl || isCreating} className="text-xs shrink-0 py-2 px-6 hover:shadow-[0_0_15px_var(--accent)]">
+                                                        <div className="flex flex-col sm:flex-row gap-2 items-start mt-2">
+                                                            <div className="flex-1 w-full">
+                                                                <Input
+                                                                    type="text"
+                                                                    value={webhookDesc}
+                                                                    onChange={(e) => setWebhookDesc(e.target.value)}
+                                                                    placeholder="DESCRIPTION (OPTIONAL)"
+                                                                    className="uppercase tracking-widest"
+                                                                />
+                                                            </div>
+                                                            <Button variant="glass-accent" onClick={() => handleRegisterWebhook(ws.id)} disabled={!webhookUrl || isCreating} className="text-xs shrink-0 h-[54px] px-6 hover:shadow-[0_0_15px_var(--accent)]">
                                                                 BIND WEBHOOK
                                                             </Button>
-                                                            <Button variant="ghost" onClick={() => setActiveWsIdForWebhook(null)} className="shrink-0 px-2 text-white/50">
+                                                            <Button variant="ghost" onClick={() => setActiveWsIdForWebhook(null)} className="shrink-0 px-2 h-[54px] text-white/50">
                                                                 CANCEL
                                                             </Button>
                                                         </div>

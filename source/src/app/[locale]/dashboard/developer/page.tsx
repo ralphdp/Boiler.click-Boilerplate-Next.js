@@ -3,6 +3,7 @@
 import { useSession } from "next-auth/react";
 import { GlassCard } from "@/components/ui/GlassCard";
 import { Button } from "@/components/ui/Button";
+import { Input } from "@/components/ui/Input";
 import Link from "next/link";
 import { ArrowLeft, KeyRound, Plus, Trash2, ShieldAlert, Webhook } from "lucide-react";
 import { useTranslation } from "@/core/i18n/LanguageProvider";
@@ -120,13 +121,15 @@ export default function DeveloperPage() {
                         <p className="text-[10px] uppercase font-mono text-white/70">
                             Please copy this key immediately. For security, it will never be displayed again.
                         </p>
-                        <div className="flex gap-2">
-                            <input
-                                readOnly
-                                value={revealedKey}
-                                className="flex-1 bg-black/50 border border-[var(--accent)]/30 p-3 font-mono text-sm tracking-widest text-[var(--accent)] outline-none"
-                            />
-                            <Button variant="glass-accent" onClick={handleCopy} className="shrink-0">
+                        <div className="flex flex-col sm:flex-row gap-4 items-center">
+                            <div className="flex-1 w-full">
+                                <Input
+                                    readOnly
+                                    value={revealedKey}
+                                    className="font-mono text-sm tracking-widest text-[var(--accent)] border-[var(--accent)]/30 h-[52px]"
+                                />
+                            </div>
+                            <Button variant="glass-accent" onClick={handleCopy} className="shrink-0 h-[52px]">
                                 COPY KEY
                             </Button>
                         </div>
@@ -140,13 +143,15 @@ export default function DeveloperPage() {
                     <div>
                         <h2 className="text-[10px] font-bold tracking-widest uppercase text-white/70 mb-4">Provision New Client Key</h2>
                         <div className="flex flex-col sm:flex-row gap-4">
-                            <input
-                                value={newKeyName}
-                                onChange={(e) => setNewKeyName(e.target.value)}
-                                placeholder="IDENTIFIER (e.g. Production Substrate)"
-                                className="flex-1 bg-black/50 border border-white/20 p-3 text-xs uppercase tracking-widest hover:border-[var(--accent)] focus:border-[var(--accent)] outline-none transition-colors text-white"
-                            />
-                            <Button onClick={handleGenerate} disabled={!newKeyName || isGenerating} variant="glass-accent" className="shrink-0">
+                            <div className="flex-1 w-full">
+                                <Input
+                                    value={newKeyName}
+                                    onChange={(e) => setNewKeyName(e.target.value)}
+                                    placeholder="IDENTIFIER (E.G. PRODUCTION SUBSTRATE)"
+                                    className="uppercase tracking-widest text-white h-[52px]"
+                                />
+                            </div>
+                            <Button onClick={handleGenerate} disabled={!newKeyName || isGenerating} variant="glass-accent" className="shrink-0 h-[52px]">
                                 <Plus size={14} className="mr-2" /> GENERATE
                             </Button>
                         </div>
@@ -201,21 +206,23 @@ export default function DeveloperPage() {
 
                         <div>
                             <h2 className="text-[10px] font-bold tracking-widest uppercase text-white/70 mb-4">Mount New Webhook</h2>
-                            <div className="flex flex-col space-y-2">
-                                <input
+                            <div className="flex flex-col space-y-4">
+                                <Input
                                     value={newWebhookDesc}
                                     onChange={(e) => setNewWebhookDesc(e.target.value)}
-                                    placeholder="DESCRIPTION (e.g. Primary Ingest Node)"
-                                    className="w-full bg-black/50 border border-white/20 p-3 text-xs uppercase tracking-widest hover:border-[var(--accent)] focus:border-[var(--accent)] outline-none transition-colors text-white"
+                                    placeholder="DESCRIPTION (E.G. PRIMARY INGEST NODE)"
+                                    className="uppercase tracking-widest text-white h-[52px]"
                                 />
                                 <div className="flex flex-col sm:flex-row gap-4">
-                                    <input
-                                        value={newWebhookUrl}
-                                        onChange={(e) => setNewWebhookUrl(e.target.value)}
-                                        placeholder="https://..."
-                                        className="flex-1 bg-black/50 border border-white/20 p-3 text-xs font-mono text-white/80 focus:border-[#00E676] outline-none transition-colors"
-                                    />
-                                    <Button onClick={handleRegisterWebhook} disabled={!newWebhookUrl || !newWebhookDesc || isGenerating} variant="glass-accent" className="shrink-0 bg-[#00E676]/20 text-[#00E676] border-[#00E676]/50 hover:bg-[#00E676]/40">
+                                    <div className="flex-1 w-full">
+                                        <Input
+                                            value={newWebhookUrl}
+                                            onChange={(e) => setNewWebhookUrl(e.target.value)}
+                                            placeholder="HTTPS://..."
+                                            className="font-mono text-white/80 focus:border-[#00E676] h-[52px]"
+                                        />
+                                    </div>
+                                    <Button onClick={handleRegisterWebhook} disabled={!newWebhookUrl || !newWebhookDesc || isGenerating} variant="glass-accent" className="shrink-0 bg-[#00E676]/20 text-[#00E676] border-[#00E676]/50 hover:bg-[#00E676]/40 h-[52px]">
                                         <Plus size={14} className="mr-2" /> MOUNT
                                     </Button>
                                 </div>
