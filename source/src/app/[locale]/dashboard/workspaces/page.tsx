@@ -15,7 +15,7 @@ import { registerWebhook } from "@/core/actions/webhooks";
 
 export default function WorkspacesPage() {
     const { data: session, update } = useSession();
-    const { language } = useTranslation();
+    const { language, t } = useTranslation();
     const [workspaces, setWorkspaces] = useState<any[]>([]);
     const [loading, setLoading] = useState(true);
 
@@ -72,7 +72,7 @@ export default function WorkspacesPage() {
         setIsCreating(true);
         const res = await inviteWorkspaceMember(wsId, inviteEmail, inviteRole);
         if (res.success) {
-            alert(`Invitation pulse sent to ${inviteEmail}.`);
+            alert(`${t.workspaces.invitationSent} ${inviteEmail}.`);
             setInviteEmail("");
             setActiveWsIdForInvite(null);
         } else {
@@ -84,14 +84,14 @@ export default function WorkspacesPage() {
     const handleSwitchContext = async (ws: any) => {
         setLoading(true);
         await update({ activeWorkspace: ws.id });
-        alert(`Context Switched. You are now operating inside: ${ws.name}`);
+        alert(`${t.workspaces.contextSwitched} ${ws.name}`);
         setLoading(false);
     };
 
     const handleExitContext = async () => {
         setLoading(true);
         await update({ activeWorkspace: null });
-        alert(`Context Severed. You have returned to your Personal Substrate.`);
+        alert(t.workspaces.contextSevered);
         setLoading(false);
     };
 
@@ -100,7 +100,7 @@ export default function WorkspacesPage() {
         setIsCreating(true);
         const res = await registerWebhook(wsId, webhookUrl, webhookDesc || "Sovereign Integration");
         if (res.success) {
-            alert(`Cryptographic Webhook mounted to ${webhookUrl}.`);
+            alert(`${t.workspaces.webhookMounted} ${webhookUrl}.`);
             setWebhookUrl("");
             setWebhookDesc("");
             setActiveWsIdForWebhook(null);
@@ -115,7 +115,7 @@ export default function WorkspacesPage() {
             <div className="w-full max-w-2xl mb-6">
                 <Button as={Link} href={`/${language}/dashboard`} variant="ghost" className="w-fit text-white/50 px-0">
                     <ArrowLeft size={14} className="mr-2" />
-                    Back to Terminal
+                    {t.settings.backToTerminal}
                 </Button>
             </div>
 
@@ -123,10 +123,10 @@ export default function WorkspacesPage() {
                 <div className="space-y-2 text-left">
                     <h1 className="text-2xl font-black uppercase tracking-widest text-[var(--accent)] flex items-center gap-3">
                         <LayoutGrid size={24} />
-                        WORKSPACE TOPOLOGY
+                        {t.workspaces.title}
                     </h1>
                     <p className="text-[10px] uppercase tracking-[0.2em] font-bold text-white/50">
-                        B2B Omni-Tenant Architecture
+                        {t.workspaces.subtitle}
                     </p>
                 </div>
 
@@ -134,19 +134,19 @@ export default function WorkspacesPage() {
 
                 <div className="space-y-6">
                     <div>
-                        <h2 className="text-[10px] font-bold tracking-widest uppercase text-white/70 mb-4">Initialize New Substrate</h2>
+                        <h2 className="text-[10px] font-bold tracking-widest uppercase text-white/70 mb-4">{t.workspaces.initNew}</h2>
                         <div className="flex flex-col sm:flex-row gap-4">
                             <div className="flex-1">
                                 <Input
                                     type="text"
                                     value={newWsName}
                                     onChange={(e) => setNewWsName(e.target.value)}
-                                    placeholder="WORKSPACE TITLE"
+                                    placeholder={t.workspaces.wsTitlePlaceholder}
                                     className="uppercase tracking-widest"
                                 />
                             </div>
                             <Button onClick={handleCreate} disabled={!newWsName || isCreating} variant="glass-accent" className="shrink-0 h-[54px]">
-                                <Plus size={14} className="mr-2" /> CREATE
+                                <Plus size={14} className="mr-2" /> {t.workspaces.create}
                             </Button>
                         </div>
                     </div>
@@ -155,7 +155,7 @@ export default function WorkspacesPage() {
 
                     <div>
                         <h2 className="text-[10px] font-bold tracking-widest uppercase text-white/70 mb-4 flex items-center justify-between">
-                            Active Directories
+                            {t.workspaces.activeDirs}
                             {(session?.user as any)?.activeWorkspace && (
                                 <Button
                                     variant="outline"
@@ -163,15 +163,15 @@ export default function WorkspacesPage() {
                                     disabled={loading}
                                     className="text-[9px] h-6 px-3 border-red-500/30 text-red-500 hover:bg-red-500/10"
                                 >
-                                    EXIT WORKSPACE
+                                    {t.workspaces.exitWorkspace}
                                 </Button>
                             )}
                         </h2>
 
                         {loading ? (
-                            <p className="text-white/30 text-xs font-mono uppercase tracking-widest animate-pulse">Scanning matrix...</p>
+                            <p className="text-white/30 text-xs font-mono uppercase tracking-widest animate-pulse">{t.workspaces.scanning}</p>
                         ) : workspaces.length === 0 ? (
-                            <p className="text-white/30 text-xs font-mono uppercase tracking-widest p-4 border border-dashed border-white/10 text-center">No active workspaces detected.</p>
+                            <p className="text-white/30 text-xs font-mono uppercase tracking-widest p-4 border border-dashed border-white/10 text-center">{t.workspaces.noWorkspaces}</p>
                         ) : (
                             <div className="space-y-4">
                                 {workspaces.map(ws => (
@@ -182,10 +182,10 @@ export default function WorkspacesPage() {
                                                     <h3 className="font-black uppercase tracking-widest text-sm flex items-center gap-2">
                                                         {ws.name}
                                                         {(session?.user as any)?.activeWorkspace === ws.id && (
-                                                            <span className="text-[9px] bg-[var(--accent)] text-black px-2 py-0.5 rounded-sm">ACTIVE</span>
+                                                            <span className="text-[9px] bg-[var(--accent)] text-black px-2 py-0.5 rounded-sm">{t.workspaces.activeBadge}</span>
                                                         )}
                                                     </h3>
-                                                    <p className="text-[10px] uppercase font-mono text-white/50 mt-1">ID: {ws.id}</p>
+                                                    <p className="text-[10px] uppercase font-mono text-white/50 mt-1">{t.workspaces.idLabel} {ws.id}</p>
                                                 </div>
                                             </div>
                                             <div className="flex items-center gap-3">
@@ -196,7 +196,7 @@ export default function WorkspacesPage() {
                                                     variant={(session?.user as any)?.activeWorkspace === ws.id ? "ghost" : "glass"}
                                                     onClick={() => handleSwitchContext(ws)}
                                                     className="w-10 h-10 !p-0 flex items-center justify-center rounded-sm text-[var(--accent)] border-[var(--accent)]/30 hover:bg-[var(--accent)]/10"
-                                                    title="Enter Context"
+                                                    title={t.workspaces.enterContext}
                                                     disabled={loading || (session?.user as any)?.activeWorkspace === ws.id}
                                                 >
                                                     <Activity size={18} />
@@ -209,12 +209,12 @@ export default function WorkspacesPage() {
                                                 <div className="flex flex-wrap gap-2 mb-4">
                                                     {activeWsIdForInvite !== ws.id && (
                                                         <Button variant="ghost" onClick={() => { setActiveWsIdForInvite(ws.id); setActiveWsIdForWebhook(null); }} className="w-fit border border-white/10 text-xs py-1.5 px-3">
-                                                            <Users size={12} className="mr-2" /> Invite Handshake
+                                                            <Users size={12} className="mr-2" /> {t.workspaces.inviteHandshake}
                                                         </Button>
                                                     )}
                                                     {activeWsIdForWebhook !== ws.id && ws.role === "OWNER" && (
                                                         <Button variant="ghost" onClick={() => { setActiveWsIdForWebhook(ws.id); setActiveWsIdForInvite(null); }} className="w-fit border border-white/10 text-xs py-1.5 px-3">
-                                                            <Webhook size={12} className="mr-2" /> Mount Webhook
+                                                            <Webhook size={12} className="mr-2" /> {t.workspaces.mountWebhook}
                                                         </Button>
                                                     )}
                                                 </div>
@@ -226,7 +226,7 @@ export default function WorkspacesPage() {
                                                                 type="email"
                                                                 value={inviteEmail}
                                                                 onChange={(e) => setInviteEmail(e.target.value)}
-                                                                placeholder="TARGET EMAIL"
+                                                                placeholder={t.workspaces.targetEmail}
                                                                 className="uppercase tracking-widest"
                                                             />
                                                         </div>
@@ -243,10 +243,10 @@ export default function WorkspacesPage() {
                                                             />
                                                         </div>
                                                         <Button variant="glass" onClick={() => handleInvite(ws.id)} disabled={!inviteEmail || isCreating} className="text-xs shrink-0 py-[17px] border-[var(--accent)]/30 hover:border-[var(--accent)]">
-                                                            SEND
+                                                            {t.workspaces.send}
                                                         </Button>
                                                         <Button variant="ghost" onClick={() => setActiveWsIdForInvite(null)} className="shrink-0 px-2 py-[17px] text-white/50">
-                                                            CANCEL
+                                                            {t.workspaces.cancel}
                                                         </Button>
                                                     </div>
                                                 )}
@@ -254,13 +254,13 @@ export default function WorkspacesPage() {
                                                 {activeWsIdForWebhook === ws.id && ws.role === "OWNER" && (
                                                     <div className="flex flex-col gap-2 animate-in fade-in slide-in-from-top-2 bg-black/50 border border-[var(--accent)]/30 p-4 relative">
                                                         <div className="text-[10px] uppercase tracking-widest text-[#00E676] font-bold mb-2 flex items-center gap-2">
-                                                            <Webhook size={12} /> Edge Event Sourcing
+                                                            <Webhook size={12} /> {t.workspaces.edgeEvent}
                                                         </div>
                                                         <Input
                                                             type="url"
                                                             value={webhookUrl}
                                                             onChange={(e) => setWebhookUrl(e.target.value)}
-                                                            placeholder="https://your-webhook-endpoint.com/api/v1"
+                                                            placeholder={t.workspaces.webhookPlaceholder}
                                                             className="font-mono tracking-widest"
                                                         />
                                                         <div className="flex flex-col sm:flex-row gap-2 items-start mt-2">
@@ -269,15 +269,15 @@ export default function WorkspacesPage() {
                                                                     type="text"
                                                                     value={webhookDesc}
                                                                     onChange={(e) => setWebhookDesc(e.target.value)}
-                                                                    placeholder="DESCRIPTION (OPTIONAL)"
+                                                                    placeholder={t.workspaces.descOptional}
                                                                     className="uppercase tracking-widest"
                                                                 />
                                                             </div>
                                                             <Button variant="glass-accent" onClick={() => handleRegisterWebhook(ws.id)} disabled={!webhookUrl || isCreating} className="text-xs shrink-0 h-[54px] px-6 hover:shadow-[0_0_15px_var(--accent)]">
-                                                                BIND WEBHOOK
+                                                                {t.workspaces.bindWebhook}
                                                             </Button>
                                                             <Button variant="ghost" onClick={() => setActiveWsIdForWebhook(null)} className="shrink-0 px-2 h-[54px] text-white/50">
-                                                                CANCEL
+                                                                {t.workspaces.cancel}
                                                             </Button>
                                                         </div>
                                                     </div>
@@ -295,18 +295,18 @@ export default function WorkspacesPage() {
                             <div className="w-full h-px bg-white/5" />
                             <div className="space-y-4">
                                 <h2 className="text-[10px] font-bold tracking-widest uppercase text-white/70 flex items-center gap-2">
-                                    <FileText size={14} /> Omni-Trace Audit Log
+                                    <FileText size={14} /> {t.workspaces.auditLogTitle}
                                 </h2>
                                 <p className="text-[10px] uppercase font-mono text-white/50 mb-4">
-                                    Immutable historical telemetry for this Substrate.
+                                    {t.workspaces.auditLogDesc}
                                 </p>
                                 <DataGrid
                                     data={auditLogs}
                                     columns={[
-                                        { id: "timestamp", header: "Time", width: "15%", render: (row: any) => new Date(row.timestamp).toLocaleString() },
-                                        { id: "action", header: "Action", width: "20%" },
-                                        { id: "user", header: "User", width: "25%", render: (row: any) => <span className="opacity-75">{row.user}</span> },
-                                        { id: "details", header: "Details", width: "40%", render: (row: any) => <span className="text-white/40">{row.details}</span> }
+                                        { id: "timestamp", header: t.workspaces.gridTime, width: "15%", render: (row: any) => new Date(row.timestamp).toLocaleString() },
+                                        { id: "action", header: t.workspaces.gridAction, width: "20%" },
+                                        { id: "user", header: t.workspaces.gridUser, width: "25%", render: (row: any) => <span className="opacity-75">{row.user}</span> },
+                                        { id: "details", header: t.workspaces.gridDetails, width: "40%", render: (row: any) => <span className="text-white/40">{row.details}</span> }
                                     ]}
                                     searchable={true}
                                 />
