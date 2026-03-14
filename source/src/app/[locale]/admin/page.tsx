@@ -111,6 +111,7 @@ export default function AdminPage() {
     const [storePage, setStorePage] = useState(1);
     const [totalStoreProducts, setTotalStoreProducts] = useState(0);
     const [isStoreModalOpen, setIsStoreModalOpen] = useState(false);
+    const [isStoreDropdownOpen, setIsStoreDropdownOpen] = useState(false);
 
     // Read inbound hash on initial render to preserve active tab
     useEffect(() => {
@@ -998,57 +999,78 @@ export default function AdminPage() {
                                                         <p className="text-xs font-serif italic text-white/50">Manage physical or digital store entities. Scale-hardened.</p>
                                                     </div>
                                                     <div className="flex flex-col items-end gap-2">
-                                                        <button
-                                                            onClick={() => { setIsEditingProduct(false); setProductForm({ id: "", name: "", description: "", price: "", imageUrl: "", stripeLink: "" }); setIsStoreModalOpen(true); }}
-                                                            className="bg-[var(--accent)] text-white px-3 py-1.5 text-xs font-bold uppercase tracking-widest flex items-center gap-2 transition-colors hover:bg-white/10 border border-[var(--accent)]"
-                                                        >
-                                                            <Plus size={14} /> Add Product
-                                                        </button>
-                                                        <div className="flex items-center gap-2 flex-wrap justify-end">
-                                                            <label className="bg-white/5 border border-white/10 text-white/70 hover:text-white px-3 py-1.5 text-xs uppercase tracking-widest flex items-center gap-2 cursor-pointer transition-colors">
-                                                                <ArrowUp size={14} /> Import CSV
-                                                                <input type="file" accept=".csv" className="hidden" onChange={async (e) => {
-                                                                    if (!e.target.files?.[0]) return;
-                                                                    const text = await e.target.files[0].text();
-                                                                    const rows = text.split("\n").slice(1).filter(r => r.trim());
-                                                                    // Very naive split for basic CSV
-                                                                    const prods = rows.map(Math.random() /* trigger reparse */ ? r => {
-                                                                        const parts = r.split(",");
-                                                                        const name = parts[0]?.replace(/"/g, '');
-                                                                        const price = parseFloat(parts[1]) || 0;
-                                                                        return { name, price, description: parts[2] || '', imageUrl: parts[3] || '', stripeLink: parts[4] || '' };
-                                                                    } : () => ({}));
-                                                                    if (confirm(`Bulk import ${prods.length} products?`)) {
-                                                                        setLoadingProducts(true);
-                                                                        const res = await bulkImportStoreProducts(prods);
-                                                                        if (res.success) {
-                                                                            toast({ title: "Import Successful", description: `Imported ${prods.length} products.`, type: "success" });
-                                                                            setStorePage(1);
-                                                                            const fresh = await getStoreProducts(storeSearch, 50, 0);
-                                                                            setStoreProducts(fresh.items);
-                                                                            setTotalStoreProducts(fresh.totalCount);
-                                                                            setLoadingProducts(false);
-                                                                        }
-                                                                    }
-                                                                    e.target.value = '';
-                                                                }} />
-                                                            </label>
-                                                            <button
-                                                                onClick={async () => {
-                                                                    const exportData = await getStoreProducts("", 10000, 0);
-                                                                    const csvContent = "data:text/csv;charset=utf-8,Name,Price,Description,ImageUrl,StripeLink\n" + exportData.items.map((p: any) => `"${p.name || ''}",${p.price || 0},"${p.description || ''}","${p.imageUrl || ''}","${p.stripeLink || ''}"`).join("\n");
-                                                                    const encodedUri = encodeURI(csvContent);
-                                                                    const link = document.createElement("a");
-                                                                    link.setAttribute("href", encodedUri);
-                                                                    link.setAttribute("download", `store_export_${new Date().toISOString()}.csv`);
-                                                                    document.body.appendChild(link);
-                                                                    link.click();
-                                                                    document.body.removeChild(link);
-                                                                }}
-                                                                className="bg-white/5 hover:bg-white/10 border border-white/10 text-white/70 hover:text-white px-6 h-[54px] rounded text-[10px] uppercase font-black tracking-widest flex items-center justify-center gap-2 transition-colors shrink-0"
-                                                            >
-                                                                <Download size={14} /> Export CSV
-                                                            </button>
+                                                        <div className="relative group">
+                                                            <div className="flex bg-[var(--accent)] text-black font-bold uppercase tracking-widest text-xs h-[54px] rounded border border-[var(--accent)]/50 items-stretch">
+                                                                <button
+                                                                    onClick={() => { setIsEditingProduct(false); setProductForm({ id: "", name: "", description: "", price: "", imageUrl: "", stripeLink: "" }); setIsStoreModalOpen(true); }}
+                                                                    className="px-6 flex items-center justify-center gap-2 hover:bg-white/20 transition-colors h-full text-black hover:text-black"
+                                                                >
+                                                                    <Plus size={14} /> Add Product
+                                                                </button>
+                                                                <div className="w-[1px] bg-black/20" />
+                                                                <button
+                                                                    onClick={() => setIsStoreDropdownOpen(!isStoreDropdownOpen)}
+                                                                    className="px-4 flex items-center justify-center hover:bg-white/20 transition-colors h-full text-black hover:text-black"
+                                                                >
+                                                                    <ChevronDown size={14} className={`transition-transform duration-300 ${isStoreDropdownOpen ? 'rotate-180' : ''}`} />
+                                                                </button>
+                                                            </div>
+                                                            <AnimatePresence>
+                                                                {isStoreDropdownOpen && (
+                                                                    <motion.div
+                                                                        initial={{ opacity: 0, y: -4, scaleY: 0.95 }}
+                                                                        animate={{ opacity: 1, y: 0, scaleY: 1 }}
+                                                                        exit={{ opacity: 0, y: -4, scaleY: 0.95 }}
+                                                                        className="absolute right-0 top-[60px] z-50 w-48 bg-black border border-white/10 shadow-2xl flex flex-col items-start origin-top-right overflow-hidden rounded"
+                                                                    >
+                                                                        <label className="w-full text-left px-4 py-4 text-[10px] technical tracking-widest hover:bg-white/5 cursor-pointer uppercase text-white/70 hover:text-white transition-colors flex items-center gap-2">
+                                                                            <ArrowUp size={14} /> Import CSV
+                                                                            <input type="file" accept=".csv" className="hidden" onChange={async (e) => {
+                                                                                setIsStoreDropdownOpen(false);
+                                                                                if (!e.target.files?.[0]) return;
+                                                                                const text = await e.target.files[0].text();
+                                                                                const rows = text.split("\n").slice(1).filter(r => r.trim());
+                                                                                const prods = rows.map(Math.random() /* trigger reparse */ ? r => {
+                                                                                    const parts = r.split(",");
+                                                                                    const name = parts[0]?.replace(/"/g, '');
+                                                                                    const price = parseFloat(parts[1]) || 0;
+                                                                                    return { name, price, description: parts[2] || '', imageUrl: parts[3] || '', stripeLink: parts[4] || '' };
+                                                                                } : () => ({}));
+                                                                                if (confirm(`Bulk import ${prods.length} products?`)) {
+                                                                                    setLoadingProducts(true);
+                                                                                    const res = await bulkImportStoreProducts(prods);
+                                                                                    if (res.success) {
+                                                                                        toast({ title: "Import Successful", description: `Imported ${prods.length} products.`, type: "success" });
+                                                                                        setStorePage(1);
+                                                                                        const fresh = await getStoreProducts(storeSearch, 50, 0);
+                                                                                        setStoreProducts(fresh.items);
+                                                                                        setTotalStoreProducts(fresh.totalCount);
+                                                                                        setLoadingProducts(false);
+                                                                                    }
+                                                                                }
+                                                                                e.target.value = '';
+                                                                            }} />
+                                                                        </label>
+                                                                        <button
+                                                                            onClick={async () => {
+                                                                                setIsStoreDropdownOpen(false);
+                                                                                const exportData = await getStoreProducts("", 10000, 0);
+                                                                                const csvContent = "data:text/csv;charset=utf-8,Name,Price,Description,ImageUrl,StripeLink\n" + exportData.items.map((p: any) => `"${p.name || ''}",${p.price || 0},"${p.description || ''}","${p.imageUrl || ''}","${p.stripeLink || ''}"`).join("\n");
+                                                                                const encodedUri = encodeURI(csvContent);
+                                                                                const link = document.createElement("a");
+                                                                                link.setAttribute("href", encodedUri);
+                                                                                link.setAttribute("download", `store_export_${new Date().toISOString()}.csv`);
+                                                                                document.body.appendChild(link);
+                                                                                link.click();
+                                                                                document.body.removeChild(link);
+                                                                            }}
+                                                                            className="w-full text-left px-4 py-4 text-[10px] technical tracking-widest hover:bg-white/5 uppercase text-white/70 hover:text-white transition-colors flex items-center gap-2 border-t border-white/5"
+                                                                        >
+                                                                            <Download size={14} /> Export CSV
+                                                                        </button>
+                                                                    </motion.div>
+                                                                )}
+                                                            </AnimatePresence>
                                                         </div>
                                                     </div>
                                                 </div>
