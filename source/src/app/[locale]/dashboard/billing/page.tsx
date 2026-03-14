@@ -16,7 +16,7 @@ const STRIPE_PRO_PRICE_ID = process.env.NEXT_PUBLIC_STRIPE_PRO_PRICE_ID || "pric
 
 export default function BillingPage() {
     const { data: session } = useSession();
-    const { language } = useTranslation();
+    const { language, t } = useTranslation();
     const [billingData, setBillingData] = useState<any>(null);
     const [loading, setLoading] = useState(true);
     const [actionLoading, setActionLoading] = useState(false);
@@ -83,10 +83,10 @@ export default function BillingPage() {
             <main className="relative min-h-screen flex flex-col items-center justify-center p-6 text-white overflow-hidden">
                 <GlassCard className="w-full max-w-2xl text-center space-y-6">
                     <ShieldAlert size={48} className="mx-auto text-red-500/50" />
-                    <h1 className="text-xl font-black uppercase tracking-widest text-[var(--accent)]">No Active Context</h1>
-                    <p className="text-xs uppercase font-mono tracking-widest text-white/50">You must execute `Enter Context` on a Workspace before manipulating billing matrices.</p>
+                    <h1 className="text-xl font-black uppercase tracking-widest text-[var(--accent)]">{t.billing.noContext}</h1>
+                    <p className="text-xs uppercase font-mono tracking-widest text-white/50">{t.billing.noContextDesc}</p>
                     <Button as={Link} href={`/${language}/dashboard/workspaces`} variant="glass-accent">
-                        RETURN TO WORKSPACES
+                        {t.billing.returnToWorkspaces}
                     </Button>
                 </GlassCard>
             </main>
@@ -98,7 +98,7 @@ export default function BillingPage() {
             <div className="w-full max-w-4xl mb-6">
                 <Button as={Link} href={`/${language}/dashboard`} variant="ghost" className="w-fit text-white/50 px-0">
                     <ArrowLeft size={14} className="mr-2" />
-                    Back to Terminal
+                    {t.settings.backToTerminal}
                 </Button>
             </div>
 
@@ -106,10 +106,10 @@ export default function BillingPage() {
                 <div className="space-y-2 text-left">
                     <h1 className="text-2xl font-black uppercase tracking-widest text-[var(--accent)] flex items-center gap-3">
                         <CreditCard size={24} />
-                        WORKSPACE BILLING MATRIX
+                        {t.billing.title}
                     </h1>
                     <p className="text-[10px] uppercase tracking-[0.2em] font-bold text-white/50">
-                        Context: {activeWorkspace}
+                        {t.billing.context} {activeWorkspace}
                     </p>
                 </div>
 
@@ -118,10 +118,10 @@ export default function BillingPage() {
                 <div className="grid grid-cols-1 md:grid-cols-2 gap-8">
                     {/* Left side: Subscription Status */}
                     <div className="space-y-6">
-                        <h2 className="text-[10px] font-bold tracking-widest uppercase text-white/70">Current Infrastructure</h2>
+                        <h2 className="text-[10px] font-bold tracking-widest uppercase text-white/70">{t.billing.currentInfra}</h2>
 
                         {loading ? (
-                            <p className="text-white/30 text-xs font-mono uppercase tracking-widest animate-pulse">Scanning matrix...</p>
+                            <p className="text-white/30 text-xs font-mono uppercase tracking-widest animate-pulse">{t.billing.scanning}</p>
                         ) : (
                             <div className="p-6 bg-black/50 border border-white/10 relative overflow-hidden flex flex-col justify-between min-h-[160px]">
                                 {billingData?.billingStatus === 'active' && (
@@ -129,20 +129,20 @@ export default function BillingPage() {
                                 )}
                                 <div>
                                     <h3 className="font-black uppercase tracking-widest text-xl mb-1 flex items-center gap-2">
-                                        {billingData?.billingStatus === 'active' ? 'VANGUARD SECURE' : 'FREE TIER'}
+                                        {billingData?.billingStatus === 'active' ? t.billing.vanguardSecure : t.billing.freeTier}
                                     </h3>
                                     <p className="text-[10px] uppercase font-mono text-white/50">
-                                        Status: <span className={billingData?.billingStatus === 'active' ? 'text-[#00E676]' : 'text-white/70'}>{billingData?.billingStatus || "none"}</span>
+                                        {t.billing.status} <span className={billingData?.billingStatus === 'active' ? 'text-[#00E676]' : 'text-white/70'}>{billingData?.billingStatus || t.billing.noneStatus}</span>
                                     </p>
                                 </div>
 
                                 {billingData?.billingStatus === 'active' ? (
                                     <Button variant="outline" onClick={handleManage} disabled={actionLoading} className="w-full mt-6 text-xs border-white/20">
-                                        Open Stellar Portal
+                                        {t.billing.openPortal}
                                     </Button>
                                 ) : (
                                     <p className="text-[9px] uppercase tracking-widest text-white/30 mt-6 font-bold leading-relaxed">
-                                        Your workspace is currently operating on unhardened infrastructure, limiting your execution rate and storage capacity.
+                                        {t.billing.unhardenedWarning}
                                     </p>
                                 )}
                             </div>
@@ -151,24 +151,24 @@ export default function BillingPage() {
 
                     {/* Right side: Upgrade Option */}
                     <div className="space-y-6">
-                        <h2 className="text-[10px] font-bold tracking-widest uppercase text-white/70">Upgrade Path</h2>
+                        <h2 className="text-[10px] font-bold tracking-widest uppercase text-white/70">{t.billing.upgradePath}</h2>
 
                         <div className="p-6 bg-[var(--accent)]/5 border border-[var(--accent)]/20 relative flex flex-col justify-between min-h-[160px]">
                             <div className="absolute top-0 right-0 w-32 h-32 bg-[var(--accent)]/10 blur-[50px] pointer-events-none rounded-full" />
                             <div>
                                 <h3 className="font-black uppercase tracking-widest text-xl text-[var(--accent)] flex items-center gap-2 mb-4">
-                                    <Sparkles size={18} /> OMNI VANGUARD
+                                    <Sparkles size={18} /> {t.billing.omniVanguard}
                                 </h3>
                                 <ul className="space-y-2 text-xs uppercase tracking-widest font-mono text-white/70 mb-6">
-                                    <li className="flex items-center gap-2"><CheckCircle size={10} className="text-[#00E676]" /> 1,000,000 Edge Computations</li>
-                                    <li className="flex items-center gap-2"><CheckCircle size={10} className="text-[#00E676]" /> 50GB Master Storage</li>
-                                    <li className="flex items-center gap-2"><CheckCircle size={10} className="text-[#00E676]" /> Real-time Outbound Webhooks</li>
-                                    <li className="flex items-center gap-2"><CheckCircle size={10} className="text-[#00E676]" /> Priority Logic Matrix</li>
+                                    <li className="flex items-center gap-2"><CheckCircle size={10} className="text-[#00E676]" /> {t.billing.edgeComputations}</li>
+                                    <li className="flex items-center gap-2"><CheckCircle size={10} className="text-[#00E676]" /> {t.billing.masterStorage}</li>
+                                    <li className="flex items-center gap-2"><CheckCircle size={10} className="text-[#00E676]" /> {t.billing.outboundWebhooks}</li>
+                                    <li className="flex items-center gap-2"><CheckCircle size={10} className="text-[#00E676]" /> {t.billing.priorityLogic}</li>
                                 </ul>
                             </div>
 
                             <Button variant="glass-accent" onClick={handleUpgrade} disabled={actionLoading || billingData?.billingStatus === 'active'} className="w-full py-6 font-bold uppercase tracking-[0.2em]">
-                                {billingData?.billingStatus === 'active' ? 'ACTIVE' : 'INITIALIZE PROTOCOL ($199/MO)'}
+                                {billingData?.billingStatus === 'active' ? t.billing.activeStatus : t.billing.initializeProtocol}
                             </Button>
                         </div>
                     </div>
@@ -177,23 +177,23 @@ export default function BillingPage() {
                 <div className="w-full h-px bg-white/5" />
 
                 <div className="space-y-4">
-                    <h2 className="text-[10px] font-bold tracking-widest uppercase text-white/70">Hardware Licensing</h2>
+                    <h2 className="text-[10px] font-bold tracking-widest uppercase text-white/70">{t.billing.hardwareLicensing}</h2>
                     <form onSubmit={handleRedeemVoucher} className="flex flex-col sm:flex-row gap-4 max-w-xl items-center">
                         <div className="flex-1 w-full">
                             <Input
                                 type="text"
                                 value={voucherCode}
                                 onChange={(e) => setVoucherCode(e.target.value)}
-                                placeholder="VGRD-XXXX-XXXX"
+                                placeholder={t.billing.voucherPlaceholder}
                                 className="tracking-[0.2em] font-mono text-white h-[52px]"
                             />
                         </div>
                         <Button type="submit" variant="glass" disabled={voucherLoading || !voucherCode.trim()} className="whitespace-nowrap cursor-pointer h-[52px]">
-                            {voucherLoading ? "VERIFYING CRYPTOGRAPHY..." : "REDEEM VOUCHER"}
+                            {voucherLoading ? t.billing.verifyingCrypto : t.billing.redeemVoucher}
                         </Button>
                     </form>
                     <p className="text-[9px] uppercase tracking-widest text-white/30 text-left font-serif italic">
-                        Input a 12-character cryptographic license key to bypass the Stripe Matrix.
+                        {t.billing.voucherHint}
                     </p>
                 </div>
             </GlassCard>
