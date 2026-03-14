@@ -1000,17 +1000,17 @@ export default function AdminPage() {
                                                     </div>
                                                     <div className="flex flex-col items-end gap-2">
                                                         <div className="relative group">
-                                                            <div className="flex bg-[var(--accent)] text-black font-bold uppercase tracking-widest text-xs h-[54px] rounded border border-[var(--accent)]/50 items-stretch">
+                                                            <div className="flex bg-[var(--accent)] text-white font-bold uppercase tracking-widest text-xs h-[54px] rounded border border-[var(--accent)]/50 items-stretch">
                                                                 <button
                                                                     onClick={() => { setIsEditingProduct(false); setProductForm({ id: "", name: "", description: "", price: "", imageUrl: "", stripeLink: "" }); setIsStoreModalOpen(true); }}
-                                                                    className="px-6 flex items-center justify-center gap-2 hover:bg-white/20 transition-colors h-full text-black hover:text-black"
+                                                                    className="px-6 flex items-center justify-center gap-2 hover:bg-black/20 transition-colors h-full text-white hover:text-white"
                                                                 >
                                                                     <Plus size={14} /> Add Product
                                                                 </button>
                                                                 <div className="w-[1px] bg-black/20" />
                                                                 <button
                                                                     onClick={() => setIsStoreDropdownOpen(!isStoreDropdownOpen)}
-                                                                    className="px-4 flex items-center justify-center hover:bg-white/20 transition-colors h-full text-black hover:text-black"
+                                                                    className="px-4 flex items-center justify-center hover:bg-black/20 transition-colors h-full text-white hover:text-white"
                                                                 >
                                                                     <ChevronDownIcon size={14} className={`transition-transform duration-300 ${isStoreDropdownOpen ? 'rotate-180' : ''}`} />
                                                                 </button>
