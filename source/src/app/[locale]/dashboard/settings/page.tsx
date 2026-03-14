@@ -18,7 +18,7 @@ import { useTranslation } from "@/core/i18n/LanguageProvider";
 
 export default function SettingsPage() {
     const { data: session, update } = useSession();
-    const { language } = useTranslation();
+    const { language, t } = useTranslation();
     const [name, setName] = useState(session?.user?.name || "");
     const [loading, setLoading] = useState(false);
     const [avatarUploading, setAvatarUploading] = useState(false);
@@ -129,15 +129,15 @@ export default function SettingsPage() {
             <div className="w-full max-w-xl mb-6">
                 <Button as={Link} href={`/${language}/dashboard`} variant="ghost" className="w-fit text-white/50 px-0">
                     <ArrowLeft size={14} className="mr-2" />
-                    Back to Terminal
+                    {t.settings.backToTerminal}
                 </Button>
             </div>
 
             <GlassCard className="w-full max-w-xl space-y-8">
                 <div className="space-y-2 text-left">
-                    <h1 className="text-2xl font-black uppercase tracking-widest text-[var(--accent)]">SYSTEM CONFIGURATION</h1>
+                    <h1 className="text-2xl font-black uppercase tracking-widest text-[var(--accent)]">{t.settings.title}</h1>
                     <p className="text-[10px] uppercase tracking-[0.2em] font-bold text-white/50">
-                        Manage Identity & Settings
+                        {t.settings.subtitle}
                     </p>
                 </div>
 
@@ -173,10 +173,10 @@ export default function SettingsPage() {
                             </div>
                             <div className="flex-1 space-y-1">
                                 <label className="text-[10px] font-bold tracking-widest uppercase text-white/70">
-                                    Sovereign Avatar / Gravatar
+                                    {t.settings.avatarTitle}
                                 </label>
                                 <p className="text-[9px] text-white/40 uppercase tracking-widest">
-                                    Click to upload native file to Storage Matrix.
+                                    {t.settings.avatarSubtitle}
                                 </p>
                             </div>
                         </div>
@@ -184,19 +184,19 @@ export default function SettingsPage() {
                         <div className="w-full h-px bg-white/5 my-4" />
 
                         <Input
-                            label="Email"
+                            label={t.settings.emailLabel}
                             type="text"
-                            value={session?.user?.email || "UNKNOWN"}
+                            value={session?.user?.email || t.settings.unknownEmail}
                             disabled
                             className="opacity-50 cursor-not-allowed uppercase"
                         />
 
                         <Input
-                            label="Display Handle"
+                            label={t.settings.handleLabel}
                             type="text"
                             value={name}
                             onChange={(e) => setName(e.target.value)}
-                            placeholder="ENTER NEW HANDLE"
+                            placeholder={t.settings.handlePlaceholder}
                             className="uppercase transition-colors text-white"
                         />
 
@@ -205,23 +205,23 @@ export default function SettingsPage() {
                         {/* SECURITY & MFA MATRIX */}
                         <div className="space-y-4">
                             <label className="text-[10px] font-bold tracking-widest uppercase text-white/70">
-                                Cryptographic Security & MFA
+                                {t.settings.mfaTitle}
                             </label>
 
                             <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
                                 <Button type="button" variant="outline" className="w-full justify-start pl-4" onClick={handlePasswordReset} disabled={!!isOAuth}>
                                     <KeyRound size={14} className="mr-3 text-white/50" />
-                                    Reset Password
+                                    {t.settings.resetPassword}
                                 </Button>
 
                                 <Button type="button" variant="outline" className="w-full justify-start pl-4" onClick={() => setActiveModal("TOTP")} disabled={!!isOAuth}>
                                     <ShieldAlert size={14} className="mr-3 text-white/50" />
-                                    Enable TOTP Auth
+                                    {t.settings.enableTotp}
                                 </Button>
 
                                 <Button type="button" variant="outline" className="w-full justify-start pl-4" onClick={() => setActiveModal("SMS")} disabled={!!isOAuth}>
                                     <Smartphone size={14} className="mr-3 text-white/50" />
-                                    Bind SMS Number
+                                    {t.settings.bindSms}
                                 </Button>
 
                                 <Button
@@ -243,18 +243,18 @@ export default function SettingsPage() {
                                     disabled={loading}
                                 >
                                     <ServerCrash size={14} className="mr-3 text-red-500/50" />
-                                    Revoke Sibling Sessions
+                                    {t.settings.revokeSessions}
                                 </Button>
                             </div>
                             <p className="text-[8px] text-white/30 uppercase tracking-widest text-left">
-                                * Security actions require verified Email/Password context. OAuth overrides will bypass MFA protocols.
+                                {t.settings.securityDisclaimer}
                             </p>
                         </div>
                     </div>
 
                     <div className="pt-6 border-t border-white/5 flex gap-4">
                         <Button type="submit" variant="glass-accent" className="flex-1" disabled={loading}>
-                            {loading ? "COMMITTING..." : "COMMIT CHANGES"}
+                            {loading ? t.settings.committing : t.settings.commitChanges}
                             <Save size={14} className="ml-2" />
                         </Button>
                     </div>
