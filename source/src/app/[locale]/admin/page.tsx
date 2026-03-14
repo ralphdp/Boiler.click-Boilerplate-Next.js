@@ -393,7 +393,7 @@ export default function AdminPage() {
                                                         icon={<Search size={14} />}
                                                     />
                                                 </div>
-                                                <button onClick={exportNodesCSV} className="shrink-0 flex items-center justify-center gap-2 bg-white/5 hover:bg-white/10 border border-white/10 px-3 py-2 text-[10px] font-black uppercase tracking-widest transition-colors text-white/70 hover:text-white">
+                                                <button onClick={exportNodesCSV} className="shrink-0 flex items-center justify-center gap-2 bg-white/5 hover:bg-white/10 border border-white/10 px-6 h-[54px] rounded text-[10px] font-black uppercase tracking-widest transition-colors text-white/70 hover:text-white">
                                                     <Download size={14} /> <span className="hidden sm:inline">Export</span>
                                                 </button>
                                             </div>
@@ -553,7 +553,7 @@ export default function AdminPage() {
                                                         icon={<Search size={14} />}
                                                     />
                                                 </div>
-                                                <button onClick={exportAuditCSV} className="shrink-0 flex items-center justify-center gap-2 bg-white/5 hover:bg-white/10 border border-white/10 px-3 py-2 text-[10px] font-black uppercase tracking-widest transition-colors text-white/70 hover:text-white">
+                                                <button onClick={exportAuditCSV} className="shrink-0 flex items-center justify-center gap-2 bg-white/5 hover:bg-white/10 border border-white/10 px-6 h-[54px] rounded text-[10px] font-black uppercase tracking-widest transition-colors text-white/70 hover:text-white">
                                                     <Download size={14} /> <span className="hidden sm:inline">Export</span>
                                                 </button>
                                             </div>
@@ -1045,7 +1045,7 @@ export default function AdminPage() {
                                                                     link.click();
                                                                     document.body.removeChild(link);
                                                                 }}
-                                                                className="bg-white/5 border border-white/10 text-white/70 hover:text-white px-3 py-1.5 text-xs uppercase tracking-widest flex items-center gap-2 transition-colors"
+                                                                className="bg-white/5 hover:bg-white/10 border border-white/10 text-white/70 hover:text-white px-6 h-[54px] rounded text-[10px] uppercase font-black tracking-widest flex items-center justify-center gap-2 transition-colors shrink-0"
                                                             >
                                                                 <Download size={14} /> Export CSV
                                                             </button>

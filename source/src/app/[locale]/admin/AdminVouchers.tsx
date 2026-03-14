@@ -70,10 +70,10 @@ export function AdminVouchers() {
                             Mint offline licenses or subscription bypass codes for B2B distribution.
                         </p>
                     </div>
-                    <Button variant="outline" className="text-xs px-3 py-1" onClick={loadVouchers} disabled={loading}>
-                        <RefreshCw size={14} className={`mr-2 ${loading ? 'animate-spin' : ''}`} />
+                    <button onClick={loadVouchers} disabled={loading} className="shrink-0 flex items-center justify-center gap-2 bg-white/5 hover:bg-white/10 border border-white/10 px-6 h-[54px] rounded text-[10px] font-black uppercase tracking-widest transition-colors text-white/70 hover:text-white disabled:opacity-50 disabled:cursor-not-allowed">
+                        <RefreshCw size={14} className={`${loading ? 'animate-spin' : ''}`} />
                         Refresh Matrix
-                    </Button>
+                    </button>
                 </div>
 
                 <form onSubmit={handleCreate} className="grid grid-cols-1 md:grid-cols-4 gap-4 items-end mb-8 p-4 bg-white/5 border border-white/10">
