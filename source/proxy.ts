@@ -2,6 +2,7 @@ import NextAuth from "next-auth";
 import { authConfig } from "./src/core/auth.config";
 import { NextResponse } from "next/server";
 import { checkEdgeRateLimit } from "./src/core/security/rate-limiter-edge";
+import { getEdgeFeatureFlags } from "./src/core/security/feature-flags-edge";
 
 const { auth } = NextAuth(authConfig);
 
@@ -13,13 +14,21 @@ export default auth(async (req) => {
     const { nextUrl } = req;
     const { pathname, search } = nextUrl;
 
-    // --- EDGE SECURITY GATE ---
-    // If the REDIS_PROVIDER="upstash", evaluate the Token Bucket natively at the CDN Edge.
+    // --- 1. EDGE SECURITY GATE ---
+    // Evaluate the Token Bucket natively at the CDN Edge.
     const ip = req.headers.get("x-forwarded-for") || "unknown";
     const isAllowed = await checkEdgeRateLimit(ip, 20, 60);
 
     if (!isAllowed) {
         return new NextResponse("Network Intercept: Rate Limit Breached.", { status: 429 });
+    }
+
+    // --- 2. HARDWARE ENTROPY GATE (L3 Stability) ---
+    // When the MCP detects S_hw > 0.8 on the iMac, it writes to edge-accessible cache or env.
+    // This allows the proxy to shed load and block non-essential logic paths.
+    const isCoolingMode = process.env.LOGOS_SUBSTRATE_COOLING === "ACTIVE";
+    if (isCoolingMode && !pathname.startsWith('/api') && !pathname.includes('/auth')) {
+        return new NextResponse("Substrate Cooling: Hardware entropy exceeds safe limits (Narrow Gate Active).", { status: 503 });
     }
 
     // --- NONCE GENERATION & CSP ---
@@ -41,6 +50,11 @@ export default auth(async (req) => {
     requestHeaders.set('x-nonce', nonce);
     requestHeaders.set('Content-Security-Policy', cspHeader);
 
+    // --- 3.5 EDGE FEATURE FLAGS ---
+    // Retrieve feature flags natively from Edge architecture (Redis) before hitting Node.
+    const edgeFlags = await getEdgeFeatureFlags(req.auth?.user?.id ?? null);
+    requestHeaders.set('x-feature-flags', JSON.stringify(edgeFlags));
+
     // Create the baseline response integrating the patched headers
     let response = NextResponse.next({
         request: {
@@ -50,7 +64,7 @@ export default auth(async (req) => {
 
     response.headers.set('Content-Security-Policy', cspHeader);
 
-    // --- LOCALIZATION & AUTH LOGIC ---
+    // --- 4. AXIOMATIC AUTH & LOCALIZATION ---
     const isRootAdmin = req.auth?.user?.role === "ADMIN" || req.auth?.user?.email === process.env.NEXT_PUBLIC_SUPER_ADMIN_EMAIL;
 
     // Check if the route is an admin route (e.g., /en/admin, /admin)

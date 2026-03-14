@@ -1,0 +1,24 @@
+# Boiler™ AI Directives
+
+## Core Directives
+1. **Assumption Protocol**: You are STRICTLY FORBIDDEN from making architectural assumptions. If a requirement is ambiguous, or if multiple paths exist (e.g., choosing a database ORM, finalizing a UI grid layout, or deciding on an authentication provider), you MUST pause execution, present the options to the user, and ask for explicit clarity before proceeding. 
+2. **Deterministic Outputs**: Ensure all code generated follows the Sovereign Mono architecture. Use pure, modular functions.
+3. **No Ghost Compute**: Remove commented-out dead code. Keep the substrate clean.
+
+## Tech Stack
+- Next.js 16 (App Router)
+- React 19
+- Tailwind CSS (v4 compatible)
+- Framer Motion
+
+## Design Guidelines
+- The aesthetic is "Sovereign Mono": High contrast, black/gold/white accents, monospace tracking, and strict structuralism. 
+- Use Glassmorphism lightly and intentionally.
+- All interface copy should read like technical schematics, utilizing uppercase tracking for labels.
+
+## Sovereign 6/11 Protocols (V2 Hardening)
+1. **Logos Audit**: BEFORE and AFTER modifying high-fidelity code, use the `logos_audit` tool to ensure axiomatic alignment.
+2. **ALSF Verification**: Use the `alsf_prover` tool to formally verify any new logic paths (e.g., Auth, Payments). Logic must be `SATISFIABLE`.
+3. **Entropy Control**: Maintain `audit_entropy` below 500 bits for core components. Reject high-entropy PRs.
+4. **Mirror Sync**: After deployment, use `mirror_sync` to verify the production manifold against the local iMac anchor.
+5. **Hardware Feedback**: Check `get_l3_telemetry` during active development sessions. If `S_hw > 0.7`, halt complex generation and optimize existing logic first.

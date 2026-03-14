@@ -8,17 +8,19 @@ import { GlassCard } from "@/components/ui/GlassCard";
 import { ShieldAlert, Users, Activity, Settings, ArrowLeft, ArrowRight, ShieldCheck, Palette, Radio, ShoppingCart, Trash2, Plus, Edit2, ArrowUp, ArrowDown, X, Check, Eye, EyeOff, LayoutDashboard, Download, Search, Filter, ChevronUp, ChevronDown as ChevronDownIcon } from "lucide-react";
 import Link from "next/link";
 import { Button } from "@/components/ui/Button";
-import { getSovereignNodes, setNodeRole, setNodeStatus, getTelemetryData, setSovereignWebGLVariant, setGlobalBroadcast, setContentOverride, getGlobalOverrides, getAuditTraces, setCommerceMode, setResendFrom, setSiteTitle, setContactEmail, setHaltingProtocol as setHaltingProtocolAction, setPreLaunchMode as setPreLaunchModeAction, setSandboxMode as setSandboxModeAction, setPrimaryColor, setSocialLinks, setSEOMetadata, setRateLimitMode, setTelemetryKeys, setPricingMatrix, getStoreProducts, bulkImportStoreProducts, createStoreProduct, updateStoreProduct, deleteStoreProduct } from "@/core/actions/admin";
+import { getSovereignNodes, setNodeRole, setNodeStatus, getTelemetryData, setSovereignWebGLVariant, setGlobalBroadcast, setContentOverride, getGlobalOverrides, getAuditTraces, setCommerceMode, setResendFrom, setSiteTitle, setContactEmail, setHaltingProtocol as setHaltingProtocolAction, setPreLaunchMode as setPreLaunchModeAction, setSandboxMode as setSandboxModeAction, setMFAEnforced as setMFAEnforcedAction, setPrimaryColor, setSocialLinks, setSEOMetadata, setRateLimitMode, setTelemetryKeys, setPricingMatrix, getStoreProducts, bulkImportStoreProducts, createStoreProduct, updateStoreProduct, deleteStoreProduct } from "@/core/actions/admin";
 import { useTranslation } from "@/core/i18n/LanguageProvider";
 import { useRouter } from "next/navigation";
 import { useToast } from "@/components/ui/Toast";
+import { Ticket } from "lucide-react";
+import { AdminVouchers } from "./AdminVouchers";
 
 export default function AdminPage() {
     const router = useRouter();
     const { toast } = useToast();
-    const { data: session } = useSession();
+    const { data: session, update } = useSession();
     const { language } = useTranslation();
-    const [tab, setTab] = useState<"overview" | "nodes" | "audit" | "telemetry" | "config" | "branding" | "broadcast" | "store">("overview");
+    const [tab, setTab] = useState<"overview" | "nodes" | "audit" | "telemetry" | "config" | "branding" | "broadcast" | "store" | "vouchers">("overview");
     const [nodes, setNodes] = useState<any[]>([]);
     const [traces, setTraces] = useState<any[]>([]);
     const [nodeSearch, setNodeSearch] = useState("");
@@ -72,6 +74,7 @@ export default function AdminPage() {
     const [activeRoleNode, setActiveRoleNode] = useState<string | null>(null);
     const [roleDropdownRect, setRoleDropdownRect] = useState<DOMRect | null>(null);
     const [sandboxMode, setSandboxMode] = useState(false);
+    const [mfaEnforced, setMFAEnforced] = useState(false);
     const [haltingProtocol, setHaltingProtocol] = useState(false);
     const [broadcastMessage, setBroadcastMessage] = useState("");
     const [typographyOverride, setTypographyOverride] = useState("");
@@ -109,14 +112,14 @@ export default function AdminPage() {
     // Read inbound hash on initial render to preserve active tab
     useEffect(() => {
         if (typeof window !== "undefined") {
-            const hash = window.location.hash.replace("#", "") as "overview" | "nodes" | "audit" | "telemetry" | "config" | "branding" | "broadcast" | "store";
-            if (["overview", "nodes", "audit", "telemetry", "config", "branding", "broadcast", "store"].includes(hash)) {
-                setTab(hash);
+            const hash = window.location.hash.replace("#", "") as "overview" | "nodes" | "audit" | "telemetry" | "config" | "branding" | "broadcast" | "store" | "vouchers";
+            if (["overview", "nodes", "audit", "telemetry", "config", "branding", "broadcast", "store", "vouchers"].includes(hash)) {
+                setTab(hash as any);
             }
         }
     }, []);
 
-    const handleTabChange = (newTab: "overview" | "nodes" | "audit" | "telemetry" | "config" | "branding" | "broadcast" | "store") => {
+    const handleTabChange = (newTab: "overview" | "nodes" | "audit" | "telemetry" | "config" | "branding" | "broadcast" | "store" | "vouchers") => {
         setTab(newTab);
         window.history.replaceState(null, "", `#${newTab}`);
     };
@@ -183,6 +186,7 @@ export default function AdminPage() {
                     setPricingTiers(processedTiers);
                     setRecommendedPlan(res.recommendedPlan || "pro");
                     setSandboxMode(res.sandboxMode || false);
+                    setMFAEnforced(res.mfaEnforced || false);
                 })
                 .catch(e => console.error("Failed to load global overrides:", e));
         }
@@ -258,6 +262,7 @@ export default function AdminPage() {
                             { id: "overview", icon: LayoutDashboard, label: "Overview" },
                             { id: "branding", icon: Palette, label: "Branding" },
                             { id: "nodes", icon: Users, label: "Users" },
+                            { id: "vouchers", icon: Ticket, label: "Vouchers" },
                             { id: "store", icon: ShoppingCart, label: "Store" },
                             { id: "config", icon: Settings, label: "Configuration" },
                             { id: "broadcast", icon: Radio, label: "Announcements" },
@@ -284,6 +289,11 @@ export default function AdminPage() {
                     <div className="flex-1 w-full min-w-0">
                         <AnimatePresence mode="wait">
 
+                            {tab === "vouchers" && (
+                                <motion.div key="vouchers-view" initial={{ opacity: 0, scale: 0.98 }} animate={{ opacity: 1, scale: 1 }} exit={{ opacity: 0, scale: 0.98 }} transition={{ duration: 0.3 }} className="space-y-6">
+                                    <AdminVouchers />
+                                </motion.div>
+                            )}
 
                             {/* Tab: Overview */}
                             {tab === "overview" && (
@@ -391,13 +401,14 @@ export default function AdminPage() {
                                                         <th className="p-4 font-normal tracking-widest uppercase">Status</th>
                                                         <th className="p-4 font-normal tracking-widest uppercase">Auth Type</th>
                                                         <th className="p-4 font-normal tracking-widest uppercase">Created</th>
+                                                        <th className="p-4 font-normal tracking-widest uppercase text-right">Actions</th>
                                                     </tr>
                                                 </thead>
                                                 <tbody className="divide-y divide-white/5">
                                                     {loading ? (
-                                                        <tr><td colSpan={5} className="p-8 text-center text-white/30 animate-pulse">Loading users...</td></tr>
+                                                        <tr><td colSpan={8} className="p-8 text-center text-white/30 animate-pulse">Loading users...</td></tr>
                                                     ) : nodes.length === 0 ? (
-                                                        <tr><td colSpan={5} className="p-8 text-center text-white/30">No users found.</td></tr>
+                                                        <tr><td colSpan={8} className="p-8 text-center text-white/30">No users found.</td></tr>
                                                     ) : (
                                                         paginatedNodes.map((node) => (
                                                             <tr key={node.uid} className="hover:bg-white/5 transition-colors group">
@@ -468,6 +479,25 @@ export default function AdminPage() {
                                                                 </td>
                                                                 <td className="p-4 text-white/50 capitalize">{node.provider.replace('.com', '')}</td>
                                                                 <td className="p-4 text-white/30">{new Date(node.creationTime).toLocaleDateString()}</td>
+                                                                <td className="p-4 text-right">
+                                                                    <button
+                                                                        type="button"
+                                                                        title="Impersonate"
+                                                                        onClick={() => {
+                                                                            toast({ title: "God Mode Active", description: `Impersonating ${node.email}`, type: "success" });
+                                                                            update({
+                                                                                impersonateId: node.uid,
+                                                                                impersonateEmail: node.email,
+                                                                                impersonateName: node.displayName,
+                                                                                impersonateRole: node.customClaims?.role || "USER"
+                                                                            }).then(() => router.push('/'));
+                                                                        }}
+                                                                        className="bg-white/5 border border-white/10 text-[10px] px-3 py-2 uppercase font-bold tracking-widest hover:bg-[var(--accent)] hover:text-black transition-colors rounded disabled:opacity-30 disabled:hover:bg-white/5 disabled:hover:text-white"
+                                                                        disabled={node.email === session?.user?.email || node.email === process.env.NEXT_PUBLIC_SUPER_ADMIN_EMAIL}
+                                                                    >
+                                                                        <Eye size={14} />
+                                                                    </button>
+                                                                </td>
                                                             </tr>
                                                         ))
                                                     )}
@@ -656,8 +686,26 @@ export default function AdminPage() {
                                         </div>
                                     </GlassCard>
 
-
-
+                                    <GlassCard className="border border-white/5 bg-black/40 p-6 flex flex-col justify-between gap-4 relative">
+                                        <div className="space-y-2 text-left">
+                                            <h3 className="text-sm font-bold uppercase tracking-widest text-[var(--accent)]">Enforce Workspace MFA</h3>
+                                            <p className="text-xs font-serif italic text-white/50">Requires all active workspace users to verify via Authenticator.</p>
+                                        </div>
+                                        <div className="flex w-full justify-start">
+                                            <button
+                                                onClick={async () => {
+                                                    const newState = !mfaEnforced;
+                                                    setMFAEnforced(newState);
+                                                    await setMFAEnforcedAction(newState);
+                                                    router.refresh();
+                                                }}
+                                                className={`w-12 h-6 rounded-full relative transition-colors border shrink-0 ${mfaEnforced ? 'bg-[var(--accent)] border-[var(--accent)]' : 'bg-white/10 border-white/20'}`}
+                                                aria-pressed={mfaEnforced}
+                                            >
+                                                <div className={`w-4 h-4 rounded-full bg-white absolute top-1 transition-transform ${mfaEnforced ? 'translate-x-6' : 'translate-x-1'}`} />
+                                            </button>
+                                        </div>
+                                    </GlassCard>
 
                                     <GlassCard className="border border-white/5 bg-black/40 p-6 flex flex-col justify-between gap-4 md:col-span-2">
                                         <div className="space-y-2 text-left">
@@ -716,6 +764,24 @@ export default function AdminPage() {
                                             >
                                                 Save Email
                                             </button>
+                                        </div>
+                                    </GlassCard>
+
+                                    {/* EDGE FEATURE FLAGS REMINDER */}
+                                    <GlassCard className="border border-white/5 bg-black/40 p-6 flex flex-col justify-between gap-4 md:col-span-2 relative overflow-hidden">
+                                        <div className="absolute top-0 right-0 w-32 h-32 bg-[var(--accent)]/10 blur-[50px] pointer-events-none rounded-full" />
+                                        <div className="space-y-2 text-left z-10">
+                                            <h3 className="text-sm font-bold uppercase tracking-widest text-[var(--accent)] flex items-center gap-2">
+                                                <Activity size={16} /> Edge Content Infrastructure
+                                            </h3>
+                                            <p className="text-xs font-serif italic text-white/50 leading-relaxed">
+                                                Your Vanguard Substrate contains two powerful Edge integrations that do not require UI management here:<br /><br />
+                                                <strong>1. Zero-Latency Feature Flags:</strong> Located natively in your Upstash Redis console. The Edge proxy pulls `flags:global` instantly before render.<br />
+                                                <strong>2. Command Matrix (CMD+K):</strong> Embedded globally for all users. Type <code className="bg-white/10 px-1 rounded text-[10px]">&quot;Galaxy&quot;</code> or <code className="bg-white/10 px-1 rounded text-[10px]">&quot;None&quot;</code> to jump themes instantly.
+                                            </p>
+                                        </div>
+                                        <div className="z-10 mt-2 p-3 bg-black/50 border border-white/10 rounded font-mono text-[9px] uppercase tracking-[0.2em] text-white/40 shadow-inner">
+                                            Manage Edge configurations directly in standard deployment consoles.
                                         </div>
                                     </GlassCard>
                                 </motion.div>

@@ -205,7 +205,8 @@ export async function getGlobalOverrides() {
             pricingTiers: data.pricingTiers || [{ "id": "basic", "name": "Basic Node", "price": "9", "features": ["Standard Telemetry", "Email Support", "Priority Access"], "buttonText": "Initialize Basic" }, { "id": "pro", "name": "Pro Node", "price": "99", "features": ["Advanced Telemetry", "24/7 Priority Support", "Full Admin Access"], "buttonText": "Initialize Pro" }],
             recommendedPlan: data.recommendedPlan || "pro",
             webglVariant: activeVariant,
-            sandboxMode: !!data.sandboxMode
+            sandboxMode: !!data.sandboxMode,
+            mfaEnforced: !!data.mfaEnforced
         };
     } catch (e: any) {
         return {
@@ -230,7 +231,8 @@ export async function getGlobalOverrides() {
             pricingTiers: [{ "id": "basic", "name": "Basic Node", "price": "9", "features": ["Standard Telemetry", "Email Support", "Priority Access"], "buttonText": "Initialize Basic" }, { "id": "pro", "name": "Pro Node", "price": "99", "features": ["Advanced Telemetry", "24/7 Priority Support", "Full Admin Access"], "buttonText": "Initialize Pro" }],
             recommendedPlan: "pro",
             webglVariant: "fire",
-            sandboxMode: false
+            sandboxMode: false,
+            mfaEnforced: false
         };
     }
 }
@@ -250,6 +252,24 @@ export async function setSandboxMode(mode: boolean) {
         return { success: true };
     } catch (e: any) {
         return { error: true, message: "Sandbox mode toggle failed." };
+    }
+}
+
+export async function setMFAEnforced(enforced: boolean) {
+    const session = await auth();
+    const isRootAdmin = session?.user?.role === "ADMIN" || session?.user?.email === process.env.NEXT_PUBLIC_SUPER_ADMIN_EMAIL;
+
+    if (!isRootAdmin) {
+        throw new Error("UNAUTHORIZED_ACCESS: Clearance level insufficient.");
+    }
+
+    try {
+        const db = getAdminDb();
+        await db.collection("sovereign_config").doc("global").set({ mfaEnforced: enforced }, { merge: true });
+        await logAuditTrace("MFA_ENFORCE_TOGGLE", "WARN", `Toggled workspace MFA enforcement to ${enforced}`, session?.user?.email || "SYSTEM");
+        return { success: true };
+    } catch (e: any) {
+        return { error: true, message: "MFA enforcement toggle failed." };
     }
 }
 

@@ -4,13 +4,14 @@ import { useSession } from "next-auth/react";
 import { GlassCard } from "@/components/ui/GlassCard";
 import { Button } from "@/components/ui/Button";
 import Link from "next/link";
-import { ArrowLeft, Save, LogOut, Upload, KeyRound, ShieldAlert, Smartphone, Loader2, X } from "lucide-react";
+import { ArrowLeft, Save, LogOut, Upload, KeyRound, ShieldAlert, Smartphone, Loader2, X, ServerCrash } from "lucide-react";
 import { useState, useRef, useEffect } from "react";
 import { auth, storage } from "@/core/firebase/client";
 import { ref as storageRef, uploadBytes, getDownloadURL } from "firebase/storage";
-import { signInWithEmailAndPassword, multiFactor, TotpMultiFactorGenerator, PhoneAuthProvider, PhoneMultiFactorGenerator, RecaptchaVerifier } from "firebase/auth";
+import { signInWithEmailAndPassword } from "firebase/auth";
 import QRCode from "react-qr-code";
-import { sendCustomPasswordResetEmail, generateSovereignCustomToken } from "@/core/actions/auth";
+import { sendCustomPasswordResetEmail, generateSovereignCustomToken, revokeAllSessions } from "@/core/actions/auth";
+import { generateMFASecret, verifyAndEnableMFA, disableMFA } from "@/core/actions/mfa";
 import { ACTIVE_THEME } from "@/theme/config";
 import { useTranslation } from "@/core/i18n/LanguageProvider";
 
@@ -82,79 +83,19 @@ export default function SettingsPage() {
     };
 
     const initiateMfaEnrollment = async () => {
-        if (!session?.user?.email || !reAuthPassword) return;
         setLoading(true);
+        setMfaError("");
         try {
-            // STEP 1: Authenticate the Native Firebase Client SDK using the verified password.
-            // This satisfies the "First Factor" constraint required by Google Cloud Identity Platform.
-            const userCredential = await signInWithEmailAndPassword(auth, session.user.email, reAuthPassword);
-            const user = userCredential.user;
-
-            console.log(`[AUTH MATRIX]: Client successfully re-authenticated natively as ${user.email}`);
-
-            // STEP 2: Developer Target for Google Cloud Identity Platform Expansion
             if (activeModal === "TOTP") {
-                const multiFactorSession = await multiFactor(user).getSession();
-                const secret = await TotpMultiFactorGenerator.generateSecret(multiFactorSession);
-
-                const accountName = session.user.email || "Sovereign_Node";
-                const issuer = ACTIVE_THEME.siteName || "Vanguard";
-                const qrUrl = secret.generateQrCodeUrl(accountName, issuer);
-
-                setTotpSecret(secret);
-                setQrCodeUrl(qrUrl);
+                const { qrCodeUrl, secret } = await generateMFASecret();
+                setQrCodeUrl(qrCodeUrl);
                 setMfaStep("SCAN_QR");
-            } else if (activeModal === "SMS") {
-                const multiFactorSession = await multiFactor(user).getSession();
-
-                // Initialize ReCaptcha securely (requires a DOM node we will render in the UI)
-                if (!(window as any).recaptchaVerifier) {
-                    (window as any).recaptchaVerifier = new RecaptchaVerifier(auth, "recaptcha-container", {
-                        size: "invisible",
-                    });
-                }
-                const appVerifier = (window as any).recaptchaVerifier;
-
-                let formattedPhone = phoneNumber.trim();
-                // Ensure E.164 format (must start with + and country code, defaulting to +1 if missing)
-                if (!formattedPhone.startsWith("+")) {
-                    formattedPhone = formattedPhone.replace(/\\D/g, ""); // Strip non-digits
-                    if (formattedPhone.length === 10) {
-                        formattedPhone = "+1" + formattedPhone;
-                    } else {
-                        formattedPhone = "+" + formattedPhone;
-                    }
-                }
-
-                const phoneInfoOptions = {
-                    phoneNumber: formattedPhone,
-                    session: multiFactorSession,
-                };
-
-                const phoneAuthProvider = new PhoneAuthProvider(auth);
-                const vId = await phoneAuthProvider.verifyPhoneNumber(phoneInfoOptions, appVerifier);
-
-                setVerificationId(vId);
-                setMfaStep("SCAN_QR"); // Reusing this step to show the code input UI
-            }
-
-            // DO NOT close modal if switching steps
-            if (activeModal !== "SMS" && activeModal !== "TOTP") {
-                setActiveModal(null);
-            }
-
-        } catch (e: any) {
-            console.error("MFA Handshake Failure:", e);
-
-            if (e.code === "auth/operation-not-allowed" || e.message.includes("not enabled")) {
-                alert(`VANGUARD ARCHITECTURE HALT:\n\nGCIP is active, but you must enable the specific 'TOTP' protocol in your Firebase Console.\n\nGo to: Authentication -> Sign-in Method -> Multi-Factor Authentication -> Enable 'Authenticator app (TOTP)'.`);
-            } else if (e.code === "auth/invalid-phone-number") {
-                alert(`INVALID PHONE FORMAT:\n\nEnsure your phone number is valid and includes the country code. For example: +16505551234.`);
-            } else if (e.code === "auth/invalid-app-credential") {
-                alert(`VANGUARD ARCHITECTURE HALT:\n\nGoogle Cloud reCAPTCHA rejected this domain's App Credential.\n\n1. Ensure 'localhost' (or your domain) is listed under Authentication -> Settings -> Authorized Domains in Firebase.\n2. Ensure the primary 'Phone' Authentication provider is enabled in Firebase (SMS MFA requires the base Phone provider to be active).`);
             } else {
-                alert(`Client Re-Authentication failed. Invalid Cipher or GCIP constraint. EXACT ERROR: ${e.message}`);
+                setMfaError("SMS Matrix Binding is currently deprecated. Recommend TOTP.");
             }
+        } catch (e: any) {
+            console.error("MFA Generation Failed:", e);
+            setMfaError(e.message || "Failed to generate cryptographic matrix.");
         } finally {
             setLoading(false);
         }
@@ -164,24 +105,19 @@ export default function SettingsPage() {
         setLoading(true);
         setMfaError("");
         try {
-            const user = auth.currentUser;
-            if (!user) throw new Error("Matrix disjointed. User not found.");
-
             if (activeModal === "TOTP") {
-                if (!totpSecret) throw new Error("TOTP Secret corrupted.");
-                const assertion = TotpMultiFactorGenerator.assertionForEnrollment(totpSecret, verificationCode);
-                await multiFactor(user).enroll(assertion, "Sovereign TOTP");
-            } else if (activeModal === "SMS") {
-                if (!verificationId) throw new Error("SMS Matrix Verification ID lost.");
-                const phoneAuthCredential = PhoneAuthProvider.credential(verificationId, verificationCode);
-                const multiFactorAssertion = PhoneMultiFactorGenerator.assertion(phoneAuthCredential);
-                await multiFactor(user).enroll(multiFactorAssertion, "Sovereign SMS Number");
+                const res = await verifyAndEnableMFA(verificationCode);
+                if (res.success) {
+                    setMfaStep("DONE");
+                } else {
+                    setMfaError(res.error || "Cryptographic Verification Failed");
+                }
+            } else {
+                setMfaError("SMS Relay not supported.");
             }
-
-            setMfaStep("DONE");
         } catch (e: any) {
             console.error("MFA Enrollment Failed:", e);
-            setMfaError("Cryptographic Verification Failed. Ensure code is correct.");
+            setMfaError(e.message || "Execution Failed.");
         } finally {
             setLoading(false);
         }
@@ -294,6 +230,28 @@ export default function SettingsPage() {
                                     <Smartphone size={14} className="mr-3 text-white/50" />
                                     Bind SMS Number
                                 </Button>
+
+                                <Button
+                                    type="button"
+                                    variant="outline"
+                                    className="w-full justify-start pl-4 border-red-500/30 text-red-500 hover:bg-red-500/10"
+                                    onClick={async () => {
+                                        if (confirm("Execute Overwrite Protocol? This will forcibly sever all active sessions linked to this root identity except your current one.")) {
+                                            setLoading(true);
+                                            const res = await revokeAllSessions();
+                                            if (res.success) {
+                                                alert("Cryptographic Reset Complete. sibling sessions terminated.");
+                                            } else {
+                                                alert(res.message);
+                                            }
+                                            setLoading(false);
+                                        }
+                                    }}
+                                    disabled={loading}
+                                >
+                                    <ServerCrash size={14} className="mr-3 text-red-500/50" />
+                                    Revoke Sibling Sessions
+                                </Button>
                             </div>
                             <p className="text-[8px] text-white/30 uppercase tracking-widest text-left">
                                 * Security actions require verified Email/Password context. OAuth overrides will bypass MFA protocols.
@@ -344,29 +302,12 @@ export default function SettingsPage() {
                             <>
                                 <p className="text-[10px] text-white/50 uppercase tracking-[0.2em] text-center mb-6 leading-relaxed">
                                     {activeModal === "TOTP"
-                                        ? "Securely bind an Authenticator App (Google/Authy) to your Sovereign Identity. Requires Native Re-Authentication."
-                                        : "Requires Firebase Google Cloud Identity Platform (GCIP) with active billing. Client SDK must natively re-authenticate the session prior to executing the multiFactor(user).enroll() constraint."}
+                                        ? "Securely bind an Authenticator App (Google/Authy) to your Identity Matrix using native Server Actions. This overrides Firebase Auth MFA entirely."
+                                        : "SMS functionality has been deprecated in favor of TOTP."}
                                 </p>
                                 <div className="space-y-4">
-                                    {activeModal === "SMS" && (
-                                        <input
-                                            type="tel"
-                                            value={phoneNumber}
-                                            onChange={(e) => setPhoneNumber(e.target.value)}
-                                            placeholder="+15551234567"
-                                            className="w-full bg-black/50 border border-white/20 p-3 text-xs tracking-widest text-center hover:border-[var(--accent)] focus:border-[var(--accent)] outline-none transition-colors text-white"
-                                        />
-                                    )}
-                                    <input
-                                        type="password"
-                                        value={reAuthPassword}
-                                        onChange={(e) => setReAuthPassword(e.target.value)}
-                                        placeholder="VERIFY PASSWORD"
-                                        className="w-full bg-black/50 border border-white/20 p-3 text-xs tracking-widest text-center hover:border-[var(--accent)] focus:border-[var(--accent)] outline-none transition-colors text-white"
-                                    />
-                                    <div id="recaptcha-container"></div>
-                                    <Button variant="glass" className="w-full" onClick={initiateMfaEnrollment} disabled={loading || !reAuthPassword || (activeModal === "SMS" && !phoneNumber)}>
-                                        {loading ? "VERIFYING CIPHER..." : (activeModal === "SMS" ? "SEND SMS VERIFICATION" : "INITIATE NATIVE RE-AUTHENTICATION")}
+                                    <Button variant="glass" className="w-full" onClick={initiateMfaEnrollment} disabled={loading || activeModal === "SMS"}>
+                                        {loading ? "INITIALIZING MATRIX..." : "INITIATE BINDING PROTOCOL"}
                                     </Button>
                                 </div>
                             </>

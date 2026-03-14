@@ -1,9 +1,10 @@
 "use server";
 
-import { getAdminAuth } from "@/core/firebase/admin";
+import { getAdminAuth, getAdminDb } from "@/core/firebase/admin";
 import { Resend } from "resend";
 import { ACTIVE_THEME } from "@/theme/config";
 import { getGlobalOverrides } from "@/core/actions/admin";
+import { auth } from "@/core/auth";
 
 const resend = new Resend(process.env.RESEND_API_KEY || "re_fallback");
 
@@ -103,5 +104,30 @@ export async function registerSovereignNode(formData: FormData) {
     } catch (e: any) {
         console.error("[Node Creation Fault]:", e);
         return { error: "REGISTRATION_FAULT", message: e.message || "Failed to establish a new Identity Node." };
+    }
+}
+
+export async function revokeAllSessions() {
+    const session = await auth();
+    if (!session?.user?.id) throw new Error("UNAUTHORIZED");
+
+    try {
+        const authAdmin = getAdminAuth();
+        const db = getAdminDb();
+        const uid = session.user.id;
+        const now = Date.now();
+
+        // Natively revoke Firebase Refresh Tokens across all devices
+        await authAdmin.revokeRefreshTokens(uid);
+
+        // Update the database to force NextAuth JWTs to instantly expire
+        await db.collection("users").doc(uid).set({
+            tokensValidAfterTime: now
+        }, { merge: true });
+
+        return { success: true, timestamp: now };
+    } catch (error) {
+        console.error("Failed to revoke sibling sessions:", error);
+        return { success: false, message: "Matrix fault during cryptographic revocation." };
     }
 }

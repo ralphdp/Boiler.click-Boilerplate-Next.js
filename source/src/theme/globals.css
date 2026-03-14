@@ -6,9 +6,10 @@
 }
 
 :root {
-    --background: #050505;
+    --background: #000000;
     --foreground: #ffffff;
-    --accent: #a855f7;
+    --accent: #D4AF37; /* Vanguard Gold default */
+    --system-stability: var(--accent);
 }
 
 body {

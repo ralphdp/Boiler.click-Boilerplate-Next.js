@@ -73,7 +73,43 @@ export const authConfig = {
             // NextAuth Client Session Trigger Intercept
             if (trigger === "update" && session) {
                 if (session.name) token.name = session.name;
-                if (session.image) token.picture = session.image;
+                if (session.picture) token.picture = session.picture; // Using standard NextAuth fields
+                if (session.activeWorkspace !== undefined) token.activeWorkspace = session.activeWorkspace;
+                if (session.tokensValidAfterTime) token.tokensValidAfterTime = session.tokensValidAfterTime;
+
+                // God Mode Impersonation Logic
+                if (session.impersonateId) {
+                    // Only root admins can trigger impersonation
+                    if (token.role === "ADMIN" || token.email === process.env.NEXT_PUBLIC_SUPER_ADMIN_EMAIL) {
+                        if (!token.impersonatorId) {
+                            token.impersonatorId = token.id; // Save true identity
+                            token.impersonatorEmail = token.email; // Save true email
+                            token.impersonatorRole = token.role; // Save true role
+                            token.impersonatorName = token.name; // Save true name
+                        }
+                        token.id = session.impersonateId;
+                        token.email = session.impersonateEmail || token.email;
+                        token.role = session.impersonateRole || "USER";
+                        if (session.impersonateName) token.name = session.impersonateName;
+                        token.impersonating = true;
+                    }
+                }
+
+                if (session.revertImpersonation) {
+                    if (token.impersonatorId) {
+                        token.id = token.impersonatorId;
+                        token.email = token.impersonatorEmail as string;
+                        token.role = token.impersonatorRole as string;
+                        if (token.impersonatorName !== undefined) {
+                            token.name = token.impersonatorName as string;
+                        }
+                        token.impersonating = false;
+                        token.impersonatorId = undefined;
+                        token.impersonatorEmail = undefined;
+                        token.impersonatorRole = undefined;
+                        token.impersonatorName = undefined;
+                    }
+                }
             }
 
             if (account) {
@@ -86,15 +122,29 @@ export const authConfig = {
             }
             return token;
         },
-        async session({ session, token }) {
+        async session({ session, token }: any) {
             if (session.user) {
                 session.user.id = token.id as string;
                 session.user.role = token.role as string;
                 session.user.provider = token.provider as string;
+                if (token.email) session.user.email = token.email as string;
+
+                // God Mode variables mapping
+                if (token.impersonating) {
+                    session.user.impersonating = token.impersonating as boolean;
+                    session.user.impersonatorId = token.impersonatorId as string;
+                } else {
+                    session.user.impersonating = false;
+                }
 
                 // Explicitly rehydrate dynamic session values modified by trigger === "update"
                 if (token.name) session.user.name = token.name;
                 if (token.picture) session.user.image = token.picture as string;
+                if (token.activeWorkspace) session.user.activeWorkspace = token.activeWorkspace as string;
+                if (token.tokensValidAfterTime) session.user.tokensValidAfterTime = token.tokensValidAfterTime as number;
+
+                // Add issue time for strict revocation comparison
+                if (token.iat) session.user.iat = token.iat;
             }
             return session;
         },

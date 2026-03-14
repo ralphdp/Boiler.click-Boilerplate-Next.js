@@ -5,7 +5,8 @@ import { ACTIVE_THEME } from "@/theme/config";
 import { GlassCard } from "@/components/ui/GlassCard";
 import { Button } from "@/components/ui/Button";
 import Link from "next/link";
-import { Settings, CreditCard, ArrowLeft, ShieldAlert } from "lucide-react";
+import { Settings, CreditCard, ArrowLeft, ShieldAlert, KeyRound, LayoutGrid } from "lucide-react";
+import { OnboardingTour } from "@/components/ui/OnboardingTour";
 
 import { useTranslation } from "@/core/i18n/LanguageProvider";
 
@@ -17,6 +18,8 @@ export default function DashboardPage() {
 
     return (
         <main className="relative min-h-screen flex flex-col items-center justify-center p-6 text-white overflow-hidden">
+            <OnboardingTour userId={session?.user?.id} />
+
             <div className="w-full max-w-xl mb-6">
                 <Button as={Link} href={`/${language}`} variant="ghost" className="w-fit text-white/50 px-0">
                     <ArrowLeft size={14} className="mr-2" />
@@ -53,11 +56,22 @@ export default function DashboardPage() {
                 <div className="pt-4 flex flex-col sm:flex-row gap-4 w-full">
                     <Button as={Link} href={`/${language}/dashboard/settings`} variant="glass" className="flex-1 w-full justify-start pl-6">
                         <Settings size={14} className="mr-3 text-white/50" />
-                        Dashboard Settings
+                        Account Settings
                     </Button>
-                    <Button variant="glass" className="flex-1 w-full justify-start pl-6" onClick={() => alert("Billing Matrix offline.")}>
-                        <CreditCard size={14} className="mr-3 text-[var(--accent)]" />
+                    <Button as={Link} href={`/${language}/dashboard/billing`} variant="glass" className="flex-1 w-full justify-start pl-6">
+                        <CreditCard size={14} className="mr-3 text-white/50" />
                         Billing & Identity
+                    </Button>
+                </div>
+
+                <div className="pt-2 flex flex-col sm:flex-row gap-4 w-full">
+                    <Button as={Link} href={`/${language}/dashboard/workspaces`} variant="glass" className="flex-1 w-full justify-start pl-6 border-[var(--accent)]/30">
+                        <LayoutGrid size={14} className="mr-3 text-[var(--accent)]" />
+                        Manage Workspaces
+                    </Button>
+                    <Button as={Link} href={`/${language}/dashboard/developer`} variant="glass" className="flex-1 w-full justify-start pl-6 border-[var(--accent)]/30">
+                        <KeyRound size={14} className="mr-3 text-[var(--accent)]" />
+                        Developer / API
                     </Button>
                 </div>
 

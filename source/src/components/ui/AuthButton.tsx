@@ -9,7 +9,7 @@ import { ChevronRight, ArrowLeft } from "lucide-react";
 import { useEffect } from "react";
 
 export function AuthButton() {
-    const { data: session, status } = useSession();
+    const { data: session, status, update } = useSession();
     const { t, language } = useTranslation();
     const pathname = usePathname();
 
@@ -33,7 +33,25 @@ export function AuthButton() {
 
     if (session) {
         return (
-            <div className="flex items-center gap-4">
+            <div className="flex flex-col sm:flex-row items-stretch sm:items-center gap-4 w-full">
+                {session?.user?.impersonating && (
+                    <Button
+                        variant="glass"
+                        className="flex-1 group bg-red-500/20 border-red-500/30 text-red-500 hover:bg-red-500/40 hover:text-white transition-colors uppercase tracking-widest font-black text-[10px]"
+                        onClick={() => update({ revertImpersonation: true }).then(() => window.location.href = `/${language}/admin#nodes`)}
+                    >
+                        Revert God Mode
+                    </Button>
+                )}
+                {(session?.user as any)?.activeWorkspace && (
+                    <Button
+                        variant="glass"
+                        className="flex-1 group bg-[var(--accent)]/10 border-[var(--accent)]/30 text-[var(--accent)] hover:bg-[var(--accent)]/20 transition-colors uppercase tracking-widest font-black text-[10px]"
+                        onClick={() => update({ activeWorkspace: null })}
+                    >
+                        Exit Workspace
+                    </Button>
+                )}
                 {pathname !== "/dashboard" && pathname !== "/admin" && (
                     <Button
                         as={Link}

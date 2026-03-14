@@ -108,8 +108,8 @@ export function CookieConsent() {
                                     onClick={handleAcceptAll}
                                     className="px-4 py-2 text-[10px] font-black tracking-widest uppercase transition-colors"
                                     style={{
-                                        borderColor: ACTIVE_THEME.primaryColor,
-                                        color: ACTIVE_THEME.primaryColor,
+                                        borderColor: 'var(--accent)',
+                                        color: 'var(--accent)',
                                         borderWidth: '1px',
                                         backgroundColor: 'rgba(255,255,255,0.02)'
                                     }}
@@ -195,12 +195,12 @@ export function CookieConsent() {
                                     backgroundColor: 'rgba(255,255,255,0.02)'
                                 }}
                                 onMouseOver={(e) => {
-                                    e.currentTarget.style.backgroundColor = ACTIVE_THEME.primaryColor;
+                                    e.currentTarget.style.backgroundColor = 'var(--accent)';
                                     e.currentTarget.style.color = 'black';
                                 }}
                                 onMouseOut={(e) => {
                                     e.currentTarget.style.backgroundColor = 'rgba(255,255,255,0.02)';
-                                    e.currentTarget.style.color = ACTIVE_THEME.primaryColor;
+                                    e.currentTarget.style.color = 'var(--accent)';
                                 }}
                             >
                                 Save Preferences

@@ -6,6 +6,12 @@ declare module "next-auth" {
             id: string;
             role?: string;
             provider?: string;
+            impersonating?: boolean;
+            impersonatorId?: string;
+            activeWorkspace?: string;
+            tokensValidAfterTime?: number;
+            mfaEnabled?: boolean;
+            mfaVerified?: boolean;
         } & DefaultSession["user"];
     }
 

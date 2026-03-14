@@ -12,7 +12,7 @@ import { useTranslation } from "@/core/i18n/LanguageProvider";
 const FEATURE_ICONS = [Shield, Box, Network, Globe, Database, Lock, CreditCard, Image, Key, Search, Layers, Terminal];
 
 export default function HomePage() {
-    const { t } = useTranslation();
+    const { t, language } = useTranslation();
     const [isPreview, setIsPreview] = useState(false);
 
     return (
@@ -56,7 +56,7 @@ export default function HomePage() {
                             </Button>
                             <Button
                                 as={Link}
-                                href="/en/demo"
+                                href={`/${language}/demo`}
                                 variant="glass"
                                 className="w-full sm:w-1/2 flex justify-center py-4 text-xs tracking-widest uppercase font-bold border border-[var(--accent)]/50 text-[var(--accent)] hover:bg-[var(--accent)] hover:text-white"
                                 aria-label="View Demo"
