@@ -205,7 +205,7 @@ export function ChatUI({ className, isMinimized, onToggleMinimize, onClose }: Ch
                             initial={{ opacity: 0, x: 20 }}
                             animate={{ opacity: 1, x: 0 }}
                             exit={{ opacity: 0, x: -20 }}
-                            className="absolute inset-0 z-10 p-6 bg-black/95 flex flex-col gap-4 overflow-y-auto"
+                            className="absolute inset-0 z-10 p-6 bg-black/95 flex flex-col gap-4 overflow-y-auto admin-scrollbar"
                         >
                             <div className="space-y-2">
                                 <label className="text-[10px] font-bold uppercase tracking-[0.2em] text-[var(--accent)]">Provider Configuration</label>
