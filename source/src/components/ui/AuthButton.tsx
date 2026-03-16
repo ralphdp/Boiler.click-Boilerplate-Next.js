@@ -40,7 +40,7 @@ export function AuthButton() {
                         className="flex-1 group bg-red-500/20 border-red-500/30 text-red-500 hover:bg-red-500/40 hover:text-white transition-colors uppercase tracking-widest font-black text-[10px]"
                         onClick={() => update({ revertImpersonation: true }).then(() => window.location.href = `/${language}/admin#nodes`)}
                     >
-                        Revert God Mode
+                        {t.home.revertGodMode}
                     </Button>
                 )}
                 {(session?.user as any)?.activeWorkspace && (
@@ -49,7 +49,7 @@ export function AuthButton() {
                         className="flex-1 group bg-[var(--accent)]/10 border-[var(--accent)]/30 text-[var(--accent)] hover:bg-[var(--accent)]/20 transition-colors uppercase tracking-widest font-black text-[10px]"
                         onClick={() => update({ activeWorkspace: null })}
                     >
-                        Exit Workspace
+                        {t.home.exitWorkspace}
                     </Button>
                 )}
                 {pathname !== "/dashboard" && pathname !== "/admin" && (
@@ -86,7 +86,7 @@ export function AuthButton() {
                 aria-label="Return to Dashboard"
             >
                 <ArrowLeft size={14} className="group-hover:-translate-x-1 transition-transform mr-2" />
-                Return
+                {t.home.returnBtn}
             </Button>
         );
     }

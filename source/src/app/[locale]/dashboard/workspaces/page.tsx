@@ -10,6 +10,7 @@ import Link from "next/link";
 import { ArrowLeft, LayoutGrid, Plus, Users, ShieldAlert, Activity, Webhook, FileText } from "lucide-react";
 import { useTranslation } from "@/core/i18n/LanguageProvider";
 import { useEffect, useState } from "react";
+import { useToast } from "@/components/ui/Toast";
 import { getUserWorkspaces, createWorkspace, inviteWorkspaceMember, getWorkspaceAuditLogs } from "@/core/actions/workspaces";
 import { registerWebhook } from "@/core/actions/webhooks";
 
@@ -18,6 +19,7 @@ export default function WorkspacesPage() {
     const { language, t } = useTranslation();
     const [workspaces, setWorkspaces] = useState<any[]>([]);
     const [loading, setLoading] = useState(true);
+    const { toast } = useToast();
 
     const [newWsName, setNewWsName] = useState("");
     const [isCreating, setIsCreating] = useState(false);
@@ -72,11 +74,11 @@ export default function WorkspacesPage() {
         setIsCreating(true);
         const res = await inviteWorkspaceMember(wsId, inviteEmail, inviteRole);
         if (res.success) {
-            alert(`${t.workspaces.invitationSent} ${inviteEmail}.`);
+            toast({ title: "Invitation Pulsed", description: `${t.workspaces.invitationSent} ${inviteEmail}`, type: "success" });
             setInviteEmail("");
             setActiveWsIdForInvite(null);
         } else {
-            alert(res.message);
+            toast({ title: "Handshake Fault", description: res.message, type: "error" });
         }
         setIsCreating(false);
     };
@@ -84,14 +86,14 @@ export default function WorkspacesPage() {
     const handleSwitchContext = async (ws: any) => {
         setLoading(true);
         await update({ activeWorkspace: ws.id });
-        alert(`${t.workspaces.contextSwitched} ${ws.name}`);
+        toast({ title: "Target Synchronized", description: `${t.workspaces.contextSwitched} ${ws.name}`, type: "success" });
         setLoading(false);
     };
 
     const handleExitContext = async () => {
         setLoading(true);
         await update({ activeWorkspace: null });
-        alert(t.workspaces.contextSevered);
+        toast({ title: "Context Severed", description: t.workspaces.contextSevered, type: "info" });
         setLoading(false);
     };
 
@@ -100,12 +102,12 @@ export default function WorkspacesPage() {
         setIsCreating(true);
         const res = await registerWebhook(wsId, webhookUrl, webhookDesc || "Sovereign Integration");
         if (res.success) {
-            alert(`${t.workspaces.webhookMounted} ${webhookUrl}.`);
+            toast({ title: "Webhook Mounted", description: `${t.workspaces.webhookMounted} ${webhookUrl}`, type: "success" });
             setWebhookUrl("");
             setWebhookDesc("");
             setActiveWsIdForWebhook(null);
         } else {
-            alert(res.message);
+            toast({ title: "Mounting Fault", description: res.message, type: "error" });
         }
         setIsCreating(false);
     };

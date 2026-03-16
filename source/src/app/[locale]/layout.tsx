@@ -18,6 +18,8 @@ import { WaitlistScreen } from "@/components/ui/WaitlistScreen";
 import { SovereignErrorBoundary } from "@/components/ui/SovereignErrorBoundary";
 import { GlobalCommandPalette } from "@/components/ui/GlobalCommandPalette";
 import { SessionRevalidator } from "@/components/ui/SessionRevalidator";
+import { dictionary, Language } from "@/core/i18n/translations";
+import { ChatFloating } from "@/components/chat/ChatFloating";
 
 const inter = Inter({
     subsets: ["latin"],
@@ -31,44 +33,12 @@ const fustat = Fustat({
     display: 'swap',
 });
 
-export async function generateMetadata(): Promise<Metadata> {
-    const overrides = await getGlobalOverrides();
-    const activeTagline = overrides.typography || ACTIVE_THEME.tagline;
-    const activeSiteTitle = overrides.siteTitle || ACTIVE_THEME.siteName;
+import { generateSEOMatrix, generateSchemaSteward } from "@/core/seo/manager";
 
-    return {
-        metadataBase: new URL(process.env.NEXT_PUBLIC_SITE_URL || "http://localhost:3000"),
-        title: {
-            default: activeSiteTitle,
-            template: `%s | ${activeSiteTitle}`
-        },
-        description: activeTagline,
-        keywords: ["Sovereign", "Vanguard", "Boilerplate", "Next.js 16", "SaaS", "Architecture"],
-        openGraph: {
-            title: activeSiteTitle,
-            description: activeTagline,
-            url: "/",
-            siteName: activeSiteTitle,
-            locale: "en_US",
-            type: "website",
-        },
-        twitter: {
-            card: "summary_large_image",
-            title: activeSiteTitle,
-            description: activeTagline,
-        },
-        robots: {
-            index: true,
-            follow: true,
-            googleBot: {
-                index: true,
-                follow: true,
-                "max-video-preview": -1,
-                "max-image-preview": "large",
-                "max-snippet": -1,
-            },
-        },
-    };
+export async function generateMetadata({ params }: { params: Promise<{ locale: string }> }): Promise<Metadata> {
+    const { locale } = await params;
+    const overrides = await getGlobalOverrides();
+    return generateSEOMatrix(overrides, { locale });
 }
 
 export default async function RootLayout({
@@ -79,7 +49,8 @@ export default async function RootLayout({
     params: Promise<{ locale: string }>;
 }>) {
     const resolvedParams = await params;
-    const locale = resolvedParams.locale;
+    const locale = resolvedParams.locale as Language;
+    const t = dictionary[locale] || dictionary["en"];
 
     const cookieStore = await cookies();
     const activeVariant = (cookieStore.get("sovereign_webgl_variant")?.value || "fire") as 'matrix' | 'fire' | 'galaxy' | 'none';
@@ -96,6 +67,9 @@ export default async function RootLayout({
     // Halting Protocol Check
     const isSystemHalted = overrides.haltingProtocol && !isRootAdmin;
 
+    // SEO Schema Matrix
+    const schema = generateSchemaSteward(overrides, { locale });
+
     const socials = {
         socialX: overrides.socialX,
         socialGithub: overrides.socialGithub,
@@ -107,17 +81,23 @@ export default async function RootLayout({
             '--accent': activeAccentColor
         } as React.CSSProperties}>
             <head>
-                <StructuredData />
+                <StructuredData schema={schema} />
             </head>
             <body
                 className={`${inter.variable} ${fustat.variable} font-sans bg-black text-white antialiased`}
             >
                 <SovereignErrorBoundary>
                     <SovereignWebGL variant={activeVariant} opacity={0.15} />
-                    <BroadcastBanner />
+                    <BroadcastBanner message={overrides.broadcast} />
                     <ScrollToTop />
                     <ToastProvider>
-                        <ClientProviders locale={locale} taglineOverride={typographyOverride} siteTitleOverride={siteTitleOverride}>
+                        <ClientProviders
+                            locale={locale}
+                            taglineOverride={typographyOverride}
+                            siteTitleOverride={siteTitleOverride}
+                            gaId={overrides.gaId}
+                            posthogId={overrides.posthogId}
+                        >
                             <SessionRevalidator />
                             <nav className="fixed top-8 right-8 z-50">
                                 <AuthButton />
@@ -125,11 +105,11 @@ export default async function RootLayout({
                             <GlobalCommandPalette />
                             {isSystemHalted ? (
                                 <div className="flex flex-col items-center justify-center min-h-screen text-center p-8 space-y-6">
-                                    <h1 className="text-4xl md:text-6xl font-black text-red-500 tracking-tighter uppercase font-mono">SYSTEM HALTED</h1>
+                                    <h1 className="text-4xl md:text-6xl font-black text-red-500 tracking-tighter uppercase font-mono">{t.systemHalted.title}</h1>
                                     <p className="text-white/50 text-sm md:text-base font-mono max-w-lg leading-relaxed uppercase tracking-widest">
-                                        The Universal Boilerplate Architecture is currently offline for critical administrative maintenance.
+                                        {t.systemHalted.descLine1}
                                         <br /><br />
-                                        Please standby for redeployment.
+                                        {t.systemHalted.descLine2}
                                     </p>
                                 </div>
                             ) : overrides.preLaunchMode && !isRootAdmin ? (

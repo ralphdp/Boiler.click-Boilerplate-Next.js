@@ -3,8 +3,10 @@
 import { useState } from "react";
 import { motion } from "framer-motion";
 import { ShieldCheck, Send } from "lucide-react";
+import { useTranslation } from "@/core/i18n/LanguageProvider";
 
 export function WaitlistScreen({ siteName = "Sovereign Substrate" }: { siteName?: string }) {
+    const { t } = useTranslation();
     const [email, setEmail] = useState("");
     const [status, setStatus] = useState<'idle' | 'submitting' | 'success' | 'error'>('idle');
 
@@ -49,12 +51,12 @@ export function WaitlistScreen({ siteName = "Sovereign Substrate" }: { siteName?
                             {siteName}
                         </h1>
                         <p className="text-[var(--accent)] text-sm md:text-base font-mono uppercase tracking-[0.2em] relative inline-block">
-                            Calibration Sequence Active
+                            {t.waitlist.calibrationSequence}
                             <span className="absolute -right-4 top-1/2 -translate-y-1/2 w-2 h-2 bg-[var(--accent)] rounded-full animate-ping"></span>
                         </p>
                     </div>
                     <p className="text-white/50 text-sm max-w-md mx-auto leading-relaxed border-l-2 border-[var(--accent)]/30 pl-4 text-left font-serif italic">
-                        The architecture is currently in a stealth refinement phase. Provide your communications vector to be notified upon public deployment.
+                        {t.waitlist.stealthRefinement}
                     </p>
                 </div>
 
@@ -68,17 +70,17 @@ export function WaitlistScreen({ siteName = "Sovereign Substrate" }: { siteName?
                             className="text-center space-y-4 py-8"
                         >
                             <Send className="w-8 h-8 text-[var(--accent)] mx-auto" />
-                            <p className="text-sm font-mono text-[var(--accent)] uppercase tracking-widest">Vector Recorded</p>
-                            <p className="text-xs text-white/40 font-mono">You will be summoned upon launch.</p>
+                            <p className="text-sm font-mono text-[var(--accent)] uppercase tracking-widest">{t.waitlist.vectorRecorded}</p>
+                            <p className="text-xs text-white/40 font-mono">{t.waitlist.summonedUponLaunch}</p>
                         </motion.div>
                     ) : (
                         <form onSubmit={handleSubmit} className="space-y-4">
                             <div className="space-y-2">
-                                <label className="text-[10px] font-mono text-white/40 uppercase tracking-widest">Digital Vector (Email)</label>
+                                <label className="text-[10px] font-mono text-white/40 uppercase tracking-widest">{t.waitlist.digitalVector}</label>
                                 <input
                                     required
                                     type="email"
-                                    placeholder="Enter your email address..."
+                                    placeholder={t.waitlist.enterEmail}
                                     className="w-full bg-black/50 border border-white/10 px-4 py-4 text-sm tracking-wide outline-none focus:border-[var(--accent)]/50 transition-all text-white placeholder:text-white/20 font-mono"
                                     value={email}
                                     onChange={(e) => setEmail(e.target.value)}
@@ -90,10 +92,10 @@ export function WaitlistScreen({ siteName = "Sovereign Substrate" }: { siteName?
                                 type="submit"
                                 className="w-full py-4 bg-[var(--accent)]/10 text-[var(--accent)] border border-[var(--accent)]/30 font-mono uppercase tracking-[0.2em] text-xs hover:bg-[var(--accent)] hover:text-black transition-all disabled:opacity-50 relative overflow-hidden"
                             >
-                                {status === 'submitting' ? 'Authenticating...' : 'Request Access'}
+                                {status === 'submitting' ? t.waitlist.authenticating : t.waitlist.requestAccess}
                             </button>
                             {status === 'error' && (
-                                <p className="text-[10px] font-mono uppercase text-red-500 text-center tracking-widest pt-2">Transmission Failed</p>
+                                <p className="text-[10px] font-mono uppercase text-red-500 text-center tracking-widest pt-2">{t.waitlist.transmissionFailed}</p>
                             )}
                         </form>
                     )}
@@ -101,7 +103,7 @@ export function WaitlistScreen({ siteName = "Sovereign Substrate" }: { siteName?
 
                 <div className="text-center opacity-30 pointer-events-none">
                     <span className="text-[8px] font-mono uppercase tracking-[0.3em] inline-block border-t border-white/20 pt-4 px-8">
-                        Secured by Vanguard Architecture 6/11
+                        {t.waitlist.securedBy}
                     </span>
                 </div>
             </motion.div>

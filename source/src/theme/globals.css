@@ -8,7 +8,8 @@
 :root {
     --background: #000000;
     --foreground: #ffffff;
-    --accent: #D4AF37; /* Vanguard Gold default */
+    --accent: #a855f7;
+    /* Vanguard Purple default - Synced with ACTIVE_THEME */
     --system-stability: var(--accent);
 }
 

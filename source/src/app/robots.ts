@@ -1,14 +1,14 @@
 import { MetadataRoute } from "next";
 
 export default function robots(): MetadataRoute.Robots {
-    const baseUrl = process.env.NEXT_PUBLIC_SITE_URL || "https://your-production-url.com";
+    const siteUrl = process.env.NEXT_PUBLIC_SITE_URL || "http://localhost:3000";
 
     return {
         rules: {
             userAgent: "*",
-            allow: ["/", "/auth/handshake"],
-            disallow: ["/dashboard/", "/admin/", "/api/"],
+            allow: ["/", "/auth/handshake", "/demo"],
+            disallow: ["/dashboard/", "/admin/", "/api/", "/_next/"],
         },
-        sitemap: `${baseUrl}/sitemap.xml`,
+        sitemap: `${siteUrl}/sitemap.xml`,
     };
 }

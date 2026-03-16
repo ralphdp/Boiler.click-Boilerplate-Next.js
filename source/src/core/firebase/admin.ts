@@ -19,23 +19,48 @@ export function initAdminApp(): App {
 
     // CRITICAL: Pull env variables strictly inside the runtime function, NOT at module closure.
     // This ensures Turbopack doesn't lock empty variables during its static tracing phases!
-    const projectId = process.env.NEXT_PUBLIC_FIREBASE_PROJECT_ID || process.env.FIREBASE_PROJECT_ID;
-    const clientEmail = process.env.FIREBASE_CLIENT_EMAIL;
-    const privateKey = process.env.FIREBASE_PRIVATE_KEY;
+    // Local JSON Fallback for robust development
+    let projectId = process.env.NEXT_PUBLIC_FIREBASE_PROJECT_ID || process.env.FIREBASE_PROJECT_ID;
+    let clientEmail = process.env.FIREBASE_CLIENT_EMAIL;
+    let privateKey = process.env.FIREBASE_PRIVATE_KEY;
+
+    // If we are on local and have the JSON file, it's MUCH safer to use it directly
+    try {
+        const fs = require('fs');
+        const path = require('path');
+        const jsonPath = path.join(process.cwd(), 'boiler-click-next-js-firebase-adminsdk-fbsvc-1f0ed27867.json');
+        if (fs.existsSync(jsonPath)) {
+            const serviceAccount = JSON.parse(fs.readFileSync(jsonPath, 'utf8'));
+            projectId = serviceAccount.project_id;
+            clientEmail = serviceAccount.client_email;
+            privateKey = serviceAccount.private_key;
+        }
+    } catch (e) {
+        // Silently ignore if file doesn't exist or can't be read
+    }
 
     if (!projectId || !clientEmail || !privateKey) {
-        console.warn("⚠️ FIREBASE_ADMIN_WARN: Missing credentials. Emitting an un-authenticated fallback. Handshakes will fail if variables aren't injected soon.");
         const fallbackApp = apps.find(a => a.name === 'sovereign-fallback') || initializeApp({ projectId: "error-missing-project" }, "sovereign-fallback");
         // DO NOT write this to globalAny.firebaseAdminApp so it doesn't permanently poison the Next.js worker!
         return fallbackApp;
     }
 
-    console.log("✅ Initializing new Firebase Admin instance (Modular API)");
+    // Aggressive parsing for private key to handle all .env edge cases
+    let formattedKey = privateKey.trim();
+
+    // Remove wrapping quotes if they exist (Next.js sometimes leaves them if misconfigured)
+    formattedKey = formattedKey.replace(/^["'](.+)["']$/s, '$1');
+
+    // Handle escaped newlines (literal \n characters in the string)
+    if (formattedKey.includes('\\n')) {
+        formattedKey = formattedKey.replace(/\\n/g, '\n');
+    }
+
     const app = initializeApp({
         credential: cert({
             projectId: projectId,
             clientEmail: clientEmail,
-            privateKey: privateKey.replace(/\\n/g, '\n').replace(/"/g, ''),
+            privateKey: formattedKey,
         }),
     });
 

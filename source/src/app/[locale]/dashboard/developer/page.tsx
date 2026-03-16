@@ -10,6 +10,9 @@ import { useTranslation } from "@/core/i18n/LanguageProvider";
 import { useEffect, useState } from "react";
 import { getUserAPIKeys, generateAPIKey, revokeAPIKey } from "@/core/actions/apikeys";
 import { getWorkspaceWebhooks, registerWebhook } from "@/core/actions/webhooks";
+import { useToast } from "@/components/ui/Toast";
+import { ConfirmationModal } from "@/components/ui/ConfirmationModal";
+import { CipherGate } from "@/components/ui/CipherGate";
 
 export default function DeveloperPage() {
     const { data: session } = useSession();
@@ -22,6 +25,22 @@ export default function DeveloperPage() {
     const [newWebhookDesc, setNewWebhookDesc] = useState("");
     const [isGenerating, setIsGenerating] = useState(false);
     const [revealedKey, setRevealedKey] = useState<string | null>(null);
+    const { toast } = useToast();
+    const { t } = useTranslation();
+
+    // Secure Actions State
+    const [confirmModal, setConfirmModal] = useState<{
+        open: boolean;
+        title: string;
+        description: string;
+        variant: 'danger' | 'warning' | 'info';
+        action: () => void;
+        requireCipher?: boolean;
+    }>({ open: false, title: "", description: "", variant: "info", action: () => { } });
+
+    const [cipherAction, setCipherAction] = useState<{ open: boolean, onConfirm: () => void } | null>(null);
+
+    const closeConfirm = () => setConfirmModal(prev => ({ ...prev, open: false }));
 
     const activeWorkspace = session?.user?.activeWorkspace;
 
@@ -60,14 +79,26 @@ export default function DeveloperPage() {
     };
 
     const handleRevoke = async (id: string, name: string) => {
-        if (confirm(`SYSTEM WARNING: Are you sure you want to revoke key '${name}'? This action cannot be reversed.`)) {
-            setIsGenerating(true);
-            const res = await revokeAPIKey(id);
-            if (res.success) {
-                await loadKeys();
+        setConfirmModal({
+            open: true,
+            title: "REVOKE CRYPTOGRAPHIC KEY",
+            description: `SYSTEM WARNING: Are you sure you want to revoke key '${name}'? This action cannot be reversed and will immediately sever any external integration relying on this substrate.`,
+            variant: "danger",
+            requireCipher: true,
+            action: async () => {
+                setIsGenerating(true);
+                try {
+                    const res = await revokeAPIKey(id);
+                    if (res.success) {
+                        toast({ title: "Key Revoked", description: `Cryptographic substrate for ${name} has been purged.`, type: "success" });
+                        await loadKeys();
+                    }
+                } catch (e: any) {
+                    toast({ title: "Revocation Fault", description: e.message || "Failed to sever cryptographic key.", type: "error" });
+                }
+                setIsGenerating(false);
             }
-            setIsGenerating(false);
-        }
+        });
     };
 
     const handleRegisterWebhook = async () => {
@@ -75,11 +106,12 @@ export default function DeveloperPage() {
         setIsGenerating(true);
         const res = await registerWebhook(activeWorkspace, newWebhookUrl, newWebhookDesc);
         if (res.success) {
+            toast({ title: "Webhook Mounted", description: "Event sink successfully bound to target URL.", type: "success" });
             setNewWebhookUrl("");
             setNewWebhookDesc("");
             await loadWebhooks();
         } else {
-            alert(res.message);
+            toast({ title: "Mounting Fault", description: (res as any).message || "Binding error.", type: "error" });
         }
         setIsGenerating(false);
     };
@@ -87,7 +119,7 @@ export default function DeveloperPage() {
     const handleCopy = () => {
         if (revealedKey) {
             navigator.clipboard.writeText(revealedKey);
-            alert("Cryptographic Key copied to clipboard.");
+            toast({ title: "Handshake Complete", description: "Cryptographic Key copied to clipboard.", type: "success" });
         }
     };
 
@@ -284,6 +316,34 @@ export default function DeveloperPage() {
             <div className="absolute inset-0 z-[-1] opacity-5 pointer-events-none" aria-hidden="true">
                 <div className="w-full h-full bg-[radial-gradient(circle_at_center,var(--accent)_1px,transparent_1px)] [background-size:32px_32px]" />
             </div>
+
+            <ConfirmationModal
+                isOpen={confirmModal.open}
+                title={confirmModal.title}
+                description={confirmModal.description}
+                variant={confirmModal.variant}
+                onConfirm={() => {
+                    if (confirmModal.requireCipher) {
+                        setCipherAction({ open: true, onConfirm: confirmModal.action });
+                        closeConfirm();
+                    } else {
+                        confirmModal.action();
+                        closeConfirm();
+                    }
+                }}
+                onCancel={closeConfirm}
+            />
+
+            {cipherAction?.open && (
+                <CipherGate
+                    t={t}
+                    onSuccess={() => {
+                        cipherAction.onConfirm();
+                        setCipherAction(null);
+                    }}
+                    onCancel={() => setCipherAction(null)}
+                />
+            )}
         </main>
     );
 }

@@ -5,14 +5,14 @@ import { useRouter } from "next/navigation";
 import { verifyLoginMFA } from "@/core/actions/mfa";
 import { useTranslation } from "@/core/i18n/LanguageProvider";
 import { Loader2 } from "lucide-react";
-import { ShieldCheckIcon } from "@heroicons/react/24/outline";
+import { ShieldCheck } from "lucide-react";
 
 export default function MFAChallengePage() {
     const [code, setCode] = useState("");
     const [loading, setLoading] = useState(false);
     const [error, setError] = useState<string | null>(null);
     const router = useRouter();
-    const { language } = useTranslation();
+    const { t, language } = useTranslation();
 
     const handleVerify = async (e: React.FormEvent) => {
         e.preventDefault();
@@ -24,10 +24,10 @@ export default function MFAChallengePage() {
             if (result.success) {
                 router.push(`/${language}/dashboard`);
             } else {
-                setError(result.error || "Invalid Verification Code.");
+                setError(result.error || t.auth.mfaInvalid);
             }
         } catch (err: any) {
-            setError(err.message || "An unexpected error occurred.");
+            setError(err.message || t.auth.mfaUnexpected);
         } finally {
             setLoading(false);
         }
@@ -44,18 +44,18 @@ export default function MFAChallengePage() {
             <div className="w-full max-w-sm z-10 bg-[#050505]/60 border border-white/10 p-10 backdrop-blur-2xl rounded-2xl relative shadow-[0_0_100px_rgba(0,0,0,0.8)]">
 
                 <div className="flex flex-col items-center mb-10">
-                    <ShieldCheckIcon className="w-16 h-16 text-accent mb-6" />
+                    <ShieldCheck className="w-16 h-16 text-accent mb-6" />
                     <h2 className="text-2xl font-black italic text-center leading-none">
-                        Vanguard <span className="text-accent">Verification</span>
+                        {t.auth.mfaTitle.split(' ')[0]} <span className="text-accent">{t.auth.mfaTitle.split(' ').slice(1).join(' ')}</span>
                     </h2>
                     <p className="text-[10px] text-white/40 mt-4 text-center">
-                        Your identity substrate is protected by an Authenticator application constraint. Execute token verification to access the terminal.
+                        {t.auth.mfaDesc}
                     </p>
                 </div>
 
                 <form onSubmit={handleVerify} className="space-y-6">
                     <div className="space-y-1">
-                        <label className="text-[10px] font-black uppercase text-white/50">Authenticator Code</label>
+                        <label className="text-[10px] font-black uppercase text-white/50">{t.auth.mfaAuthCode}</label>
                         <input
                             type="text"
                             maxLength={6}
@@ -78,11 +78,11 @@ export default function MFAChallengePage() {
                         disabled={loading || code.length < 6}
                         className="w-full py-4 bg-accent text-white font-black text-[12px] uppercase tracking-wider hover:bg-accent/80 transition-all rounded-xl shadow-[0_0_20px_rgba(var(--accent-rgb),0.2)] disabled:opacity-50 flex justify-center items-center"
                     >
-                        {loading ? <Loader2 className="w-5 h-5 animate-spin" /> : "Verify Handshake"}
+                        {loading ? <Loader2 className="w-5 h-5 animate-spin" /> : t.auth.mfaVerifyBtn}
                     </button>
 
                     <div className="pt-6 mt-6 border-t border-white/10 flex justify-center text-[10px] font-mono text-white/30 hidden">
-                        Requires Authenticator Binding Check
+                        {t.auth.mfaBindingCheck}
                     </div>
                 </form>
             </div>

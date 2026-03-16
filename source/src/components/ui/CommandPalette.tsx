@@ -3,6 +3,7 @@
 import { useState, useEffect, useCallback, useRef } from "react";
 import { motion, AnimatePresence } from "framer-motion";
 import { Search, ChevronRight, Terminal } from "lucide-react";
+import { useTranslation } from "@/core/i18n/LanguageProvider";
 
 export interface CommandDefinition {
     id: string;
@@ -24,6 +25,7 @@ export function CommandPalette({
     const [search, setSearch] = useState("");
     const [activeIndex, setActiveIndex] = useState(0);
     const inputRef = useRef<HTMLInputElement>(null);
+    const { t } = useTranslation();
 
     const filteredCommands = commands.filter((cmd) =>
         cmd.name.toLowerCase().includes(search.toLowerCase())
@@ -31,10 +33,6 @@ export function CommandPalette({
 
     useEffect(() => {
         const handleKeyDown = (e: KeyboardEvent) => {
-            if ((e.metaKey || e.ctrlKey) && e.key === "k") {
-                e.preventDefault();
-                onOpenChange(!isOpen);
-            }
             if (e.key === "Escape" && isOpen) {
                 onOpenChange(false);
             }
@@ -96,7 +94,7 @@ export function CommandPalette({
                                 value={search}
                                 onChange={(e) => setSearch(e.target.value)}
                                 onKeyDown={handleKeyDown}
-                                placeholder="Search commands or hit ⌘K..."
+                                placeholder={t.commandPalette.searchPlaceholder}
                                 className="w-full bg-transparent border-none text-white focus:outline-none focus:ring-0 pl-3 font-mono text-sm placeholder-white/30"
                             />
                             <div className="flex gap-1">
@@ -108,7 +106,7 @@ export function CommandPalette({
                         <div className="max-h-[300px] overflow-y-auto admin-scrollbar p-2">
                             {filteredCommands.length === 0 ? (
                                 <div className="text-center py-8 text-white/30 font-mono text-xs tracking-widest uppercase">
-                                    No Directives Found
+                                    {t.commandPalette.noDirectives}
                                 </div>
                             ) : (
                                 filteredCommands.map((cmd, index) => {
@@ -122,8 +120,8 @@ export function CommandPalette({
                                             }}
                                             onMouseEnter={() => setActiveIndex(index)}
                                             className={`flex items-center justify-between px-4 py-3 rounded-lg cursor-pointer transition-colors duration-150 ${isActive
-                                                    ? "bg-[var(--accent)]/10 border border-[var(--accent)]/30 text-white shadow-inner"
-                                                    : "bg-transparent border border-transparent text-white/60 hover:text-white"
+                                                ? "bg-[var(--accent)]/10 border border-[var(--accent)]/30 text-white shadow-inner"
+                                                : "bg-transparent border border-transparent text-white/60 hover:text-white"
                                                 }`}
                                         >
                                             <div className="flex items-center gap-3">
@@ -144,7 +142,7 @@ export function CommandPalette({
                             )}
                         </div>
                         <div className="p-2 bg-white/5 border-t border-white/5 flex justify-between items-center text-[10px] uppercase font-mono tracking-widest text-[var(--accent)] opacity-60">
-                            <span>Sovereign Substrate Cmd Palette</span>
+                            <span>{t.commandPalette.subtitle}</span>
                             <span>v2.1</span>
                         </div>
                     </motion.div>

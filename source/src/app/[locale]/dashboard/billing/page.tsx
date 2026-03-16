@@ -10,6 +10,7 @@ import { useTranslation } from "@/core/i18n/LanguageProvider";
 import { useEffect, useState } from "react";
 import { createCheckoutSession, createBillingPortal, getWorkspaceBilling } from "@/core/actions/billing";
 import { redeemVoucher } from "@/core/actions/vouchers";
+import { useToast } from "@/components/ui/Toast";
 
 // Note: In an actual SaaS, these price IDs would be dynamically pulled or hidden behind .env
 const STRIPE_PRO_PRICE_ID = process.env.NEXT_PUBLIC_STRIPE_PRO_PRICE_ID || "price_1xxxxxxxxxxxxx";
@@ -19,6 +20,7 @@ export default function BillingPage() {
     const { language, t } = useTranslation();
     const [billingData, setBillingData] = useState<any>(null);
     const [loading, setLoading] = useState(true);
+    const { toast } = useToast();
     const [actionLoading, setActionLoading] = useState(false);
     const [voucherCode, setVoucherCode] = useState("");
     const [voucherLoading, setVoucherLoading] = useState(false);
@@ -46,7 +48,7 @@ export default function BillingPage() {
             const res = await createCheckoutSession(activeWorkspace, STRIPE_PRO_PRICE_ID, language);
             if (res.url) window.location.href = res.url;
         } catch (e: any) {
-            alert(e.message);
+            toast({ title: "Checkout Fault", description: e.message, type: "error" });
             setActionLoading(false); // Only set if failed, otherwise redirecting
         }
     };
@@ -57,7 +59,7 @@ export default function BillingPage() {
             const res = await createBillingPortal(activeWorkspace, language);
             if (res.url) window.location.href = res.url;
         } catch (e: any) {
-            alert(e.message);
+            toast({ title: "Portal Fault", description: e.message, type: "error" });
             setActionLoading(false);
         }
     };
@@ -68,11 +70,11 @@ export default function BillingPage() {
         setVoucherLoading(true);
         try {
             await redeemVoucher(activeWorkspace, voucherCode.trim().toUpperCase());
-            alert("Hardware License / Voucher Redeemed Successfully. Your context has been upgraded.");
+            toast({ title: "License Authenticated", description: "Hardware License / Voucher Redeemed Successfully. Your context has been upgraded.", type: "success" });
             setVoucherCode("");
             await loadBilling();
         } catch (e: any) {
-            alert(`Voucher Redemption Failed: ${e.message}`);
+            toast({ title: "Redemption Fault", description: `Voucher Redemption Failed: ${e.message}`, type: "error" });
         } finally {
             setVoucherLoading(false);
         }

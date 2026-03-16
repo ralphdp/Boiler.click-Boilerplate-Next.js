@@ -8,6 +8,7 @@ import { Button } from "@/components/ui/Button";
 import { IdentityBadge } from "@/components/ui/IdentityBadge";
 import { useState } from "react";
 import { useTranslation } from "@/core/i18n/LanguageProvider";
+import { SystemHeartbeat } from "@/components/ui/SystemHeartbeat";
 
 const FEATURE_ICONS = [Shield, Box, Network, Globe, Database, Lock, CreditCard, Image, Key, Search, Layers, Terminal];
 
@@ -60,8 +61,12 @@ export default function HomePage() {
                             className="w-full sm:w-1/2 flex justify-center py-4 text-xs tracking-widest uppercase font-bold border border-[var(--accent)]/50 text-[var(--accent)] hover:bg-[var(--accent)] hover:text-white"
                             aria-label="View Demo"
                         >
-                            Live Demo Matrix
+                            {t.home.demoMatrix}
                         </Button>
+                    </div>
+
+                    <div className="pt-8">
+                        <SystemHeartbeat />
                     </div>
                 </motion.section>
             </AnimatePresence>

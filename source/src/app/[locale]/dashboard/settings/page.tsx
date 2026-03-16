@@ -13,8 +13,49 @@ import { signInWithEmailAndPassword } from "firebase/auth";
 import QRCode from "react-qr-code";
 import { sendCustomPasswordResetEmail, generateSovereignCustomToken, revokeAllSessions } from "@/core/actions/auth";
 import { generateMFASecret, verifyAndEnableMFA, disableMFA } from "@/core/actions/mfa";
-import { ACTIVE_THEME } from "@/theme/config";
+import { motion, AnimatePresence } from "framer-motion";
+import { getActiveSessions, revokeSession } from "@/core/actions/auth";
 import { useTranslation } from "@/core/i18n/LanguageProvider";
+import { useToast } from "@/components/ui/Toast";
+import { ConfirmationModal } from "@/components/ui/ConfirmationModal";
+import { CipherGate } from "@/components/ui/CipherGate";
+
+function SessionList({ sessions, loading, onRevoke }: { sessions: any[], loading: boolean, onRevoke: (id: string) => any }) {
+    if (loading) return <div className="text-[10px] text-white/20 animate-pulse uppercase tracking-widest">Scanning active nodes...</div>;
+    if (sessions.length === 0) return <div className="text-[10px] text-white/20 uppercase tracking-widest">No sibling sessions detected.</div>;
+
+    return (
+        <div className="space-y-2">
+            {sessions.map((s, idx) => (
+                <div key={s.id} className="flex items-center justify-between p-3 glass border-white/5 group hover:border-[var(--accent)]/30 transition-colors">
+                    <div className="flex items-center gap-3">
+                        <div className="w-8 h-8 rounded-full bg-white/5 flex items-center justify-center text-white/40">
+                            <Smartphone size={14} />
+                        </div>
+                        <div className="flex flex-col">
+                            <span className="text-[10px] font-black uppercase tracking-widest text-white/80">
+                                {s.userAgent.includes("Macintosh") || s.userAgent.includes("Mac OS X") ? "Apple Silicon Node" :
+                                    s.userAgent.includes("iPhone") || s.userAgent.includes("iPad") ? "iOS Mobile Node" :
+                                        s.userAgent.includes("Windows") ? "Win64 Matrix" :
+                                            s.userAgent.includes("Linux") ? "Linux Kernel Node" :
+                                                "Unknown Substrate"}
+                            </span>
+                            <span className="text-[8px] text-white/30 uppercase tracking-widest">
+                                {new Date(s.lastSeen).toLocaleString()}
+                            </span>
+                        </div>
+                    </div>
+                    <button
+                        onClick={() => onRevoke(s.id)}
+                        className="text-[9px] font-black uppercase text-red-500/50 hover:text-red-500 opacity-0 group-hover:opacity-100 transition-all px-2 py-1"
+                    >
+                        [ REVOKE ]
+                    </button>
+                </div>
+            ))}
+        </div>
+    );
+}
 
 export default function SettingsPage() {
     const { data: session, update } = useSession();
@@ -38,7 +79,54 @@ export default function SettingsPage() {
     const [verificationId, setVerificationId] = useState("");
     const [reAuthPassword, setReAuthPassword] = useState("");
     const [mfaError, setMfaError] = useState("");
+    const [sessions, setSessions] = useState<any[]>([]);
+    const [sessionsLoading, setSessionsLoading] = useState(true);
     const fileInputRef = useRef<HTMLInputElement>(null);
+    const { toast } = useToast();
+
+    // Secure Actions State
+    const [confirmModal, setConfirmModal] = useState<{
+        open: boolean;
+        title: string;
+        description: string;
+        variant: 'danger' | 'warning' | 'info';
+        action: () => void;
+        requireCipher?: boolean;
+    }>({ open: false, title: "", description: "", variant: "info", action: () => { } });
+
+    const [cipherAction, setCipherAction] = useState<{ open: boolean, onConfirm: () => void } | null>(null);
+
+    const closeConfirm = () => setConfirmModal(prev => ({ ...prev, open: false }));
+
+    const refreshSessions = async () => {
+        setSessionsLoading(true);
+        const s = await getActiveSessions();
+        setSessions(s);
+        setSessionsLoading(false);
+    };
+
+    useEffect(() => {
+        refreshSessions();
+    }, []);
+
+    const handleRevokeSingle = async (id: string) => {
+        setConfirmModal({
+            open: true,
+            title: "De-authorize Identity Node",
+            description: "Are you sure you want to de-authorize this specific identity node? This will immediately sever terminal access for that session.",
+            variant: "danger",
+            requireCipher: true,
+            action: async () => {
+                const res = await revokeSession(id);
+                if (res.success) {
+                    setSessions(prev => prev.filter(s => s.id !== id));
+                    toast({ title: "Node De-authorized", description: "Identity session successfully severed.", type: "success" });
+                } else {
+                    toast({ title: "Revocation Fault", description: "Could not sever remote session.", type: "error" });
+                }
+            }
+        });
+    };
 
     const isOAuth = (session?.user as any)?.provider && (session?.user as any)?.provider !== "credentials";
 
@@ -55,10 +143,10 @@ export default function SettingsPage() {
         if (!session?.user?.email) return;
         try {
             await sendCustomPasswordResetEmail(session.user.email, language);
-            alert("Cryptographic Pulse Sent: Check your email for a secure password reset link.");
+            toast({ title: "Pulse Sent", description: "Check your email for a secure password reset link.", type: "success" });
         } catch (e: any) {
             console.error("Reset Failed:", e);
-            alert("MFA Matrix Failure. Ensure you set the RESEND_API_KEY environment variable correctly.");
+            toast({ title: "Pulse Fault", description: "MFA Matrix Failure. Ensure Resend API is configured.", type: "error" });
         }
     };
 
@@ -74,10 +162,10 @@ export default function SettingsPage() {
 
             // Push the new image globally to NextAuth state
             await update({ image: downloadUrl });
-            alert("Sovereign Gravatar Securely Uplinked to Firebase Matrix.");
+            toast({ title: "Gravatar Uplinked", description: "Identity image successfully synchronized with the Firebase matrix.", type: "success" });
         } catch (e) {
             console.error("Upload Matrix Fault:", e);
-            alert("Storage Uplink Failed. Verify Firebase permissions.");
+            toast({ title: "Uplink Fault", description: "Storage access denied. Verify Firebase permissions.", type: "error" });
         } finally {
             setAvatarUploading(false);
         }
@@ -110,6 +198,7 @@ export default function SettingsPage() {
                 const res = await verifyAndEnableMFA(verificationCode);
                 if (res.success) {
                     setMfaStep("DONE");
+                    await update({ mfaEnabled: true });
                 } else {
                     setMfaError(res.error || "Cryptographic Verification Failed");
                 }
@@ -123,6 +212,24 @@ export default function SettingsPage() {
             setLoading(false);
         }
     };
+
+    // Dynamic Alignment Jitter Subsystem
+    const [alignment, setAlignment] = useState(98.6);
+    const [mounted, setMounted] = useState(false);
+
+    useEffect(() => {
+        setMounted(true);
+        const interval = setInterval(() => {
+            setAlignment(prev => {
+                const jitter = (Math.random() * 0.2) - 0.1;
+                const next = prev + jitter;
+                return Math.min(99.9, Math.max(98.4, next));
+            });
+        }, 3000);
+        return () => clearInterval(interval);
+    }, []);
+
+    const isMfaActive = isOAuth || (session?.user as any)?.mfaEnabled;
 
     return (
         <main className="relative min-h-screen flex flex-col items-center justify-center p-6 text-white overflow-hidden">
@@ -139,6 +246,55 @@ export default function SettingsPage() {
                     <p className="text-[10px] uppercase tracking-[0.2em] font-bold text-white/50">
                         {t.settings.subtitle}
                     </p>
+                </div>
+
+                <div className="w-full h-px bg-white/5" />
+
+                {/* STRUCTURAL CLEARANCE SECTION */}
+                <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+                    <div className="glass p-4 border-white/5 space-y-3">
+                        <div className="flex justify-between items-center">
+                            <span className="text-[9px] font-black uppercase tracking-widest text-white/40">{t.settings.clearanceLevel}</span>
+                            <span className="text-[10px] font-black uppercase tracking-[0.2em] text-[var(--accent)] bg-[var(--accent)]/10 px-2 py-0.5 border border-[var(--accent)]/20">
+                                {session?.user?.role || "USER"}
+                            </span>
+                        </div>
+                        <div className="space-y-1">
+                            <div className="flex justify-between items-center text-[8px] uppercase tracking-widest text-white/30">
+                                <span>{t.settings.logosAlignment}</span>
+                                <span className="text-white/70">{alignment.toFixed(1)}%</span>
+                            </div>
+                            <div className="w-full h-1 bg-white/5 overflow-hidden">
+                                <motion.div
+                                    initial={{ width: 0 }}
+                                    animate={{ width: `${alignment}%` }}
+                                    transition={{ duration: 1, ease: "easeOut" }}
+                                    className="h-full bg-[var(--accent)]"
+                                />
+                            </div>
+                        </div>
+                    </div>
+
+                    <div className="glass p-4 border-white/5 space-y-3">
+                        <div className="flex justify-between items-center">
+                            <span className="text-[9px] font-black uppercase tracking-widest text-white/40">{t.settings.terminalAccess}</span>
+                            <span className={`text-[10px] font-black uppercase tracking-[0.2em] px-2 py-0.5 border transition-all duration-700 ${isMfaActive ? "text-[var(--accent)] bg-[var(--accent)]/10 border-[var(--accent)]/20" : "text-white/40 bg-white/5 border-white/10"}`}>
+                                {isMfaActive ? "IDENTITY_HARDENED" : "IDENTITY_VERIFIED"}
+                            </span>
+                        </div>
+                        <div className="flex gap-2">
+                            {[1, 2, 3].map(i => {
+                                // OAuth accounts (Google/Github) are considered hardened at the service level.
+                                const isFull = i <= 2 || isMfaActive || isOAuth;
+                                return (
+                                    <div
+                                        key={i}
+                                        className={`flex-1 h-1 bg-[var(--accent)] transition-all duration-1000 ${mounted && isFull ? 'opacity-100' : 'opacity-10'}`}
+                                    />
+                                );
+                            })}
+                        </div>
+                    </div>
                 </div>
 
                 <div className="w-full h-px bg-white/5" />
@@ -214,9 +370,9 @@ export default function SettingsPage() {
                                     {t.settings.resetPassword}
                                 </Button>
 
-                                <Button type="button" variant="outline" className="w-full justify-start pl-4" onClick={() => setActiveModal("TOTP")} disabled={!!isOAuth}>
+                                <Button type="button" variant="outline" className="w-full justify-start pl-4" onClick={() => setActiveModal("TOTP")} disabled={!!isOAuth || (session?.user as any)?.mfaEnabled}>
                                     <ShieldAlert size={14} className="mr-3 text-white/50" />
-                                    {t.settings.enableTotp}
+                                    {isMfaActive ? "MFA HARDENED" : t.settings.enableTotp}
                                 </Button>
 
                                 <Button type="button" variant="outline" className="w-full justify-start pl-4" onClick={() => setActiveModal("SMS")} disabled={!!isOAuth}>
@@ -229,16 +385,24 @@ export default function SettingsPage() {
                                     variant="outline"
                                     className="w-full justify-start pl-4 border-red-500/30 text-red-500 hover:bg-red-500/10"
                                     onClick={async () => {
-                                        if (confirm("Execute Overwrite Protocol? This will forcibly sever all active sessions linked to this root identity except your current one.")) {
-                                            setLoading(true);
-                                            const res = await revokeAllSessions();
-                                            if (res.success) {
-                                                alert("Cryptographic Reset Complete. sibling sessions terminated.");
-                                            } else {
-                                                alert(res.message);
+                                        setConfirmModal({
+                                            open: true,
+                                            title: "EXECUTE OVERWRITE PROTOCOL",
+                                            description: "This will forcibly sever all active sessions linked to this root identity except your current one. Proceed with total cryptographic severance?",
+                                            variant: "danger",
+                                            requireCipher: true,
+                                            action: async () => {
+                                                setLoading(true);
+                                                const res = await revokeAllSessions();
+                                                if (res.success) {
+                                                    toast({ title: "Severance Complete", description: "All secondary identity nodes have been neutralized.", type: "success" });
+                                                    await refreshSessions();
+                                                } else {
+                                                    toast({ title: "Severance Fault", description: res.message, type: "error" });
+                                                }
+                                                setLoading(false);
                                             }
-                                            setLoading(false);
-                                        }
+                                        });
                                     }}
                                     disabled={loading}
                                 >
@@ -246,6 +410,23 @@ export default function SettingsPage() {
                                     {t.settings.revokeSessions}
                                 </Button>
                             </div>
+
+                            {/* ACTIVE SESSIONS TELEMETRY */}
+                            <div className="pt-4 space-y-4">
+                                <label className="text-[10px] font-bold tracking-widest uppercase text-white/70 flex items-center gap-2">
+                                    <Smartphone size={12} className="text-[var(--accent)]" />
+                                    Active Node Connections
+                                </label>
+
+                                <div className="space-y-2">
+                                    <SessionList
+                                        sessions={sessions}
+                                        loading={sessionsLoading}
+                                        onRevoke={handleRevokeSingle}
+                                    />
+                                </div>
+                            </div>
+
                             <p className="text-[8px] text-white/30 uppercase tracking-widest text-left">
                                 {t.settings.securityDisclaimer}
                             </p>
@@ -355,6 +536,34 @@ export default function SettingsPage() {
                         )}
                     </GlassCard>
                 </div>
+            )}
+
+            <ConfirmationModal
+                isOpen={confirmModal.open}
+                title={confirmModal.title}
+                description={confirmModal.description}
+                variant={confirmModal.variant}
+                onConfirm={() => {
+                    if (confirmModal.requireCipher) {
+                        setCipherAction({ open: true, onConfirm: confirmModal.action });
+                        closeConfirm();
+                    } else {
+                        confirmModal.action();
+                        closeConfirm();
+                    }
+                }}
+                onCancel={closeConfirm}
+            />
+
+            {cipherAction?.open && (
+                <CipherGate
+                    t={t}
+                    onSuccess={() => {
+                        cipherAction.onConfirm();
+                        setCipherAction(null);
+                    }}
+                    onCancel={() => setCipherAction(null)}
+                />
             )}
         </main>
     );

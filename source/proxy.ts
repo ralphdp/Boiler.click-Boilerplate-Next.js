@@ -3,6 +3,8 @@ import { authConfig } from "./src/core/auth.config";
 import { NextResponse } from "next/server";
 import { checkEdgeRateLimit } from "./src/core/security/rate-limiter-edge";
 import { getEdgeFeatureFlags } from "./src/core/security/feature-flags-edge";
+import { getEdgeConfig } from "./src/core/security/edge-config";
+import { SECURITY_CONFIG } from "./src/core/security/security-config";
 
 const { auth } = NextAuth(authConfig);
 
@@ -16,11 +18,25 @@ export default auth(async (req) => {
 
     // --- 1. EDGE SECURITY GATE ---
     // Evaluate the Token Bucket natively at the CDN Edge.
-    const ip = req.headers.get("x-forwarded-for") || "unknown";
+    const ip = (req.headers.get("x-forwarded-for") || "unknown").toString();
     const isAllowed = await checkEdgeRateLimit(ip, 20, 60);
 
     if (!isAllowed) {
         return new NextResponse("Network Intercept: Rate Limit Breached.", { status: 429 });
+    }
+
+    // --- 1.5 DOMAIN SHIELD GATE ---
+    const edgeConfig = await getEdgeConfig();
+    const referrer = req.headers.get("referer") || "";
+
+    if (edgeConfig.domainShield && referrer) {
+        const isMaliciousReferrer = SECURITY_CONFIG.DOMAIN_SHIELD.BLACKLISTED_DOMAINS.some(
+            domain => referrer.toLowerCase().includes(domain.toLowerCase())
+        );
+
+        if (isMaliciousReferrer) {
+            return new NextResponse("Vanguard Shield: Inbound Domain Blacklisted.", { status: 403 });
+        }
     }
 
     // --- 2. HARDWARE ENTROPY GATE (L3 Stability) ---
@@ -29,6 +45,13 @@ export default auth(async (req) => {
     const isCoolingMode = process.env.LOGOS_SUBSTRATE_COOLING === "ACTIVE";
     if (isCoolingMode && !pathname.startsWith('/api') && !pathname.includes('/auth')) {
         return new NextResponse("Substrate Cooling: Hardware entropy exceeds safe limits (Narrow Gate Active).", { status: 503 });
+    }
+
+    // --- 2.2 INFRASTRUCTURE HALTING GATE ---
+    const isAdmin = locales.some(loc => pathname.startsWith(`/${loc}/admin`)) || pathname.startsWith('/admin');
+    const isAuth = pathname.includes('/auth');
+    if (edgeConfig.haltingProtocol && !isAdmin && !isAuth && !pathname.startsWith('/api')) {
+        return new NextResponse("System Halted: Infrastructure Maintenance in Progress.", { status: 503 });
     }
 
     // --- NONCE GENERATION & CSP ---
@@ -63,6 +86,14 @@ export default auth(async (req) => {
     });
 
     response.headers.set('Content-Security-Policy', cspHeader);
+
+    // --- 3.7 MANDATORY SECURITY HEADERS ---
+    const hsts = `max-age=${SECURITY_CONFIG.HEADERS.HSTS_MAX_AGE}${SECURITY_CONFIG.HEADERS.HSTS_INCLUDE_SUBDOMAINS ? '; includeSubDomains' : ''}${SECURITY_CONFIG.HEADERS.HSTS_PRELOAD ? '; preload' : ''}`;
+    response.headers.set('Strict-Transport-Security', hsts);
+    response.headers.set('Referrer-Policy', SECURITY_CONFIG.HEADERS.REFERRER_POLICY);
+    response.headers.set('X-Content-Type-Options', 'nosniff');
+    response.headers.set('X-Frame-Options', 'DENY');
+    response.headers.set('X-XSS-Protection', '1; mode=block');
 
     // --- 4. AXIOMATIC AUTH & LOCALIZATION ---
     const isRootAdmin = req.auth?.user?.role === "ADMIN" || req.auth?.user?.email === process.env.NEXT_PUBLIC_SUPER_ADMIN_EMAIL;

@@ -3,6 +3,7 @@
 import { useState, useEffect } from 'react';
 import { motion, AnimatePresence } from 'framer-motion';
 import { ACTIVE_THEME } from '@/theme/config';
+import { useTranslation } from '@/core/i18n/LanguageProvider';
 
 type ConsentSettings = {
     necessary: boolean;
@@ -11,6 +12,7 @@ type ConsentSettings = {
 };
 
 export function CookieConsent() {
+    const { t } = useTranslation();
     const [showBanner, setShowBanner] = useState(false);
     const [showPreferences, setShowPreferences] = useState(false);
     const [settings, setSettings] = useState<ConsentSettings>({
@@ -82,10 +84,10 @@ export function CookieConsent() {
 
                         <div className="flex-1 space-y-3">
                             <h3 className="text-[12px] uppercase tracking-[0.2em] font-black">
-                                Privacy & Cookies
+                                {t.cookieConsent.title}
                             </h3>
                             <p className="text-11px sm:text-xs text-zinc-400 font-serif italic max-w-2xl leading-relaxed">
-                                We value your privacy. We use essential cookies to make our site work correctly. We'd also like to use optional cookies for analytics and marketing to help us improve your experience, but only with your consent.
+                                {t.cookieConsent.desc}
                             </p>
                         </div>
 
@@ -94,7 +96,7 @@ export function CookieConsent() {
                                 onClick={() => setShowPreferences(true)}
                                 className="text-[10px] uppercase font-mono text-zinc-500 hover:text-white transition-colors underline decoration-dotted underline-offset-4"
                             >
-                                Manage Preferences
+                                {t.cookieConsent.managePreferences}
                             </button>
 
                             <div className="flex gap-2">
@@ -102,7 +104,7 @@ export function CookieConsent() {
                                     onClick={handleDeclineAll}
                                     className="px-4 py-2 border border-zinc-800 text-[10px] font-black tracking-widest uppercase hover:bg-zinc-900 transition-colors text-zinc-400"
                                 >
-                                    Reject All
+                                    {t.cookieConsent.rejectAll}
                                 </button>
                                 <button
                                     onClick={handleAcceptAll}
@@ -122,7 +124,7 @@ export function CookieConsent() {
                                         e.currentTarget.style.color = 'var(--accent)';
                                     }}
                                 >
-                                    Accept All
+                                    {t.cookieConsent.acceptAll}
                                 </button>
                             </div>
                         </div>
@@ -141,24 +143,24 @@ export function CookieConsent() {
                         <div className="absolute top-0 left-0 w-full h-1 opacity-50" style={{ backgroundColor: 'var(--accent)' }} />
 
                         <h2 className="text-[14px] uppercase tracking-[0.2em] font-black mb-6 text-white border-b border-zinc-800 pb-4">
-                            Cookie Preferences
+                            {t.cookieConsent.cookiePreferences}
                         </h2>
 
                         <div className="space-y-6 mb-8">
                             <div className="flex items-start justify-between gap-4">
                                 <div className="space-y-1">
-                                    <h4 className="text-[11px] font-bold text-white uppercase tracking-wider">Essential Cookies</h4>
-                                    <p className="text-[11px] text-zinc-500 italic font-serif">Required cookies that enable core site functionality and security. These cannot be disabled.</p>
+                                    <h4 className="text-[11px] font-bold text-white uppercase tracking-wider">{t.cookieConsent.essentialCookies}</h4>
+                                    <p className="text-[11px] text-zinc-500 italic font-serif">{t.cookieConsent.essentialDesc}</p>
                                 </div>
                                 <div className="text-[10px] text-white/50 font-mono uppercase bg-white/5 px-2 py-1 border border-white/20">
-                                    Always Active
+                                    {t.cookieConsent.alwaysActive}
                                 </div>
                             </div>
 
                             <div className="flex items-start justify-between gap-4">
                                 <div className="space-y-1">
-                                    <h4 className="text-[11px] font-bold text-white uppercase tracking-wider">Analytics</h4>
-                                    <p className="text-[11px] text-zinc-500 italic font-serif">Cookies that help us understand how visitors interact with our website to improve our services.</p>
+                                    <h4 className="text-[11px] font-bold text-white uppercase tracking-wider">{t.cookieConsent.analytics}</h4>
+                                    <p className="text-[11px] text-zinc-500 italic font-serif">{t.cookieConsent.analyticsDesc}</p>
                                 </div>
                                 <label className="relative inline-flex items-center cursor-pointer">
                                     <input type="checkbox" className="sr-only peer" checked={settings.analytics} onChange={(e) => setSettings({ ...settings, analytics: e.target.checked })} />
@@ -168,8 +170,8 @@ export function CookieConsent() {
 
                             <div className="flex items-start justify-between gap-4">
                                 <div className="space-y-1">
-                                    <h4 className="text-[11px] font-bold text-white uppercase tracking-wider">Marketing & Advertising</h4>
-                                    <p className="text-[11px] text-zinc-500 italic font-serif">Cookies used to deliver more relevant advertisements and track ad campaign performance.</p>
+                                    <h4 className="text-[11px] font-bold text-white uppercase tracking-wider">{t.cookieConsent.marketing}</h4>
+                                    <p className="text-[11px] text-zinc-500 italic font-serif">{t.cookieConsent.marketingDesc}</p>
                                 </div>
                                 <label className="relative inline-flex items-center cursor-pointer">
                                     <input type="checkbox" className="sr-only peer" checked={settings.marketing} onChange={(e) => setSettings({ ...settings, marketing: e.target.checked })} />
@@ -183,7 +185,7 @@ export function CookieConsent() {
                                 onClick={() => setShowPreferences(false)}
                                 className="px-6 py-2 border border-zinc-800 text-[10px] font-black tracking-widest uppercase hover:text-white transition-colors text-zinc-400"
                             >
-                                Cancel
+                                {t.cookieConsent.cancel}
                             </button>
                             <button
                                 onClick={handleSavePreferences}
@@ -203,7 +205,7 @@ export function CookieConsent() {
                                     e.currentTarget.style.color = 'var(--accent)';
                                 }}
                             >
-                                Save Preferences
+                                {t.cookieConsent.savePreferences}
                             </button>
                         </div>
                     </div>
