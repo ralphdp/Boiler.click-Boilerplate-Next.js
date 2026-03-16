@@ -14,7 +14,7 @@ export const VanguardEmail = ({
     previewText = "A new message from the Sovereign Substrate",
     message = "This is a secure system update.",
     ctaText = "Access Terminal",
-    ctaLink = "https://boiler.click",
+    ctaLink = "#",
 }: VanguardEmailProps) => (
     <Html>
         <Head />
@@ -49,7 +49,7 @@ export const VanguardEmail = ({
                 <Section style={footer}>
                     <Text style={footerText}>
                         VANGUARD SECURE TRANSPORT<br />
-                        © {new Date().getFullYear()} Boiler Labs. All Rights Reserved.
+                        © {new Date().getFullYear()} Your Substrate. All Rights Reserved.
                     </Text>
                 </Section>
             </Container>

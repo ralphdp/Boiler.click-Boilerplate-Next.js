@@ -282,7 +282,7 @@ export async function getGlobalOverrides() {
             broadcast: data.broadcast || "",
             typography: data.typography || "",
             commerceMode: data.commerceMode || process.env.COMMERCE_MODE || "saas",
-            resendFrom: data.resendFrom || process.env.RESEND_DEFAULT_FROM || "noreply@boiler.click",
+            resendFrom: data.resendFrom || process.env.RESEND_DEFAULT_FROM || "noreply@yourdomain.com",
             siteTitle: data.siteTitle || "",
             contactEmail: data.contactEmail || "",
             primaryColor: data.primaryColor || "",

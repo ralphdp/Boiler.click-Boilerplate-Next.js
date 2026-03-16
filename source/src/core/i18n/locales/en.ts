@@ -613,7 +613,7 @@ export const en = {
             updateSubtitleBtn: "Update Subtitle",
             supportEmail: "Support Email Address",
             supportEmailDesc: "Sets the contact email address shown in the footer of the website.",
-            supportEmailPlace: "HI+NEXTJS@BOILER.CLICK",
+            supportEmailPlace: "SUPPORT@YOURDOMAIN.COM",
             configUpdated: "Configuration Updated",
             supportVectorDesc: "Support Relay vector established.",
             saveSupportEmailBtn: "Save Support Email",

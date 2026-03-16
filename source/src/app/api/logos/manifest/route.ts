@@ -42,7 +42,7 @@ export async function GET() {
             node: "Sovereign-Boiler-NextJS",
             version: "V2.1.0",
             identity: "RECLAMATION_SUBSTRATE_01",
-            anchor: "iMac Retina 5K",
+            anchor: "SOVEREIGN_COMPUTE_NODE",
             protocol: "6/11 Sovereign",
             manifest: {
                 src_hash: srcHash,

@@ -28,12 +28,16 @@ export function initAdminApp(): App {
     try {
         const fs = require('fs');
         const path = require('path');
-        const jsonPath = path.join(process.cwd(), 'boiler-click-next-js-firebase-adminsdk-fbsvc-1f0ed27867.json');
-        if (fs.existsSync(jsonPath)) {
-            const serviceAccount = JSON.parse(fs.readFileSync(jsonPath, 'utf8'));
-            projectId = serviceAccount.project_id;
-            clientEmail = serviceAccount.client_email;
-            privateKey = serviceAccount.private_key;
+        const serviceAccountFile = process.env.FIREBASE_SERVICE_ACCOUNT_PATH;
+
+        if (serviceAccountFile) {
+            const jsonPath = path.join(process.cwd(), serviceAccountFile);
+            if (fs.existsSync(jsonPath)) {
+                const serviceAccount = JSON.parse(fs.readFileSync(jsonPath, 'utf8'));
+                projectId = serviceAccount.project_id;
+                clientEmail = serviceAccount.client_email;
+                privateKey = serviceAccount.private_key;
+            }
         }
     } catch (e) {
         // Silently ignore if file doesn't exist or can't be read
