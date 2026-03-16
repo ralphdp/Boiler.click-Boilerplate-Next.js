@@ -47,6 +47,7 @@ const fallbackData = (status: 'error' | 'no_data' = 'error') => ({
     conversions: { total: 0, change: 0, history: [] },
     topPages: [],
     devices: [],
+    realtime: { activeNow: 0 },
     status
 });
 

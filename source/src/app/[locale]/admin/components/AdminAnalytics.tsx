@@ -111,14 +111,14 @@ export function AdminAnalytics({ t }: { t: any }) {
                                 {isError ? 'GA4 Bridge Offline' : (noData ? 'GA4 Connected // Standing By' : 'GA4 Analytics Pulse Nominal')}
                             </span>
                         </div>
-                        {data?.realtime?.activeNow >= 0 && (
+                        {data?.realtime && (
                             <div className="flex items-center gap-2 bg-green-500/10 border border-green-500/20 px-3 py-1 rounded-full">
                                 <span className="relative flex h-2 w-2">
-                                    <span className="animate-ping absolute inline-flex h-full w-full rounded-full bg-green-400 opacity-75"></span>
+                                    <span className={`absolute inline-flex h-full w-full rounded-full bg-green-400 opacity-75 ${data.realtime.activeNow > 0 ? 'animate-ping' : ''}`}></span>
                                     <span className="relative inline-flex rounded-full h-2 w-2 bg-green-500"></span>
                                 </span>
                                 <span className="text-[10px] font-black text-green-500 uppercase tracking-tighter">
-                                    {data.realtime.activeNow} Active Citizens Now
+                                    {data.realtime.activeNow} Active Now
                                 </span>
                             </div>
                         )}
@@ -158,7 +158,8 @@ export function AdminAnalytics({ t }: { t: any }) {
                         <h4 className="text-xs font-black uppercase tracking-[0.2em]">Identity Synchronized</h4>
                         <p className="text-[10px] text-white/40 uppercase tracking-widest leading-relaxed">
                             Bridge established with Property **528435699**. <br />
-                            Accumulating temporal data pulses. This may take 24-48 hours for new properties.
+                            <span className="text-[var(--accent)] font-bold">Latency Warning:</span> GA4 historical data (Charts, Top Routes, Hardware) <br />
+                            requires **24-48 hours** to process. Real-time "Active Now" is live.
                         </p>
                     </div>
                 </GlassCard>
@@ -237,16 +238,16 @@ export function AdminAnalytics({ t }: { t: any }) {
             <div className="grid grid-cols-1 md:grid-cols-3 gap-6">
                 <StatCard
                     icon={MousePointer2}
-                    label="Volume Aggregate"
+                    label="Volume Aggregate (GA4)"
                     value={data?.sessions.total}
                     change={data?.sessions.change}
                     history={data?.sessions.history}
                 />
                 <StatCard
                     icon={Users}
-                    label="Citizen Pulse"
+                    label="Citizen Pulse (Firebase)"
                     value={data?.users.total}
-                    change={data?.users.change}
+                    change={data?.users.history?.length > 0 ? data.users.total : data?.users.total}
                     history={data?.users.history}
                 />
                 <StatCard
