@@ -8,9 +8,10 @@ import { Github, Twitter, MessageSquare, BarChart3 } from "lucide-react";
 import { useFeatureFlags } from "@/core/hooks/useFeatureFlags";
 import Link from "next/link";
 
-export function FooterTimestamp({ contactEmail, socials, activeAccentColor }: { contactEmail?: string, socials?: { socialX?: string, socialGithub?: string, socialDiscord?: string }, activeAccentColor?: string }) {
+export function FooterTimestamp({ contactEmail, socials, activeAccentColor, modules: initialModules }: { contactEmail?: string, socials?: { socialX?: string, socialGithub?: string, socialDiscord?: string }, activeAccentColor?: string, modules?: any }) {
     const { t, language } = useTranslation();
-    const { modules } = useFeatureFlags();
+    const { modules: hookedModules } = useFeatureFlags();
+    const modules = initialModules || hookedModules;
 
     return (
         <div className="fixed bottom-8 left-8 right-8 z-50 flex flex-row items-center justify-between pointer-events-none md:pointer-events-auto opacity-0 md:opacity-100 gap-4">
