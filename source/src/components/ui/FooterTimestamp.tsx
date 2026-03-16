@@ -14,7 +14,7 @@ export function FooterTimestamp({ contactEmail, socials, activeAccentColor, modu
     const modules = initialModules || hookedModules;
 
     return (
-        <div className="fixed bottom-8 left-8 right-8 z-50 flex flex-row items-center justify-between pointer-events-none md:pointer-events-auto opacity-0 md:opacity-100 gap-4">
+        <div className="fixed bottom-8 left-8 right-8 z-[200] flex flex-row items-center justify-between pointer-events-none md:pointer-events-auto opacity-0 md:opacity-100 gap-4">
             <div className="flex items-center gap-6 pointer-events-auto">
                 <p className="text-[10px] font-black text-white/40 uppercase tracking-[0.5em]">
                     {t.home.timestamp} // {new Date().getFullYear()}

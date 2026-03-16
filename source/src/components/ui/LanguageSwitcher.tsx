@@ -27,8 +27,8 @@ export function LanguageSwitcher() {
 
             {open && (
                 <>
-                    <div className="fixed inset-0 z-40" onClick={() => setOpen(false)} />
-                    <div className="absolute bottom-full right-0 mb-4 w-16 bg-black/90 backdrop-blur-xl border border-white/10 p-2 flex flex-col gap-1 z-50">
+                    <div className="fixed inset-0 z-[200]" onClick={() => setOpen(false)} />
+                    <div className="absolute bottom-full right-0 mb-4 w-16 bg-black/90 backdrop-blur-xl border border-white/10 p-2 flex flex-col gap-1 z-[210]">
                         {(["en", "es", "it"] as Language[]).map((lang) => (
                             <button
                                 key={lang}
