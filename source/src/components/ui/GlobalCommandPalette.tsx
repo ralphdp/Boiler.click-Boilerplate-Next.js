@@ -68,6 +68,7 @@ export function GlobalCommandPalette() {
 
             if (document.activeElement?.tagName === "INPUT" || document.activeElement?.tagName === "TEXTAREA") return;
 
+            if (!e.key) return;
             const key = e.key.toUpperCase();
             sequenceRef.current.push(key);
             const sequenceStr = sequenceRef.current.join(" ");
