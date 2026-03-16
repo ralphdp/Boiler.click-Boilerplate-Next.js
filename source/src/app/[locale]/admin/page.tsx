@@ -95,6 +95,17 @@ export default function AdminPage() {
     const [gaId, setGaIdUI] = useState("");
     const [gaPropertyId, setGaPropertyIdUI] = useState("");
     const [posthogId, setPosthogIdUI] = useState("");
+    const [modules, setModules] = useState<any>({
+        vfs: true,
+        vouchers: true,
+        store: true,
+        workspaces: true,
+        api: true,
+        socialAuth: true,
+        publicAnalytics: true,
+        auditVisibility: true,
+        aiSupport: true
+    });
 
     // Read inbound hash on initial render
     useEffect(() => {
@@ -141,6 +152,7 @@ export default function AdminPage() {
                 setGaIdUI(res.gaId || "");
                 setGaPropertyIdUI(res.gaPropertyId || "");
                 setPosthogIdUI(res.posthogId || "");
+                if (res.modules) setModules(res.modules);
             })
             .catch(e => {
                 console.error("Failed to load overrides", e);
@@ -271,7 +283,13 @@ export default function AdminPage() {
                             { id: "vfs", icon: FileCode, label: t.admin.tabs.vfs || "VFS Auditor" },
                             { id: "audit", icon: ShieldCheck, label: t.admin.tabs.audit },
                             { id: "telemetry", icon: Activity, label: t.admin.tabs.telemetry }
-                        ] as const).map(({ id, icon: Icon, label }) => (
+                        ].filter(tabItem => {
+                            if (tabItem.id === "vfs") return modules.vfs;
+                            if (tabItem.id === "vouchers") return modules.vouchers;
+                            if (tabItem.id === "store") return modules.store;
+                            if (tabItem.id === "analytics") return modules.publicAnalytics || session?.user?.role === "ADMIN";
+                            return true;
+                        }) as any).map(({ id, icon: Icon, label }: any) => (
                             <button
                                 key={id}
                                 onClick={() => handleTabChange(id)}
@@ -319,7 +337,7 @@ export default function AdminPage() {
                                     superAdminEmail={process.env.NEXT_PUBLIC_SUPER_ADMIN_EMAIL}
                                 />
                             )}
-                            {tab === "vouchers" && <AdminVouchers t={t} />}
+                            {tab === "vouchers" && modules.vouchers && <AdminVouchers t={t} />}
                             {tab === "seo" && <AdminSEO t={t} />}
                             {tab === "audit" && <AdminAudit t={t} traces={traces} loading={loadingData} />}
                             {tab === "telemetry" && <AdminTelemetry t={t} telemetry={telemetry} />}
@@ -336,6 +354,7 @@ export default function AdminPage() {
                                     gaId={gaId} setGaIdUI={setGaIdUI}
                                     gaPropertyId={gaPropertyId} setGaPropertyIdUI={setGaPropertyIdUI}
                                     posthogId={posthogId} setPosthogIdUI={setPosthogIdUI}
+                                    modules={modules} setModules={setModules}
                                 />
                             )}
                             {tab === "branding" && (
@@ -355,7 +374,7 @@ export default function AdminPage() {
                                 />
                             )}
                             {tab === "broadcast" && <AdminBroadcast t={t} broadcastMessage={broadcastMessage} setBroadcastMessage={setBroadcastMessage} />}
-                            {tab === "store" && (
+                            {tab === "store" && modules.store && (
                                 <AdminStore
                                     t={t}
                                     commerceMode={commerceMode} setCommerceModeUI={setCommerceModeUI}
@@ -365,7 +384,7 @@ export default function AdminPage() {
                                 />
                             )}
                             {tab === "analytics" && <AdminAnalytics t={t} />}
-                            {tab === "vfs" && (
+                            {tab === "vfs" && modules.vfs && (
                                 <motion.div key="vfs" initial={{ opacity: 0, x: 20 }} animate={{ opacity: 1, x: 0 }} exit={{ opacity: 0, x: -20 }}>
                                     <AdminVFS />
                                 </motion.div>

@@ -303,7 +303,18 @@ export async function getGlobalOverrides() {
             webglVariant: activeVariant,
             sandboxMode: !!data.sandboxMode,
             mfaEnforced: !!data.mfaEnforced,
-            domainShield: !!data.domainShield
+            domainShield: !!data.domainShield,
+            modules: data.modules || {
+                vfs: true,
+                vouchers: true,
+                store: true,
+                workspaces: true,
+                api: true,
+                socialAuth: true,
+                publicAnalytics: true,
+                auditVisibility: true,
+                aiSupport: true
+            }
         };
     } catch (e: any) {
         return {
@@ -330,7 +341,18 @@ export async function getGlobalOverrides() {
             recommendedPlan: "pro",
             webglVariant: "fire",
             sandboxMode: false,
-            mfaEnforced: false
+            mfaEnforced: false,
+            modules: {
+                vfs: true,
+                vouchers: true,
+                store: true,
+                workspaces: true,
+                api: true,
+                socialAuth: true,
+                publicAnalytics: true,
+                auditVisibility: true,
+                aiSupport: true
+            }
         };
     }
 }
@@ -521,6 +543,34 @@ export async function setSocialLinks(socials: { socialX?: string, socialGithub?:
     }
 }
 
+export async function getUserAuditTraces(limitCount = 50) {
+    const session = await auth();
+    if (!session?.user?.email) {
+        throw new Error("UNAUTHORIZED");
+    }
+
+    try {
+        const db = getAdminDb();
+        const snapshot = await db.collection("omni_audit_traces")
+            .where("user", "==", session.user.email)
+            .orderBy("timestamp", "desc")
+            .limit(limitCount)
+            .get();
+
+        return snapshot.docs.map(d => ({
+            id: d.id,
+            action: d.data().action || "UNKNOWN",
+            severity: d.data().severity || "INFO",
+            message: d.data().message || "",
+            timestamp: typeof d.data().timestamp === "number" ? d.data().timestamp : (d.data().timestamp?.toMillis ? d.data().timestamp.toMillis() : Date.now()),
+            user: d.data().user || "SYSTEM"
+        }));
+    } catch (e: any) {
+        console.error("[User Audit Fetch Error]:", e);
+        return [];
+    }
+}
+
 export async function getAuditTraces(limitCount = 20) {
     const session = await auth();
     const isRootAdmin = session?.user?.role === "ADMIN" || session?.user?.email === process.env.NEXT_PUBLIC_SUPER_ADMIN_EMAIL;
@@ -586,6 +636,17 @@ export async function setTelemetryKeys(data: { gaId?: string, gaPropertyId?: str
 
     await db.collection("sovereign_config").doc("global").set(updates, { merge: true });
     await logAuditTrace("TELEMETRY_UPDATE", "WARN", "Updated analytics tracking keys", session?.user?.email || "SYSTEM", "UNITY");
+    return { success: true };
+}
+
+export async function updateGlobalModules(modules: any) {
+    const session = await auth();
+    const isRootAdmin = session?.user?.role === "ADMIN" || session?.user?.email === process.env.NEXT_PUBLIC_SUPER_ADMIN_EMAIL;
+    if (!isRootAdmin) throw new Error("UNAUTHORIZED");
+
+    const db = getAdminDb();
+    await db.collection("sovereign_config").doc("global").set({ modules }, { merge: true });
+    await logAuditTrace("MODULE_UPDATE", "WARN", "Updated global module governance flags", session?.user?.email || "SYSTEM", "UNITY");
     return { success: true };
 }
 

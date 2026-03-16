@@ -9,9 +9,11 @@ import { Button } from "@/components/ui/Button";
 import { SocialProviders } from "@/components/auth/SocialProviders";
 import { CredentialsForm } from "@/components/auth/CredentialsForm";
 import { useTranslation } from "@/core/i18n/LanguageProvider";
+import { useFeatureFlags } from "@/core/hooks/useFeatureFlags";
 
 export default function HandshakePage() {
     const { t } = useTranslation();
+    const { modules } = useFeatureFlags();
     const [isCredentialsMode, setIsCredentialsMode] = useState(false);
     const [lastUsed, setLastUsed] = useState<string | null>(null);
 
@@ -49,7 +51,7 @@ export default function HandshakePage() {
                     </header>
 
                     <div className="space-y-4">
-                        <SocialProviders lastUsed={lastUsed} markLastUsed={markPendingAuth} />
+                        {modules.socialAuth && <SocialProviders lastUsed={lastUsed} markLastUsed={markPendingAuth} />}
 
                         <div className="flex items-center gap-4 py-4" aria-hidden="true">
                             <div className="flex-1 h-[1px] bg-white/5" />

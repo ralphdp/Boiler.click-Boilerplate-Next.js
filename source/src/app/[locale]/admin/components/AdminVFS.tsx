@@ -80,7 +80,7 @@ export function AdminVFS() {
                                 onClick={navigateUp}
                                 className="w-full flex items-center gap-2 p-2 text-[10px] text-white/40 hover:bg-white/5 transition-colors text-left"
                             >
-                                <ChevronRight size={12} className="rotate-180" />
+                                <ChevronRight size={12} className="rotate-180 shrink-0" />
                                 <span>..</span>
                             </button>
                         )}
@@ -93,7 +93,7 @@ export function AdminVFS() {
                                     selectedFile === entry.path ? "bg-[var(--accent)]/10 text-[var(--accent)]" : "text-white/60 hover:bg-white/5"
                                 )}
                             >
-                                {entry.isDirectory ? <Folder size={12} className="text-blue-400/50" /> : <File size={12} className="text-white/20" />}
+                                {entry.isDirectory ? <Folder size={12} className="text-blue-400/50 shrink-0" /> : <File size={12} className="text-white/20 shrink-0" />}
                                 <span className="truncate">{entry.name}</span>
                             </button>
                         ))}

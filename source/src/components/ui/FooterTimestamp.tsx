@@ -4,10 +4,13 @@ import { useTranslation } from "@/core/i18n/LanguageProvider";
 import { LanguageSwitcher } from "@/components/ui/LanguageSwitcher";
 import { ThemeSwitcher } from "@/components/ui/ThemeSwitcher";
 
-import { Github, Twitter, MessageSquare } from "lucide-react";
+import { Github, Twitter, MessageSquare, BarChart3 } from "lucide-react";
+import { useFeatureFlags } from "@/core/hooks/useFeatureFlags";
+import Link from "next/link";
 
 export function FooterTimestamp({ contactEmail, socials, activeAccentColor }: { contactEmail?: string, socials?: { socialX?: string, socialGithub?: string, socialDiscord?: string }, activeAccentColor?: string }) {
-    const { t } = useTranslation();
+    const { t, language } = useTranslation();
+    const { modules } = useFeatureFlags();
 
     return (
         <div className="fixed bottom-8 left-8 right-8 z-50 flex flex-row items-center justify-between pointer-events-none md:pointer-events-auto opacity-0 md:opacity-100 gap-4">
@@ -35,6 +38,12 @@ export function FooterTimestamp({ contactEmail, socials, activeAccentColor }: { 
                         <a href={socials.socialDiscord} target="_blank" rel="noopener noreferrer" className="text-white/30 hover:text-white transition-colors">
                             <MessageSquare size={14} />
                         </a>
+                    )}
+                    {modules.publicAnalytics && (
+                        <Link href={`/${language}/analytics`} className="text-[10px] uppercase font-black tracking-widest text-[var(--accent)]/50 hover:text-[var(--accent)] transition-colors flex items-center gap-2 border-l border-white/5 pl-4 ml-2">
+                            <BarChart3 size={12} />
+                            Public Pulse
+                        </Link>
                     )}
                 </div>
             </div>

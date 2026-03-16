@@ -20,6 +20,7 @@ import { GlobalCommandPalette } from "@/components/ui/GlobalCommandPalette";
 import { SessionRevalidator } from "@/components/ui/SessionRevalidator";
 import { dictionary, Language } from "@/core/i18n/translations";
 import { ChatFloating } from "@/components/chat/ChatFloating";
+import { useFeatureFlags } from "@/core/hooks/useFeatureFlags";
 
 const inter = Inter({
     subsets: ["latin"],
@@ -119,10 +120,17 @@ export default async function RootLayout({
                             )}
                             <FooterTimestamp contactEmail={contactEmail} socials={socials} activeAccentColor={activeAccentColor} />
                             <CookieConsent />
+                            <ChatWrapper />
                         </ClientProviders>
                     </ToastProvider>
                 </SovereignErrorBoundary>
             </body>
         </html>
     );
+}
+
+function ChatWrapper() {
+    const { modules } = useFeatureFlags();
+    if (!modules.aiSupport) return null;
+    return <ChatFloating />;
 }

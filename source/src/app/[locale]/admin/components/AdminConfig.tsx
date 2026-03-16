@@ -7,7 +7,7 @@ import { Activity } from "lucide-react";
 import { useToast } from "@/components/ui/Toast";
 import { useRouter } from "next/navigation";
 import { useState } from "react";
-import { setPreLaunchMode as setPreLaunchModeAction, setHaltingProtocol as setHaltingProtocolAction, setMFAEnforced as setMFAEnforcedAction, setRateLimitMode, setResendFrom, setSandboxMode as setSandboxModeAction, setDomainShield as setDomainShieldAction, setTelemetryKeys } from "@/core/actions/admin";
+import { setPreLaunchMode as setPreLaunchModeAction, setHaltingProtocol as setHaltingProtocolAction, setMFAEnforced as setMFAEnforcedAction, setRateLimitMode, setResendFrom, setSandboxMode as setSandboxModeAction, setDomainShield as setDomainShieldAction, setTelemetryKeys, updateGlobalModules } from "@/core/actions/admin";
 import { ConfirmationModal } from "@/components/ui/ConfirmationModal";
 import { CipherGate } from "@/components/ui/CipherGate";
 
@@ -33,6 +33,8 @@ interface AdminConfigProps {
     setGaPropertyIdUI: (val: string) => void;
     posthogId: string;
     setPosthogIdUI: (val: string) => void;
+    modules: any;
+    setModules: (val: any) => void;
 }
 
 export function AdminConfig({
@@ -57,6 +59,8 @@ export function AdminConfig({
     setGaPropertyIdUI,
     posthogId,
     setPosthogIdUI,
+    modules,
+    setModules,
 }: AdminConfigProps) {
     const { toast } = useToast();
     const router = useRouter();
@@ -259,6 +263,45 @@ export function AdminConfig({
                             }
                         }}
                     />
+                </div>
+            </GlassCard>
+
+            <GlassCard className="border border-white/5 bg-black/40 p-6 flex flex-col justify-between gap-4 md:col-span-2">
+                <div className="space-y-2 text-left">
+                    <h3 className="text-sm font-bold uppercase tracking-widest text-[var(--accent)]">Module Governance</h3>
+                    <p className="text-xs font-serif italic text-white/50">Toggle entire system modules on/off. Disabled modules will be hidden from all standard administrative and user views.</p>
+                </div>
+                <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-6 py-4">
+                    {([
+                        { id: 'vfs', label: 'VFS Auditor', desc: 'Real-time filesystem inspection.' },
+                        { id: 'vouchers', label: 'Voucher Engine', desc: 'Provision access tokens.' },
+                        { id: 'store', label: 'Commerce Matrix', desc: 'Store & Billing infrastructure.' },
+                        { id: 'workspaces', label: 'Workspaces', desc: 'Multi-member team support.' },
+                        { id: 'api', label: 'Developer Pulse', desc: 'Public API keys & docs.' },
+                        { id: 'socialAuth', label: 'Identity Pulse', desc: 'Google/GitHub authentication.' },
+                        { id: 'publicAnalytics', label: 'Public Analytics', desc: 'Public traffic dashboard.' },
+                        { id: 'auditVisibility', label: 'Audit Visibility', desc: 'Users can see their own logs.' },
+                        { id: 'aiSupport', label: 'AI Support Bridge', desc: 'Integrated AI chat overlay.' }
+                    ]).map((mod) => (
+                        <div key={mod.id} className="flex items-center justify-between gap-4 p-3 bg-white/5 border border-white/5 rounded-lg">
+                            <div className="space-y-1">
+                                <span className="text-[10px] font-black uppercase tracking-widest text-white">{mod.label}</span>
+                                <p className="text-[9px] text-white/40 italic">{mod.desc}</p>
+                            </div>
+                            <button
+                                onClick={async () => {
+                                    const newModules = { ...modules, [mod.id]: !modules[mod.id] };
+                                    setModules(newModules);
+                                    await updateGlobalModules(newModules);
+                                    router.refresh();
+                                    toast({ title: "Module Synchronized", description: `${mod.label} state updated successfully.`, type: "success" });
+                                }}
+                                className={`w-10 h-5 rounded-full relative transition-colors border shrink-0 ${modules[mod.id] ? 'bg-green-500/50 border-green-500/50' : 'bg-white/10 border-white/20'}`}
+                            >
+                                <div className={`w-3 h-3 rounded-full bg-white absolute top-0.5 transition-transform ${modules[mod.id] ? 'translate-x-5.5' : 'translate-x-1'}`} />
+                            </button>
+                        </div>
+                    ))}
                 </div>
             </GlassCard>
 

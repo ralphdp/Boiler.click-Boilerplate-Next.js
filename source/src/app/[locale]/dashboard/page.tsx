@@ -5,16 +5,18 @@ import { ACTIVE_THEME } from "@/theme/config";
 import { GlassCard } from "@/components/ui/GlassCard";
 import { Button } from "@/components/ui/Button";
 import Link from "next/link";
-import { Settings, CreditCard, ArrowLeft, ShieldAlert, KeyRound, LayoutGrid } from "lucide-react";
+import { Settings, CreditCard, ArrowLeft, ShieldAlert, KeyRound, LayoutGrid, Clock } from "lucide-react";
 import { OnboardingTour } from "@/components/ui/OnboardingTour";
 
 import { useTranslation } from "@/core/i18n/LanguageProvider";
+import { useFeatureFlags } from "@/core/hooks/useFeatureFlags";
 
 export default function DashboardPage() {
     const { data: session } = useSession();
     const { language, t } = useTranslation();
     const name = session?.user?.name || session?.user?.email || "ARCHITECT";
     const isAdmin = session?.user?.role === "ADMIN" || session?.user?.email === process.env.NEXT_PUBLIC_SUPER_ADMIN_EMAIL;
+    const { modules, loading } = useFeatureFlags();
 
     return (
         <main className="relative min-h-screen flex flex-col items-center justify-center p-6 text-white overflow-hidden">
@@ -58,21 +60,33 @@ export default function DashboardPage() {
                         <Settings size={14} className="mr-3 text-white/50" />
                         {t.dashboard.accountSettings}
                     </Button>
-                    <Button as={Link} href={`/${language}/dashboard/billing`} variant="glass" className="flex-1 w-full justify-start pl-6">
-                        <CreditCard size={14} className="mr-3 text-white/50" />
-                        {t.dashboard.billingIdentity}
-                    </Button>
+                    {(modules.store || isAdmin) && (
+                        <Button as={Link} href={`/${language}/dashboard/billing`} variant="glass" className="flex-1 w-full justify-start pl-6">
+                            <CreditCard size={14} className="mr-3 text-white/50" />
+                            {t.dashboard.billingIdentity}
+                        </Button>
+                    )}
+                    {(modules.auditVisibility || isAdmin) && (
+                        <Button as={Link} href={`/${language}/dashboard/activity`} variant="glass" className="flex-1 w-full justify-start pl-6">
+                            <Clock size={14} className="mr-3 text-white/50" />
+                            Activity Logs
+                        </Button>
+                    )}
                 </div>
 
                 <div className="pt-2 flex flex-col sm:flex-row gap-4 w-full">
-                    <Button as={Link} href={`/${language}/dashboard/workspaces`} variant="glass" className="flex-1 w-full justify-start pl-6 border-[var(--accent)]/30">
-                        <LayoutGrid size={14} className="mr-3 text-[var(--accent)]" />
-                        {t.dashboard.manageWorkspaces}
-                    </Button>
-                    <Button as={Link} href={`/${language}/dashboard/developer`} variant="glass" className="flex-1 w-full justify-start pl-6 border-[var(--accent)]/30">
-                        <KeyRound size={14} className="mr-3 text-[var(--accent)]" />
-                        {t.dashboard.developerApi}
-                    </Button>
+                    {(modules.workspaces || isAdmin) && (
+                        <Button as={Link} href={`/${language}/dashboard/workspaces`} variant="glass" className="flex-1 w-full justify-start pl-6 border-[var(--accent)]/30">
+                            <LayoutGrid size={14} className="mr-3 text-[var(--accent)]" />
+                            {t.dashboard.manageWorkspaces}
+                        </Button>
+                    )}
+                    {(modules.api || isAdmin) && (
+                        <Button as={Link} href={`/${language}/dashboard/developer`} variant="glass" className="flex-1 w-full justify-start pl-6 border-[var(--accent)]/30">
+                            <KeyRound size={14} className="mr-3 text-[var(--accent)]" />
+                            {t.dashboard.developerApi}
+                        </Button>
+                    )}
                 </div>
 
                 {isAdmin && (
