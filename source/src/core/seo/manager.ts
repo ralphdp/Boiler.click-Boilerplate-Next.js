@@ -97,8 +97,8 @@ export async function generateSEOMatrix(
             title,
             description,
             images: [ogImage],
-            creator: overrides.socialX || "@rdepaz",
-            site: overrides.socialX || "@rdepaz",
+            creator: overrides.socialX || "@yourhandle",
+            site: overrides.socialX || "@yourhandle",
         },
         robots: {
             index: !noIndexOverride && !isHalted,

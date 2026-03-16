@@ -12,6 +12,6 @@ export const ACTIVE_THEME: ThemeConfig = {
     primaryColor: '#a855f7', // Purple
     accentColor: '#e0aaff',
     shaderType: 'FIRE',
-    siteName: 'Boiler™',
+    siteName: 'SOVEREIGN_BOILER',
     tagline: 'Universal Next.js Boilerplate Architecture'
 };

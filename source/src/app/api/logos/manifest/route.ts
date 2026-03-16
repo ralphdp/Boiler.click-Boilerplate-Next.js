@@ -39,7 +39,7 @@ export async function GET() {
         } catch { }
 
         return NextResponse.json({
-            node: "Sovereign-Boiler-NextJS",
+            node: "SOVEREIGN_SUBSTRATE",
             version: "V2.1.0",
             identity: "RECLAMATION_SUBSTRATE_01",
             anchor: "SOVEREIGN_COMPUTE_NODE",
