@@ -92,6 +92,9 @@ export default function AdminPage() {
     const [recommendedPlan, setRecommendedPlan] = useState("");
     const [totalStoreProducts, setTotalStoreProducts] = useState(0);
     const [domainShield, setDomainShieldUI] = useState(false);
+    const [gaId, setGaIdUI] = useState("");
+    const [gaPropertyId, setGaPropertyIdUI] = useState("");
+    const [posthogId, setPosthogIdUI] = useState("");
 
     // Read inbound hash on initial render
     useEffect(() => {
@@ -135,6 +138,9 @@ export default function AdminPage() {
                 setPricingTiers(res.pricingTiers || []);
                 setRecommendedPlan(res.recommendedPlan || "");
                 setDomainShieldUI(res.domainShield || false);
+                setGaIdUI(res.gaId || "");
+                setGaPropertyIdUI(res.gaPropertyId || "");
+                setPosthogIdUI(res.posthogId || "");
             })
             .catch(e => {
                 console.error("Failed to load overrides", e);
@@ -327,6 +333,9 @@ export default function AdminPage() {
                                     resendFrom={resendFrom} setResendFromUI={setResendFromUI}
                                     sandboxMode={sandboxMode} setSandboxMode={setSandboxMode}
                                     domainShield={domainShield} setDomainShieldUI={setDomainShieldUI}
+                                    gaId={gaId} setGaIdUI={setGaIdUI}
+                                    gaPropertyId={gaPropertyId} setGaPropertyIdUI={setGaPropertyIdUI}
+                                    posthogId={posthogId} setPosthogIdUI={setPosthogIdUI}
                                 />
                             )}
                             {tab === "branding" && (

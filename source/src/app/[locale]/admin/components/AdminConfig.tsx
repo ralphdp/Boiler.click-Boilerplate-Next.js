@@ -27,6 +27,12 @@ interface AdminConfigProps {
     setSandboxMode: (val: boolean) => void;
     domainShield: boolean;
     setDomainShieldUI: (val: boolean) => void;
+    gaId: string;
+    setGaIdUI: (val: string) => void;
+    gaPropertyId: string;
+    setGaPropertyIdUI: (val: string) => void;
+    posthogId: string;
+    setPosthogIdUI: (val: string) => void;
 }
 
 export function AdminConfig({
@@ -45,6 +51,12 @@ export function AdminConfig({
     setSandboxMode,
     domainShield,
     setDomainShieldUI,
+    gaId,
+    setGaIdUI,
+    gaPropertyId,
+    setGaPropertyIdUI,
+    posthogId,
+    setPosthogIdUI,
 }: AdminConfigProps) {
     const { toast } = useToast();
     const router = useRouter();
@@ -239,19 +251,14 @@ export function AdminConfig({
                         placeholder={t.admin.config.senderEmailPlace || "NOREPLY@DOMAIN.COM"}
                         value={resendFrom}
                         onChange={(e) => setResendFromUI(e.target.value)}
-                    />
-                    <button
-                        onClick={async () => {
-                            const res = await setResendFrom(resendFrom);
+                        onBlur={async (e) => {
+                            const res = await setResendFrom(e.target.value);
                             if (res.success) {
                                 toast({ title: t.admin.config.saveSuccess, description: t.admin.config.saveSuccessDesc, type: "success" });
                                 router.refresh();
                             }
                         }}
-                        className="bg-[var(--accent)]/20 border border-[var(--accent)]/50 text-[var(--accent)] text-xs px-6 py-2 outline-none focus:border-white uppercase tracking-widest font-bold transition-colors hover:bg-[var(--accent)]/40 hover:text-white"
-                    >
-                        {t.admin.config.saveEmail}
-                    </button>
+                    />
                 </div>
             </GlassCard>
 
@@ -266,12 +273,11 @@ export function AdminConfig({
                         <Input
                             type="text"
                             placeholder="G-XXXXXXXXXX"
-                            defaultValue={process.env.NEXT_PUBLIC_GA_MEASUREMENT_ID}
+                            value={gaId}
+                            onChange={(e) => setGaIdUI(e.target.value)}
                             onBlur={async (e) => {
-                                if (e.target.value) {
-                                    await setTelemetryKeys({ gaId: e.target.value });
-                                    toast({ title: "GA4 Bridge Synchronized", description: "Telemetry identifier updated.", type: "success" });
-                                }
+                                await setTelemetryKeys({ gaId: e.target.value });
+                                toast({ title: "GA4 Bridge Synchronized", description: "Telemetry identifier updated.", type: "success" });
                             }}
                         />
                     </div>
@@ -280,12 +286,11 @@ export function AdminConfig({
                         <Input
                             type="text"
                             placeholder="528435699"
-                            defaultValue={process.env.GA_PROPERTY_ID}
+                            value={gaPropertyId}
+                            onChange={(e) => setGaPropertyIdUI(e.target.value)}
                             onBlur={async (e) => {
-                                if (e.target.value) {
-                                    await setTelemetryKeys({ gaPropertyId: e.target.value });
-                                    toast({ title: "GA4 Property Hardened", description: "Reporting bridge updated.", type: "success" });
-                                }
+                                await setTelemetryKeys({ gaPropertyId: e.target.value });
+                                toast({ title: "GA4 Property Hardened", description: "Reporting bridge updated.", type: "success" });
                             }}
                         />
                     </div>
@@ -294,11 +299,11 @@ export function AdminConfig({
                         <Input
                             type="text"
                             placeholder="PHC_XXXXXXXXXX"
+                            value={posthogId}
+                            onChange={(e) => setPosthogIdUI(e.target.value)}
                             onBlur={async (e) => {
-                                if (e.target.value) {
-                                    await setTelemetryKeys({ posthogId: e.target.value });
-                                    toast({ title: "PostHog Matrix Initialized", description: "Behavioral pulse key updated.", type: "success" });
-                                }
+                                await setTelemetryKeys({ posthogId: e.target.value });
+                                toast({ title: "PostHog Matrix Initialized", description: "Behavioral pulse key updated.", type: "success" });
                             }}
                         />
                     </div>

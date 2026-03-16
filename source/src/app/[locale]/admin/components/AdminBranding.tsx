@@ -82,19 +82,14 @@ export function AdminBranding({
                         placeholder={t.admin.branding.siteTitlePlace}
                         value={siteTitle}
                         onChange={(e) => setSiteTitleUI(e.target.value)}
-                    />
-                    <button
-                        onClick={async () => {
-                            const res = await setSiteTitle(siteTitle);
+                        onBlur={async (e) => {
+                            const res = await setSiteTitle(e.target.value);
                             if (res.success) {
                                 toast({ title: t.admin.branding.titleOverride, description: t.admin.branding.titleOverrideDesc, type: "success" });
                                 router.refresh();
                             }
                         }}
-                        className="bg-[var(--accent)]/20 border border-[var(--accent)]/50 text-[var(--accent)] text-xs px-6 py-2 outline-none focus:border-white uppercase tracking-widest font-bold transition-colors hover:bg-[var(--accent)]/40 hover:text-white"
-                    >
-                        {t.admin.branding.updateTitleBtn}
-                    </button>
+                    />
                 </div>
             </GlassCard>
 
@@ -109,19 +104,14 @@ export function AdminBranding({
                         placeholder={t.admin.branding.siteSubtitlePlace || "THE ULTIMATE SOVEREIGN IDENTITY MATRIX."}
                         value={typographyOverride}
                         onChange={(e) => setTypographyOverride(e.target.value)}
-                    />
-                    <button
-                        onClick={async () => {
-                            const res = await setContentOverride(typographyOverride);
+                        onBlur={async (e) => {
+                            const res = await setContentOverride(e.target.value);
                             if (res.success) {
                                 toast({ title: t.admin.branding.typographyOverride, description: t.admin.branding.typographyOverrideDesc, type: "success" });
                                 router.refresh();
                             }
                         }}
-                        className="bg-[var(--accent)]/20 border border-[var(--accent)]/50 text-[var(--accent)] text-xs px-6 py-2 outline-none focus:border-white uppercase tracking-widest font-bold transition-colors hover:bg-[var(--accent)]/40 hover:text-white"
-                    >
-                        {t.admin.branding.updateSubtitleBtn}
-                    </button>
+                    />
                 </div>
             </GlassCard>
 
@@ -136,19 +126,14 @@ export function AdminBranding({
                         placeholder={t.admin.branding.supportEmailPlace}
                         value={contactEmail}
                         onChange={(e) => setContactEmailUI(e.target.value)}
-                    />
-                    <button
-                        onClick={async () => {
-                            const res = await setContactEmail(contactEmail);
+                        onBlur={async (e) => {
+                            const res = await setContactEmail(e.target.value);
                             if (res.success) {
                                 toast({ title: t.admin.branding.configUpdated, description: t.admin.branding.supportVectorDesc, type: "success" });
                                 router.refresh();
                             }
                         }}
-                        className="bg-[var(--accent)]/20 border border-[var(--accent)]/50 text-[var(--accent)] text-xs px-6 py-2 outline-none focus:border-white uppercase tracking-widest font-bold transition-colors hover:bg-[var(--accent)]/40 hover:text-white"
-                    >
-                        {t.admin.branding.saveSupportEmailBtn}
-                    </button>
+                    />
                 </div>
             </GlassCard>
 
@@ -163,19 +148,14 @@ export function AdminBranding({
                         placeholder={t.admin.branding.primaryThemePlace}
                         value={primaryColor}
                         onChange={(e) => setPrimaryColorUI(e.target.value)}
-                    />
-                    <button
-                        onClick={async () => {
-                            const res = await setPrimaryColor(primaryColor);
+                        onBlur={async (e) => {
+                            const res = await setPrimaryColor(e.target.value);
                             if (res.success) {
                                 toast({ title: t.admin.branding.titleOverride, description: t.admin.branding.globalAccentDesc, type: "success" });
                                 router.refresh();
                             }
                         }}
-                        className="bg-[var(--accent)]/20 border border-[var(--accent)]/50 text-[var(--accent)] text-xs px-6 py-2 outline-none focus:border-white uppercase tracking-widest font-bold transition-colors hover:bg-[var(--accent)]/40 hover:text-white"
-                    >
-                        {t.admin.branding.updateColorBtn}
-                    </button>
+                    />
                 </div>
             </GlassCard>
 
@@ -189,6 +169,13 @@ export function AdminBranding({
                         placeholder={t.admin.branding.seoDescPlace}
                         value={seoDescription}
                         onChange={(e) => setSeoDescriptionUI(e.target.value)}
+                        onBlur={async () => {
+                            const res = await setSEOMetadata({ description: seoDescription, keywords: seoKeywords, ogUrl: seoOgImage });
+                            if (res.success) {
+                                toast({ title: t.admin.branding.configUpdated, description: t.admin.branding.searchIndexDesc, type: "success" });
+                                router.refresh();
+                            }
+                        }}
                     />
                     <div className="grid grid-cols-1 sm:grid-cols-2 gap-4 w-full">
                         <Input
@@ -196,28 +183,28 @@ export function AdminBranding({
                             placeholder={t.admin.branding.seoKeywordsPlace}
                             value={seoKeywords}
                             onChange={(e) => setSeoKeywordsUI(e.target.value)}
+                            onBlur={async () => {
+                                const res = await setSEOMetadata({ description: seoDescription, keywords: seoKeywords, ogUrl: seoOgImage });
+                                if (res.success) {
+                                    toast({ title: t.admin.branding.configUpdated, description: t.admin.branding.searchIndexDesc, type: "success" });
+                                    router.refresh();
+                                }
+                            }}
                         />
                         <Input
                             type="text"
                             placeholder={t.admin.branding.seoOgPlace}
                             value={seoOgImage}
                             onChange={(e) => setSeoOgImageUI(e.target.value)}
+                            onBlur={async () => {
+                                const res = await setSEOMetadata({ description: seoDescription, keywords: seoKeywords, ogUrl: seoOgImage });
+                                if (res.success) {
+                                    toast({ title: t.admin.branding.configUpdated, description: t.admin.branding.searchIndexDesc, type: "success" });
+                                    router.refresh();
+                                }
+                            }}
                         />
                     </div>
-                </div>
-                <div className="flex w-full justify-start">
-                    <button
-                        onClick={async () => {
-                            const res = await setSEOMetadata({ description: seoDescription, keywords: seoKeywords, ogUrl: seoOgImage });
-                            if (res.success) {
-                                toast({ title: t.admin.branding.configUpdated, description: t.admin.branding.searchIndexDesc, type: "success" });
-                                router.refresh();
-                            }
-                        }}
-                        className="bg-[var(--accent)]/20 border border-[var(--accent)]/50 text-[var(--accent)] text-xs px-6 py-2 outline-none focus:border-white uppercase tracking-widest font-bold transition-colors hover:bg-[var(--accent)]/40 hover:text-white"
-                    >
-                        {t.admin.branding.saveSeoBtn}
-                    </button>
                 </div>
             </GlassCard>
 
@@ -232,33 +219,40 @@ export function AdminBranding({
                         placeholder={t.admin.branding.xPlace}
                         value={socialX}
                         onChange={(e) => setSocialXUI(e.target.value)}
-                    />
-                    <Input
-                        type="text"
-                        placeholder={t.admin.branding.githubPlace}
-                        value={socialGithub}
-                        onChange={(e) => setSocialGithubUI(e.target.value)}
-                    />
-                    <Input
-                        type="text"
-                        placeholder={t.admin.branding.discordPlace}
-                        value={socialDiscord}
-                        onChange={(e) => setSocialDiscordUI(e.target.value)}
-                    />
-                </div>
-                <div className="flex w-full justify-start">
-                    <button
-                        onClick={async () => {
+                        onBlur={async () => {
                             const res = await setSocialLinks({ socialX, socialGithub, socialDiscord });
                             if (res.success) {
                                 toast({ title: t.admin.branding.configUpdated, description: t.admin.branding.socialRelaysDesc, type: "success" });
                                 router.refresh();
                             }
                         }}
-                        className="bg-[var(--accent)]/20 border border-[var(--accent)]/50 text-[var(--accent)] text-xs px-6 py-2 outline-none focus:border-white uppercase tracking-widest font-bold transition-colors hover:bg-[var(--accent)]/40 hover:text-white"
-                    >
-                        {t.admin.branding.saveLinksBtn}
-                    </button>
+                    />
+                    <Input
+                        type="text"
+                        placeholder={t.admin.branding.githubPlace}
+                        value={socialGithub}
+                        onChange={(e) => setSocialGithubUI(e.target.value)}
+                        onBlur={async () => {
+                            const res = await setSocialLinks({ socialX, socialGithub, socialDiscord });
+                            if (res.success) {
+                                toast({ title: t.admin.branding.configUpdated, description: t.admin.branding.socialRelaysDesc, type: "success" });
+                                router.refresh();
+                            }
+                        }}
+                    />
+                    <Input
+                        type="text"
+                        placeholder={t.admin.branding.discordPlace}
+                        value={socialDiscord}
+                        onChange={(e) => setSocialDiscordUI(e.target.value)}
+                        onBlur={async () => {
+                            const res = await setSocialLinks({ socialX, socialGithub, socialDiscord });
+                            if (res.success) {
+                                toast({ title: t.admin.branding.configUpdated, description: t.admin.branding.socialRelaysDesc, type: "success" });
+                                router.refresh();
+                            }
+                        }}
+                    />
                 </div>
             </GlassCard>
             <GlassCard className="border border-white/5 bg-black/40 p-6 flex flex-col justify-between gap-4 md:col-span-2">
