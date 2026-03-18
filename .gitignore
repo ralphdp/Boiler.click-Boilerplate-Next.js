@@ -1,3 +1,7 @@
+
+tsconfig.tsbuildinfo
+boiler-click-next-js*.json
+
 # Ignore node_modules everywhere
 node_modules/
 **/node_modules/

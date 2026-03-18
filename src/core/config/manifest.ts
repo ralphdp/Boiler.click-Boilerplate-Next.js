@@ -1,0 +1,29 @@
+/**
+ * VANGUARD BOILERPLATE MANIFEST [v6.8.5.v6]
+ * This file defines the core substrate version and environment requirements.
+ */
+
+export const BOILERPLATE_VERSION = "6.8.5.v6";
+export const BOILERPLATE_IDENTITY = "Sovereign-Boiler-NextJS";
+
+export const REQUIRED_ENVS = [
+    "NEXTAUTH_SECRET",
+    "GOOGLE_CLIENT_ID",
+    "GOOGLE_CLIENT_SECRET",
+    "FIREBASE_PROJECT_ID",
+    "FIREBASE_CLIENT_EMAIL",
+    "FIREBASE_PRIVATE_KEY",
+    "STRIPE_SECRET_KEY",
+    "STRIPE_WEBHOOK_SECRET",
+    "RESEND_API_KEY",
+    "NEXT_PUBLIC_SUPER_ADMIN_EMAIL"
+];
+
+export const OPTIONAL_ENVS = [
+    "UPSTASH_REDIS_REST_URL",
+    "UPSTASH_REDIS_REST_TOKEN",
+    "NEXT_PUBLIC_POSTHOG_KEY",
+    "NEXT_PUBLIC_GA_MEASUREMENT_ID",
+    "GA_PROPERTY_ID",
+    "SOVEREIGN_CIPHER"
+];

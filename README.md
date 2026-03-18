@@ -12,5 +12,12 @@ This is a Next.js 16 project optimized with Turbopack and Framer Motion.
 npm run dev
 ```
 
+### 🚨 Critical Requirement: Stripe Webhooks
+If you clone this boilerplate or deploy to Vercel, you **MUST** ensure the following environment variables are assigned real values:
+- `STRIPE_SECRET_KEY`
+- `STRIPE_WEBHOOK_SECRET`
+
+**If these values remain as placeholders, the Stripe API will crash with an HTTP 500 when interacting with subscription checkouts or portal interfaces.**
+
 ---
 Powered by Boiler.click

@@ -6,7 +6,7 @@ import VanguardEmail from '@/components/emails/VanguardEmail';
 const resend = new Resend(process.env.RESEND_API_KEY || 're_placeholder');
 
 // The domain must be registered in your Resend account
-const DEFAULT_FROM = process.env.RESEND_FROM_EMAIL || 'Boiler Substrate <system@boiler.click>';
+const DEFAULT_FROM = process.env.RESEND_FROM_EMAIL || 'Boiler Substrate <system@yourdomain.com>';
 
 export interface SendEmailOptions {
     to: string | string[];
