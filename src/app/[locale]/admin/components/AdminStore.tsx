@@ -2,7 +2,7 @@
 
 import { useState, useEffect } from "react";
 import { motion, AnimatePresence } from "framer-motion";
-import { GlassCard } from "@/components/ui/GlassCard";
+import { SolidCard } from "@/components/ui/SolidCard";
 import { Input } from "@/components/ui/Input";
 import {
     Plus, EyeOff, Eye, Trash2, Check, ArrowUp, ArrowDown,
@@ -18,7 +18,7 @@ import {
     bulkImportStoreProducts, createStoreProduct, updateStoreProduct,
     deleteStoreProduct, bulkUpdateStoreProducts, bulkDeleteStoreProducts
 } from "@/core/actions/commerce";
-import { setSandboxMode as setSandboxModeAction } from "@/core/actions/system";
+import { setSandboxMode as setSandboxModeAction } from "@/core/actions/branding";
 import { sanitizeSearchQuery } from "@/core/security/input-sanitization";
 import { ConfirmationModal } from "@/components/ui/ConfirmationModal";
 import { CipherGate } from "@/components/ui/CipherGate";
@@ -99,16 +99,16 @@ export function AdminStore({
             transition={{ duration: 0.3 }}
             className="grid grid-cols-1 gap-6"
         >
-            <GlassCard className="border border-white/5 bg-black/40 p-6 flex flex-col justify-between gap-4 md:col-span-2">
+            <SolidCard className="border border-white/5 bg-black/40 p-6 flex flex-col justify-between gap-4 md:col-span-2">
                 <div className="space-y-2 text-left">
-                    <h3 className="text-sm font-bold uppercase tracking-widest text-[var(--accent)]">{t.admin.store.storeMode}</h3>
+                    <h3 className="text-sm font-bold tracking-normal text-[var(--accent)]">{t.admin.store.storeMode}</h3>
                     <p className="text-xs font-serif italic text-white/50">{t.admin.store.storeModeDesc}</p>
                 </div>
                 <div className="flex flex-wrap w-full justify-start gap-4">
                     {['saas', 'store', 'none'].map((variant) => (
                         <Button
                             key={variant}
-                            variant="glass"
+                            variant="solid"
                             onClick={async () => {
                                 if (variant === commerceMode) return;
 
@@ -132,24 +132,24 @@ export function AdminStore({
                             tooltip={`Toggle the architectural commerce engine to ${variant.toUpperCase()} mode.`}
                             tooltipTerm="COMMERCE_MODE_SHIFT"
                         >
-                            {variant}
+                            {variant === 'saas' ? 'Saas' : variant === 'store' ? 'Store' : 'None'}
                         </Button>
                     ))}
                 </div>
-            </GlassCard>
+            </SolidCard>
 
             {
                 commerceMode === 'saas' && (
-                    <GlassCard className="border border-white/5 bg-black/40 p-6 flex flex-col gap-4 md:col-span-2">
+                    <SolidCard className="border border-white/5 bg-black/40 p-6 flex flex-col gap-4 md:col-span-2">
                         <div className="space-y-4 text-left flex flex-col w-full">
                             <div className="flex flex-col sm:flex-row justify-between items-start sm:items-center w-full gap-4">
                                 <div>
-                                    <h3 className="text-sm font-bold uppercase tracking-widest text-[var(--accent)]">{t.admin.store.saasPricing}</h3>
+                                    <h3 className="text-sm font-bold tracking-normal text-[var(--accent)]">{t.admin.store.saasPricing}</h3>
                                     <p className="text-xs font-serif italic text-white/50">{t.admin.store.saasPricingDesc}</p>
                                 </div>
                                 {pricingTiers.length < 4 && (
                                     <Button
-                                        variant="glass"
+                                        variant="solid"
                                         onClick={() => {
                                             const newId = `tier_${Date.now()}`;
                                             setPricingTiers([...pricingTiers, {
@@ -175,7 +175,7 @@ export function AdminStore({
                                     {pricingTiers.map(tier => (
                                         <Button
                                             key={tier.id}
-                                            variant="glass"
+                                            variant="solid"
                                             onClick={() => setRecommendedPlan(tier.id)}
                                             className={`h-auto py-1 px-3 rounded-none border-none ${recommendedPlan === tier.id ? 'bg-[var(--accent)] text-white hover:bg-[var(--accent)]' : 'text-white/50 hover:text-white'}`}
                                             tooltip="Flag this tier as the recommended entry point for citizens."
@@ -190,9 +190,9 @@ export function AdminStore({
                         <div className="grid grid-cols-1 md:grid-cols-2 gap-6 w-full mt-2">
                             {pricingTiers.map((tier, tIdx) => (
                                 <div key={tier.id} className={`space-y-4 bg-white/5 border p-5 relative flex flex-col ${recommendedPlan === tier.id ? 'border-[var(--accent)]/50 shadow-[0_0_15px_rgba(var(--accent-rgb),0.1)]' : 'border-white/10'}`}>
-                                    {recommendedPlan === tier.id && <div className="absolute -top-2.5 right-4 bg-[var(--accent)] text-[10px] text-white px-2 py-0.5 font-bold uppercase tracking-widest">{t.admin.store.recommended.replace(':', '')}</div>}
+                                    {recommendedPlan === tier.id && <div className="absolute -top-2.5 right-4 bg-[var(--accent)] text-[10px] text-white px-2 py-0.5 font-bold tracking-normal">{t.admin.store.recommended.replace(':', '')}</div>}
 
-                                    <div className="text-xs font-bold text-white mb-2 uppercase tracking-widest flex justify-between items-center">
+                                    <div className="text-xs font-bold text-white mb-2 tracking-normal flex justify-between items-center">
                                         {t.admin.store.tier} {tIdx + 1}
                                         <div className="flex gap-2">
                                             <Tooltip content={tier.hidden ? "Reveal this tier in the public matrix." : "Conceal this tier from the public matrix."} term={tier.hidden ? "TIER_REVEAL" : "TIER_CONCEAL"}>
@@ -238,7 +238,7 @@ export function AdminStore({
                                     }} />
 
                                     <div className="space-y-2 pt-2 border-t border-white/10 flex-grow">
-                                        <div className="text-[10px] uppercase font-bold text-white/50 px-1">{t.admin.store.checkmarkFeatures}</div>
+                                        <div className="text-[10px] font-bold text-white/50 px-1">{t.admin.store.checkmarkFeatures}</div>
                                         {tier.features.map((feat: any, fIdx: number) => {
                                             const isActive = typeof feat === 'string' ? true : feat.active !== false;
                                             const featureName = typeof feat === 'string' ? feat : feat.name;
@@ -298,7 +298,7 @@ export function AdminStore({
                                             )
                                         })}
                                         <Button
-                                            variant="glass"
+                                            variant="solid"
                                             onClick={() => {
                                                 const newTiers = [...pricingTiers];
                                                 newTiers[tIdx].features.push({ name: "", active: true });
@@ -328,7 +328,7 @@ export function AdminStore({
                         </div>
                         <div className="flex w-full justify-start mt-2">
                             <Button
-                                variant="glass"
+                                variant="solid"
                                 onClick={async () => {
                                     const res = await setPricingMatrix({
                                         pricingTiers, recommendedPlan
@@ -344,22 +344,22 @@ export function AdminStore({
                                 Save Pricing Config
                             </Button>
                         </div>
-                    </GlassCard>
+                    </SolidCard>
                 )
             }
 
             {
                 commerceMode === 'store' && (
                     <div className="flex flex-col gap-4 md:col-span-2">
-                        <GlassCard className="border border-white/5 bg-black/40 p-6 flex flex-col gap-4">
+                        <SolidCard className="border border-white/5 bg-black/40 p-6 flex flex-col gap-4">
                             <div className="flex flex-col md:flex-row justify-between items-start md:items-center w-full gap-4">
                                 <div className="space-y-2 text-left">
-                                    <h3 className="text-sm font-bold uppercase tracking-widest text-[var(--accent)]">{t.admin.store.catalogUpdate}</h3>
+                                    <h3 className="text-sm font-bold tracking-normal text-[var(--accent)]">{t.admin.store.catalogUpdate}</h3>
                                     <p className="text-xs font-serif italic text-white/50">{t.admin.store.catalogDesc}</p>
                                 </div>
                                 <div className="flex flex-col items-end gap-2">
                                     <div className="relative group">
-                                        <div className="flex bg-[var(--accent)] text-white font-bold uppercase tracking-widest text-xs h-[54px] border border-[var(--accent)]/50 items-stretch">
+                                        <div className="flex bg-[var(--accent)] text-white font-bold tracking-normal text-xs h-[54px] border border-[var(--accent)]/50 items-stretch">
                                             <Button
                                                 variant="outline"
                                                 onClick={() => { setIsEditingProduct(false); setProductForm({ id: "", name: "", description: "", price: "", imageUrl: "", stripeLink: "" }); setIsStoreModalOpen(true); }}
@@ -389,7 +389,7 @@ export function AdminStore({
                                                     className="absolute right-0 top-[60px] z-50 w-48 bg-black border border-white/10 shadow-2xl flex flex-col items-start origin-top-right overflow-hidden"
                                                 >
                                                     <Tooltip content="Ingest catalog objects from a CSV buffer." term="CATALOG_INGEST" className="w-full">
-                                                        <label className="w-full text-left px-4 py-4 text-[10px] technical tracking-widest hover:bg-white/5 cursor-pointer uppercase text-white/70 hover:text-white transition-colors flex items-center gap-2">
+                                                        <label className="w-full text-left px-4 py-4 text-[10px] tracking-normal hover:bg-white/5 cursor-pointer text-white/70 hover:text-white transition-colors flex items-center gap-2">
                                                             <ArrowUp size={14} /> {t.admin.store.importCsv}
                                                             <input type="file" accept=".csv" className="hidden" onChange={async (e) => {
                                                                 setIsStoreDropdownOpen(false);
@@ -437,7 +437,7 @@ export function AdminStore({
                                                                 link.click();
                                                                 document.body.removeChild(link);
                                                             }}
-                                                            className="w-full text-left px-4 py-4 text-[10px] technical tracking-widest hover:bg-white/5 uppercase text-white/70 hover:text-white transition-colors flex items-center gap-2 border-t border-white/5"
+                                                            className="w-full text-left px-4 py-4 text-[10px] tracking-normal hover:bg-white/5 text-white/70 hover:text-white transition-colors flex items-center gap-2 border-t border-white/5"
                                                         >
                                                             <Download size={14} /> {t.admin.store.exportCsv}
                                                         </button>
@@ -460,12 +460,12 @@ export function AdminStore({
                                             className="absolute inset-0 z-20 bg-[var(--accent)] flex items-center justify-between px-6"
                                         >
                                             <div className="flex items-center gap-4">
-                                                <span className="text-black font-black uppercase tracking-[0.2em] text-[10px]">{selectedIds.length} {t.admin.store.selected}</span>
+                                                <span className="text-black font-semibold tracking-normal] text-[10px]">{selectedIds.length} {t.admin.store.selected}</span>
                                                 <button onClick={() => setSelectedIds([])} className="text-black/50 hover:text-black p-1"><X size={14} /></button>
                                             </div>
                                             <div className="flex gap-4">
                                                 <Button
-                                                    variant="glass"
+                                                    variant="solid"
                                                     onClick={async () => {
                                                         const price = prompt(t.admin.store.bulkPricePrompt);
                                                         if (price) {
@@ -484,7 +484,7 @@ export function AdminStore({
                                                     {t.admin.store.bulkPrice}
                                                 </Button>
                                                 <Button
-                                                    variant="glass"
+                                                    variant="solid"
                                                     onClick={() => {
                                                         setConfirmModal({
                                                             open: true,
@@ -535,7 +535,7 @@ export function AdminStore({
                             {/* Dense Data Table */}
                             <div className="overflow-x-auto border border-white/10 bg-black/40">
                                 <table className="w-full text-left text-xs text-white/70">
-                                    <thead className="bg-white/5 text-xs uppercase tracking-widest text-white/40 border-b border-white/10">
+                                    <thead className="bg-white/5 text-xs tracking-normal text-white/40 border-b border-white/10">
                                         <tr>
                                             <th className="px-4 py-3 w-10">
                                                 <button
@@ -572,13 +572,13 @@ export function AdminStore({
                                                         {selectedIds.includes(p.id) && <Check size={10} className="text-white" />}
                                                     </button>
                                                 </td>
-                                                <td className="px-4 py-3 text-white/30 tracking-widest">{p.id?.slice(0, 8)}</td>
+                                                <td className="px-4 py-3 text-white/30 tracking-normal">{p.id?.slice(0, 8)}</td>
                                                 <td className="px-4 py-3 text-white font-sans">{p.name}</td>
                                                 <td className="px-4 py-3 text-[var(--accent)]">${p.price}</td>
                                                 <td className="px-4 py-3 text-right">
                                                     <div className="flex justify-end gap-2">
                                                         <Button
-                                                            variant="glass"
+                                                            variant="solid"
                                                             onClick={() => { setIsEditingProduct(true); setProductForm(p); setIsStoreModalOpen(true); }}
                                                             className="p-1.5 border-none h-auto bg-transparent hover:bg-white/10 text-white/50 hover:text-white"
                                                             tooltip="Modify the metadata and pricing for this commerce object."
@@ -587,7 +587,7 @@ export function AdminStore({
                                                             <Edit2 size={14} />
                                                         </Button>
                                                         <Button
-                                                            variant="glass"
+                                                            variant="solid"
                                                             onClick={async () => {
                                                                 setConfirmModal({
                                                                     open: true,
@@ -622,12 +622,12 @@ export function AdminStore({
                             {/* Pagination */}
                             {totalStoreProducts > 0 && (
                                 <div className="flex justify-between items-center p-4 border-t border-white/5 bg-white/5">
-                                    <div className="text-xs text-white/50 font-mono tracking-widest">
+                                    <div className="text-xs text-white/50 font-mono tracking-normal">
                                         {t.admin.store.pagePrefix} {storePage} {t.admin.store.pageOf} {Math.max(1, Math.ceil(totalStoreProducts / 50))}
                                     </div>
                                     <div className="flex gap-2">
                                         <Button
-                                            variant="glass"
+                                            variant="solid"
                                             onClick={() => setStorePage(Math.max(1, storePage - 1))}
                                             disabled={storePage === 1}
                                             className="h-auto p-2"
@@ -637,7 +637,7 @@ export function AdminStore({
                                             <ArrowLeft size={16} />
                                         </Button>
                                         <Button
-                                            variant="glass"
+                                            variant="solid"
                                             onClick={() => setStorePage(Math.min(Math.ceil(totalStoreProducts / 50), storePage + 1))}
                                             disabled={storePage >= Math.ceil(totalStoreProducts / 50)}
                                             className="h-auto p-2"
@@ -649,17 +649,17 @@ export function AdminStore({
                                     </div>
                                 </div>
                             )}
-                        </GlassCard>
+                        </SolidCard>
 
                         {/* Modal Editor */}
                         {isStoreModalOpen && (
                             <div className="fixed inset-0 z-[100] flex items-center justify-center p-4 bg-black/80 backdrop-blur-sm">
-                                <GlassCard className="w-full max-w-2xl border border-white/10 bg-black p-6 flex flex-col gap-6 relative shadow-[0_0_100px_rgba(0,0,0,0.8)]">
+                                <SolidCard className="w-full max-w-2xl border border-white/10 bg-black p-6 flex flex-col gap-6 relative shadow-[0_0_100px_rgba(0,0,0,0.8)]">
                                     <Tooltip content="Close the editor without commitment." term="EDITOR_CLOSE" className="absolute top-4 right-4">
                                         <button onClick={() => setIsStoreModalOpen(false)} className="text-white/50 hover:text-white"><X size={20} /></button>
                                     </Tooltip>
                                     <div>
-                                        <h3 className="text-sm font-bold uppercase tracking-widest text-[var(--accent)]">{isEditingProduct ? t.admin.store.modalEdit : t.admin.store.modalNew}</h3>
+                                        <h3 className="text-sm font-bold tracking-normal text-[var(--accent)]">{isEditingProduct ? t.admin.store.modalEdit : t.admin.store.modalNew}</h3>
                                     </div>
 
                                     <div className="flex flex-col gap-3">
@@ -703,7 +703,7 @@ export function AdminStore({
                                             </div>
                                         </div>
                                         <Button
-                                            variant="glass"
+                                            variant="solid"
                                             onClick={async () => {
                                                 if (!productForm.name || !productForm.price) return toast({ title: t.admin.store.validationError, description: t.admin.store.nameAndPriceReq, type: "error" });
                                                 if (isEditingProduct && productForm.id) {
@@ -731,16 +731,16 @@ export function AdminStore({
                                             {isEditingProduct ? t.admin.store.btnUpdateNode : t.admin.store.btnCommitNode}
                                         </Button>
                                     </div>
-                                </GlassCard>
+                                </SolidCard>
                             </div>
                         )}
                     </div>
                 )
             }
 
-            <GlassCard className="border border-white/5 bg-black/40 p-6 flex flex-col justify-between gap-4 md:col-span-2">
+            <SolidCard className="border border-white/5 bg-black/40 p-6 flex flex-col justify-between gap-4 md:col-span-2">
                 <div className="space-y-2 text-left">
-                    <h3 className="text-sm font-bold uppercase tracking-widest">{t.admin.store.sandboxMode}</h3>
+                    <h3 className="text-sm font-bold tracking-normal">{t.admin.store.sandboxMode}</h3>
                     <p className="text-xs font-serif italic text-white/50">{t.admin.store.sandboxDesc}</p>
                 </div>
                 <div className="flex w-full justify-start">
@@ -763,7 +763,7 @@ export function AdminStore({
                         </button>
                     </Tooltip>
                 </div>
-            </GlassCard>
+            </SolidCard>
 
             <ConfirmationModal
                 isOpen={confirmModal.open}

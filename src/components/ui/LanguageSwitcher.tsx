@@ -19,7 +19,7 @@ export function LanguageSwitcher() {
             <Globe size={12} className="text-white/30 group-hover:text-[var(--accent)] transition-colors" />
             <button
                 onClick={() => setOpen(!open)}
-                className="appearance-none bg-transparent text-[8px] font-black uppercase tracking-widest text-white/50 hover:text-white cursor-pointer outline-none ring-0 border-none transition-colors"
+                className="appearance-none bg-transparent text-[8px] font-bold tracking-normal text-white/50 hover:text-white cursor-pointer outline-none ring-0 border-none transition-colors"
                 aria-label="Select Language"
             >
                 {language.toUpperCase()}
@@ -28,7 +28,7 @@ export function LanguageSwitcher() {
             {open && (
                 <>
                     <div className="fixed inset-0 z-[200]" onClick={() => setOpen(false)} />
-                    <div className="absolute bottom-full right-0 mb-4 w-16 bg-black/90 backdrop-blur-xl border border-white/10 p-2 flex flex-col gap-1 z-[210]">
+                    <div className="absolute bottom-full right-0 mb-4 w-16 bg-[#050505] border border-white/10 p-2 flex flex-col gap-1 z-[210]">
                         {(["en", "es", "it"] as Language[]).map((lang) => (
                             <button
                                 key={lang}

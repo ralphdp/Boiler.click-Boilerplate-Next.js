@@ -78,7 +78,7 @@ export function CommandPalette({
                         animate={{ opacity: 1 }}
                         exit={{ opacity: 0 }}
                         transition={{ duration: 0.2 }}
-                        className="fixed inset-0 bg-black/60 backdrop-blur-sm"
+                        className="fixed inset-0"
                         onClick={() => onOpenChange(false)}
                     />
                     <motion.div
@@ -86,7 +86,7 @@ export function CommandPalette({
                         animate={{ opacity: 1, scale: 1, y: 0 }}
                         exit={{ opacity: 0, scale: 0.95, y: -20 }}
                         transition={{ type: "spring", damping: 25, stiffness: 300 }}
-                        className="relative w-full max-w-xl bg-black border border-white/10 rounded-xl overflow-hidden shadow-2xl glass-accent shadow-[var(--accent)]/10"
+                        className="relative w-full max-w-xl bg-black border border-white/10 overflow-hidden shadow-2xl bg-[#0a0a0a] rounded-md shadow-[var(--accent)]/10"
                     >
                         {/* Search Input */}
                         <div className="flex items-center px-4 py-3 border-b border-white/10 relative group">
@@ -110,7 +110,7 @@ export function CommandPalette({
                         {/* Results List */}
                         <div className="max-h-[300px] overflow-y-auto admin-scrollbar p-2">
                             {filteredCommands.length === 0 ? (
-                                <div className="text-center py-8 text-white/30 font-mono text-xs tracking-widest uppercase">
+                                <div className="text-center py-8 text-white/30 font-mono text-xs tracking-normal">
                                     {t.commandPalette.noDirectives}
                                 </div>
                             ) : (
@@ -124,7 +124,7 @@ export function CommandPalette({
                                                 onOpenChange(false);
                                             }}
                                             onMouseEnter={() => setActiveIndex(index)}
-                                            className={`flex items-center justify-between px-4 py-3 rounded-lg cursor-pointer transition-colors duration-150 ${isActive
+                                            className={`flex items-center justify-between px-4 py-3 rounded-sm cursor-pointer transition-colors duration-150 ${isActive
                                                 ? "bg-[var(--accent)]/10 border border-[var(--accent)]/30 text-white shadow-inner"
                                                 : "bg-transparent border border-transparent text-white/60 hover:text-white"
                                                 }`}
@@ -146,7 +146,7 @@ export function CommandPalette({
                                 })
                             )}
                         </div>
-                        <div className="p-2 bg-white/5 border-t border-white/5 flex justify-between items-center text-[10px] uppercase font-mono tracking-widest text-[var(--accent)] opacity-60">
+                        <div className="p-2 bg-white/5 border-t border-white/5 flex justify-between items-center text-[10px] font-mono tracking-normal text-[var(--accent)] opacity-60">
                             <span>{t.commandPalette.subtitle}</span>
                             <span>v2.1</span>
                         </div>

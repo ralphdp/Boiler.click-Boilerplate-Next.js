@@ -75,3 +75,8 @@ export function initAdminApp(): App {
 export const getAdminDb = () => getFirestore(initAdminApp());
 export const getAdminAuth = () => getAuth(initAdminApp());
 export const getAdminStorage = () => getStorage(initAdminApp());
+
+export const getCollectionName = (baseName: string): string => {
+    const prefix = process.env.DATABASE_PREFIX || "";
+    return `${prefix}${baseName}`;
+};

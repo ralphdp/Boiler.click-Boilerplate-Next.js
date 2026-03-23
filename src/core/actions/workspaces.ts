@@ -1,17 +1,25 @@
 "use server";
 
-import { getAdminAuth, getAdminDb } from "@/core/firebase/admin";
+import { getAdminAuth, getAdminDb, getCollectionName } from "@/core/firebase/admin";
 import { auth } from "@/core/auth";
-import { logAuditTrace } from "./admin";
+import { logAuditTrace } from "./nodes";
+
+import { emitAuditLog } from "./audit";
 
 export async function logWorkspaceAction(workspaceId: string, action: string, details: string) {
     const session = await auth();
-    const db = getAdminDb();
-    await db.collection("omni_workspaces").doc(workspaceId).collection("audit_logs").add({
-        action,
-        details,
-        user: session?.user?.email || session?.user?.id || "SYSTEM",
-        timestamp: Date.now()
+
+    await emitAuditLog({
+        workspaceId,
+        actor: {
+            id: session?.user?.id || "SYSTEM",
+            email: session?.user?.email || "SYSTEM",
+            name: session?.user?.name || "System Automated",
+        },
+        action: action,
+        resource: "omni_workspaces",
+        description: details,
+        severity: "INFO",
     });
 }
 
@@ -22,7 +30,7 @@ export async function createWorkspace(data: { name: string, description?: string
     const db = getAdminDb();
 
     // Create Workspace Document
-    const workspaceRef = db.collection("omni_workspaces").doc();
+    const workspaceRef = db.collection(getCollectionName("omni_workspaces")).doc();
     const ts = Date.now();
 
     await workspaceRef.set({
@@ -41,7 +49,7 @@ export async function createWorkspace(data: { name: string, description?: string
     });
 
     // Add Workspace to User's active Workspaces
-    const userRef = db.collection("users").doc(session.user.id);
+    const userRef = db.collection(getCollectionName("users")).doc(session.user.id);
     await userRef.set({
         workspaces: {
             [workspaceRef.id]: { role: "OWNER", name: data.name }
@@ -59,7 +67,7 @@ export async function getUserWorkspaces() {
     if (!session?.user?.id) return [];
 
     const db = getAdminDb();
-    const userSnap = await db.collection("users").doc(session.user.id).get();
+    const userSnap = await db.collection(getCollectionName("users")).doc(session.user.id).get();
 
     if (!userSnap.exists) return [];
 
@@ -69,7 +77,7 @@ export async function getUserWorkspaces() {
     if (workspaceIds.length === 0) return [];
 
     // Fetch the actual workspace documents to ensure they aren't marked DELETED
-    const refs = workspaceIds.map(id => db.collection("omni_workspaces").doc(id));
+    const refs = workspaceIds.map(id => db.collection(getCollectionName("omni_workspaces")).doc(id));
     const snaps = await db.getAll(...refs);
 
     const activeWorkspaces: any[] = [];
@@ -88,7 +96,7 @@ export async function inviteWorkspaceMember(workspaceId: string, email: string, 
     if (!session?.user?.id) throw new Error("UNAUTHORIZED");
 
     const db = getAdminDb();
-    const callerMemberSnap = await db.collection("omni_workspaces").doc(workspaceId).collection("members").doc(session.user.id).get();
+    const callerMemberSnap = await db.collection(getCollectionName("omni_workspaces")).doc(workspaceId).collection("members").doc(session.user.id).get();
 
     if (!callerMemberSnap.exists || !["OWNER", "ADMIN"].includes(callerMemberSnap.data()?.role)) {
         throw new Error("UNAUTHORIZED_ACCESS: Insufficient workspace clearance.");
@@ -98,17 +106,17 @@ export async function inviteWorkspaceMember(workspaceId: string, email: string, 
         const authAdmin = getAdminAuth();
         const targetUser = await authAdmin.getUserByEmail(email);
 
-        await db.collection("omni_workspaces").doc(workspaceId).collection("members").doc(targetUser.uid).set({
+        await db.collection(getCollectionName("omni_workspaces")).doc(workspaceId).collection("members").doc(targetUser.uid).set({
             role,
             email,
             joinedAt: Date.now()
         });
 
         // Add to the user's workspace mapping
-        const userRef = db.collection("users").doc(targetUser.uid);
+        const userRef = db.collection(getCollectionName("users")).doc(targetUser.uid);
 
         // Fetch workspace name
-        const wsSnap = await db.collection("omni_workspaces").doc(workspaceId).get();
+        const wsSnap = await db.collection(getCollectionName("omni_workspaces")).doc(workspaceId).get();
         const wsName = wsSnap.data()?.name || "Unknown Workspace";
 
         await userRef.set({
@@ -130,14 +138,14 @@ export async function softDeleteWorkspace(workspaceId: string) {
     if (!session?.user?.id) throw new Error("UNAUTHORIZED");
 
     const db = getAdminDb();
-    const callerMemberSnap = await db.collection("omni_workspaces").doc(workspaceId).collection("members").doc(session.user.id).get();
+    const callerMemberSnap = await db.collection(getCollectionName("omni_workspaces")).doc(workspaceId).collection("members").doc(session.user.id).get();
 
     if (!callerMemberSnap.exists || callerMemberSnap.data()?.role !== "OWNER") {
         throw new Error("UNAUTHORIZED_ACCESS: Only the Workspace Owner can delete the workspace.");
     }
 
     try {
-        await db.collection("omni_workspaces").doc(workspaceId).update({
+        await db.collection(getCollectionName("omni_workspaces")).doc(workspaceId).update({
             status: "DELETED",
             deletedAt: Date.now(),
             deletedBy: session.user.id
@@ -158,13 +166,13 @@ export async function getWorkspaceAuditLogs(workspaceId: string) {
     if (!session?.user?.id) return [];
 
     const db = getAdminDb();
-    const callerMemberSnap = await db.collection("omni_workspaces").doc(workspaceId).collection("members").doc(session.user.id).get();
+    const callerMemberSnap = await db.collection(getCollectionName("omni_workspaces")).doc(workspaceId).collection("members").doc(session.user.id).get();
 
     if (!callerMemberSnap.exists) {
         throw new Error("UNAUTHORIZED_ACCESS: You must be a member to view audit logs.");
     }
 
-    const snap = await db.collection("omni_workspaces").doc(workspaceId).collection("audit_logs")
+    const snap = await db.collection(getCollectionName("omni_workspaces")).doc(workspaceId).collection("audit_logs")
         .orderBy("timestamp", "desc")
         .limit(50)
         .get();

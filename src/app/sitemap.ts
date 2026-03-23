@@ -1,5 +1,5 @@
 import { MetadataRoute } from 'next';
-import { getAdminDb } from '@/core/firebase/admin';
+import { getAdminDb, getCollectionName } from '@/core/firebase/admin';
 import { SUPPORTED_LOCALES } from '@/core/i18n/translations';
 
 export default async function sitemap(): Promise<MetadataRoute.Sitemap> {
@@ -30,7 +30,7 @@ export default async function sitemap(): Promise<MetadataRoute.Sitemap> {
     // Dynamic Discovery: Fetch products from Substrate DB
     try {
         const db = getAdminDb();
-        const productsSnap = await db.collection("store_products").get();
+        const productsSnap = await db.collection(getCollectionName("store_products")).get();
 
         productsSnap.docs.forEach(doc => {
             const product = doc.data();

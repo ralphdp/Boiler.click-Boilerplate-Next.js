@@ -6,7 +6,7 @@ import { ArrowLeft, Rocket } from "lucide-react";
 import Link from "next/link";
 import { Button } from "@/components/ui/Button";
 import { PricingMatrix } from "@/components/demo/PricingMatrix";
-import { getGlobalOverrides } from "@/core/actions/system";
+import { getGlobalOverrides } from "@/core/actions/branding";
 import { useTranslation } from "@/core/i18n/LanguageProvider";
 import { useToast } from "@/components/ui/Toast";
 
@@ -64,7 +64,7 @@ export default function SaasDemoPage() {
     if (loading) {
         return (
             <main className="min-h-screen flex flex-col items-center justify-center p-6 bg-black text-white">
-                <div className="text-xs text-[var(--accent)] font-mono animate-pulse tracking-widest uppercase">
+                <div className="text-xs text-[var(--accent)] font-mono animate-pulse tracking-normal">
                     [ Synchronizing SaaS Matrix ]
                 </div>
             </main>
@@ -85,11 +85,7 @@ export default function SaasDemoPage() {
                 animate={{ opacity: 1, y: 0 }}
                 className="w-full max-w-4xl text-center space-y-6 mb-24"
             >
-                <div className="inline-flex items-center gap-2 px-3 py-1 bg-[var(--accent)]/10 border border-[var(--accent)]/20 text-[var(--accent)] text-[10px] font-black uppercase tracking-[0.2em] mb-4">
-                    <Rocket size={12} />
-                    SaaS Substrate v1.0
-                </div>
-                <h1 className="text-4xl md:text-6xl font-black uppercase tracking-widest">
+                <h1 className="text-4xl md:text-6xl font-semibold tracking-normal">
                     Subscription <span className="text-[var(--accent)]">Matrix</span>
                 </h1>
                 <p className="text-white/50 font-serif italic text-lg max-w-2xl mx-auto">

@@ -22,10 +22,10 @@ export default function FeaturesPage() {
                 className="z-10 w-full max-w-5xl flex flex-col items-center space-y-12"
             >
                 <div className="text-center space-y-4">
-                    <h1 className="text-3xl font-black uppercase tracking-widest text-[var(--accent)]">
+                    <h1 className="text-4xl font-bold tracking-normal text-white">
                         {t.home.ecosystemPreview}
                     </h1>
-                    <p className="text-[10px] text-white/50 uppercase tracking-[0.3em]">
+                    <p className="text-sm text-white/50 leading-relaxed font-semibold">
                         {t.home.architecturalForms}
                     </p>
                 </div>
@@ -36,14 +36,14 @@ export default function FeaturesPage() {
                     {t.home.features.map((feature, i) => {
                         const Icon = FEATURE_ICONS[i % FEATURE_ICONS.length] || Box;
                         return (
-                            <div key={i} className="glass p-6 flex flex-col border border-white/5 space-y-2 text-left hover:border-[var(--accent)]/50 transition-colors">
+                            <div key={i} className="bg-[#0a0a0a] p-6 flex flex-col border border-white/10 space-y-3 text-left hover:border-[var(--accent)]/50 transition-colors rounded-xl shadow-lg">
                                 <div className="flex items-center gap-3">
-                                    <Icon size={16} className="text-[var(--accent)]" />
-                                    <h3 className="text-sm font-black tracking-widest uppercase text-white/90">
+                                    <Icon size={18} className="text-[var(--accent)]" />
+                                    <h3 className="text-base font-semibold text-white">
                                         {feature.title}
                                     </h3>
                                 </div>
-                                <p className="text-[10px] text-white/50 tracking-widest leading-relaxed">
+                                <p className="text-sm text-white/60 leading-relaxed">
                                     {feature.desc}
                                 </p>
                             </div>
@@ -54,7 +54,7 @@ export default function FeaturesPage() {
                 <Button
                     as={Link}
                     href={`/${language}`}
-                    variant="glass"
+                    variant="solid"
                     className="mt-12 group flex items-center justify-center gap-2 px-6 w-fit"
                 >
                     <ChevronLeft size={14} className="group-hover:-translate-x-1 transition-transform" />

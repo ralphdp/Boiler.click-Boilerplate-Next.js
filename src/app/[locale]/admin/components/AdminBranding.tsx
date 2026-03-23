@@ -1,12 +1,12 @@
 "use client";
 
 import { motion } from "framer-motion";
-import { GlassCard } from "@/components/ui/GlassCard";
+import { SolidCard } from "@/components/ui/SolidCard";
 import { Input } from "@/components/ui/Input";
 import { Textarea } from "@/components/ui/Textarea";
 import { useToast } from "@/components/ui/Toast";
 import { useRouter } from "next/navigation";
-import { setSiteTitle, setContentOverride, setContactEmail, setPrimaryColor, setSEOMetadata, setSocialLinks, setSovereignWebGLVariant } from "@/core/actions/system";
+import { setSiteTitle, setContentOverride, setContactEmail, setPrimaryColor, setSEOMetadata, setSocialLinks, setSovereignWebGLVariant } from "@/core/actions/branding";
 import { Button } from "@/components/ui/Button";
 import { Tooltip } from "@/components/ui/Tooltip";
 
@@ -73,9 +73,9 @@ export function AdminBranding({
             transition={{ duration: 0.3 }}
             className="grid grid-cols-1 md:grid-cols-2 gap-6"
         >
-            <GlassCard className="border border-white/5 bg-black/40 p-6 flex flex-col justify-between gap-4">
+            <SolidCard className="border border-white/5 bg-black/40 p-6 flex flex-col justify-between gap-4">
                 <div className="space-y-2 text-left">
-                    <h3 className="text-sm font-bold uppercase tracking-widest text-[var(--accent)]">{t.admin.branding.siteTitle}</h3>
+                    <h3 className="text-sm font-bold tracking-normal text-[var(--accent)]">{t.admin.branding.siteTitle}</h3>
                     <p className="text-xs font-serif italic text-white/50">{t.admin.branding.siteTitleDesc}</p>
                 </div>
                 <div className="flex flex-col gap-3 w-full justify-start">
@@ -93,17 +93,17 @@ export function AdminBranding({
                         }}
                     />
                 </div>
-            </GlassCard>
+            </SolidCard>
 
-            <GlassCard className="border border-white/5 bg-black/40 p-6 flex flex-col justify-between gap-4">
+            <SolidCard className="border border-white/5 bg-black/40 p-6 flex flex-col justify-between gap-4">
                 <div className="space-y-2 text-left">
-                    <h3 className="text-sm font-bold uppercase tracking-widest text-[var(--accent)]">{t.admin.branding.siteSubtitle}</h3>
+                    <h3 className="text-sm font-bold tracking-normal text-[var(--accent)]">{t.admin.branding.siteSubtitle}</h3>
                     <p className="text-xs font-serif italic text-white/50">{t.admin.branding.siteSubtitleDesc}</p>
                 </div>
                 <div className="flex flex-col gap-3 w-full justify-start">
                     <Input
                         type="text"
-                        placeholder={t.admin.branding.siteSubtitlePlace || "THE ULTIMATE SOVEREIGN IDENTITY MATRIX."}
+                        placeholder={t.admin.branding.siteSubtitlePlace || "The ultimate sovereign identity matrix."}
                         value={typographyOverride}
                         onChange={(e) => setTypographyOverride(e.target.value)}
                         onBlur={async (e) => {
@@ -115,11 +115,11 @@ export function AdminBranding({
                         }}
                     />
                 </div>
-            </GlassCard>
+            </SolidCard>
 
-            <GlassCard className="border border-white/5 bg-black/40 p-6 flex flex-col justify-between gap-4">
+            <SolidCard className="border border-white/5 bg-black/40 p-6 flex flex-col justify-between gap-4">
                 <div className="space-y-2 text-left">
-                    <h3 className="text-sm font-bold uppercase tracking-widest text-[var(--accent)]">{t.admin.branding.supportEmail}</h3>
+                    <h3 className="text-sm font-bold tracking-normal text-[var(--accent)]">{t.admin.branding.supportEmail}</h3>
                     <p className="text-xs font-serif italic text-white/50">{t.admin.branding.supportEmailDesc}</p>
                 </div>
                 <div className="flex flex-col gap-3 w-full justify-start">
@@ -137,11 +137,11 @@ export function AdminBranding({
                         }}
                     />
                 </div>
-            </GlassCard>
+            </SolidCard>
 
-            <GlassCard className="border border-white/5 bg-black/40 p-6 flex flex-col justify-between gap-4">
+            <SolidCard className="border border-white/5 bg-black/40 p-6 flex flex-col justify-between gap-4">
                 <div className="space-y-2 text-left">
-                    <h3 className="text-sm font-bold uppercase tracking-widest text-[var(--accent)]">{t.admin.branding.primaryTheme}</h3>
+                    <h3 className="text-sm font-bold tracking-normal text-[var(--accent)]">{t.admin.branding.primaryTheme}</h3>
                     <p className="text-xs font-serif italic text-white/50">{t.admin.branding.primaryThemeDesc}</p>
                 </div>
                 <div className="flex flex-col gap-3 w-full justify-start">
@@ -159,11 +159,11 @@ export function AdminBranding({
                         }}
                     />
                 </div>
-            </GlassCard>
+            </SolidCard>
 
-            <GlassCard className="border border-white/5 bg-black/40 p-6 flex flex-col justify-between gap-4 md:col-span-2">
+            <SolidCard className="border border-white/5 bg-black/40 p-6 flex flex-col justify-between gap-4 md:col-span-2">
                 <div className="space-y-2 text-left">
-                    <h3 className="text-sm font-bold uppercase tracking-widest text-[var(--accent)]">{t.admin.branding.seoTags}</h3>
+                    <h3 className="text-sm font-bold tracking-normal text-[var(--accent)]">{t.admin.branding.seoTags}</h3>
                     <p className="text-xs font-serif italic text-white/50">{t.admin.branding.seoTagsDesc}</p>
                 </div>
                 <div className="flex flex-col gap-4 w-full">
@@ -208,11 +208,11 @@ export function AdminBranding({
                         />
                     </div>
                 </div>
-            </GlassCard>
+            </SolidCard>
 
-            <GlassCard className="border border-white/5 bg-black/40 p-6 flex flex-col justify-between gap-4 md:col-span-2">
+            <SolidCard className="border border-white/5 bg-black/40 p-6 flex flex-col justify-between gap-4 md:col-span-2">
                 <div className="space-y-2 text-left">
-                    <h3 className="text-sm font-bold uppercase tracking-widest text-[var(--accent)]">{t.admin.branding.socialLinks}</h3>
+                    <h3 className="text-sm font-bold tracking-normal text-[var(--accent)]">{t.admin.branding.socialLinks}</h3>
                     <p className="text-xs font-serif italic text-white/50">{t.admin.branding.socialLinksDesc}</p>
                 </div>
                 <div className="grid grid-cols-1 sm:grid-cols-3 gap-4 w-full">
@@ -256,10 +256,10 @@ export function AdminBranding({
                         }}
                     />
                 </div>
-            </GlassCard>
-            <GlassCard className="border border-white/5 bg-black/40 p-6 flex flex-col justify-between gap-4 md:col-span-2">
+            </SolidCard>
+            <SolidCard className="border border-white/5 bg-black/40 p-6 flex flex-col justify-between gap-4 md:col-span-2">
                 <div className="space-y-2 text-left">
-                    <h3 className="text-sm font-bold uppercase tracking-widest text-[var(--accent)]">{t.admin.branding.bgAnimation}</h3>
+                    <h3 className="text-sm font-bold tracking-normal text-[var(--accent)]">{t.admin.branding.bgAnimation}</h3>
                     <p className="text-xs font-serif italic text-white/50">{t.admin.branding.bgAnimationDesc}</p>
                 </div>
                 <div className="flex flex-wrap w-full justify-start gap-4">
@@ -268,7 +268,7 @@ export function AdminBranding({
                         return (
                             <Button
                                 key={variant}
-                                variant={isActive ? "glass-accent" : "glass"}
+                                variant={isActive ? "solid-accent" : "solid"}
                                 onClick={async () => {
                                     setWebglVariantUI(variant); // Immediate UI update
                                     const res = await setSovereignWebGLVariant(variant as any);
@@ -277,16 +277,16 @@ export function AdminBranding({
                                         router.refresh();
                                     }
                                 }}
-                                className={`min-w-[100px] h-auto py-2 ${isActive ? 'ring-1 ring-[var(--accent)] border-[var(--accent)]/50 text-white' : 'border-white/10 text-white/40'}`}
+                                className={`min-w-[100px] h-auto py-2 text-xs font-semibold tracking-normal transition-all ${isActive ? 'bg-[var(--accent)] border-[var(--accent)] text-white' : 'border-white/10 text-white/40'}`}
                                 tooltip={`Switch the background aesthetic protocol to ${variant.toUpperCase()}.`}
                                 tooltipTerm="BG_VARIANT_SHIFT"
                             >
-                                {variant}
+                                {variant.charAt(0).toUpperCase() + variant.slice(1)}
                             </Button>
                         );
                     })}
                 </div>
-            </GlassCard>
+            </SolidCard>
         </motion.div>
     );
 }

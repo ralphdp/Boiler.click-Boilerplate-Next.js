@@ -1,7 +1,7 @@
 "use client";
 
 import { useSession } from "next-auth/react";
-import { GlassCard } from "@/components/ui/GlassCard";
+import { SolidCard } from "@/components/ui/SolidCard";
 import { Button } from "@/components/ui/Button";
 import { Input } from "@/components/ui/Input";
 import Link from "next/link";
@@ -21,35 +21,35 @@ import { ConfirmationModal } from "@/components/ui/ConfirmationModal";
 import { CipherGate } from "@/components/ui/CipherGate";
 
 function SessionList({ sessions, loading, onRevoke }: { sessions: any[], loading: boolean, onRevoke: (id: string) => any }) {
-    if (loading) return <div className="text-[10px] text-white/20 animate-pulse uppercase tracking-widest">Scanning active nodes...</div>;
-    if (sessions.length === 0) return <div className="text-[10px] text-white/20 uppercase tracking-widest">No sibling sessions detected.</div>;
+    if (loading) return <div className="text-sm text-white/50 animate-pulse">Scanning active nodes...</div>;
+    if (sessions.length === 0) return <div className="text-sm text-white/50">No sibling sessions detected.</div>;
 
     return (
-        <div className="space-y-2">
+        <div className="space-y-2 text-left">
             {sessions.map((s, idx) => (
-                <div key={s.id} className="flex items-center justify-between p-3 glass border-white/5 group hover:border-[var(--accent)]/30 transition-colors">
+                <div key={s.id} className="flex items-center justify-between p-3 bg-[#0a0a0a] border border-white/5 group hover:border-white/20 transition-colors">
                     <div className="flex items-center gap-3">
                         <div className="w-8 h-8 rounded-full bg-white/5 flex items-center justify-center text-white/40">
                             <Smartphone size={14} />
                         </div>
                         <div className="flex flex-col">
-                            <span className="text-[10px] font-black uppercase tracking-widest text-white/80">
+                            <span className="text-sm font-semibold text-white">
                                 {s.userAgent.includes("Macintosh") || s.userAgent.includes("Mac OS X") ? "Apple Silicon Node" :
                                     s.userAgent.includes("iPhone") || s.userAgent.includes("iPad") ? "iOS Mobile Node" :
                                         s.userAgent.includes("Windows") ? "Win64 Matrix" :
                                             s.userAgent.includes("Linux") ? "Linux Kernel Node" :
                                                 "Unknown Substrate"}
                             </span>
-                            <span className="text-[8px] text-white/30 uppercase tracking-widest">
+                            <span className="text-xs text-white/50">
                                 {new Date(s.lastSeen).toLocaleString()}
                             </span>
                         </div>
                     </div>
                     <button
                         onClick={() => onRevoke(s.id)}
-                        className="text-[9px] font-black uppercase text-red-500/50 hover:text-red-500 opacity-0 group-hover:opacity-100 transition-all px-2 py-1"
+                        className="text-xs font-bold text-red-500 hover:text-red-400 opacity-0 group-hover:opacity-100 transition-opacity px-3 py-1 bg-red-500/10 border border-red-500/20 rounded-md"
                     >
-                        [ REVOKE ]
+                        Revoke
                     </button>
                 </div>
             ))}
@@ -240,10 +240,10 @@ export default function SettingsPage() {
                 </Button>
             </div>
 
-            <GlassCard className="w-full max-w-xl space-y-8">
+            <SolidCard className="w-full max-w-xl space-y-8">
                 <div className="space-y-2 text-left">
-                    <h1 className="text-2xl font-black technical tracking-[0.2em] uppercase text-[var(--accent)]">{t.settings.title}</h1>
-                    <p className="text-[10px] uppercase tracking-[0.2em] font-bold text-white/50">
+                    <h1 className="text-2xl font-bold tracking-normal text-white">{t.settings.title}</h1>
+                    <p className="text-sm text-white/50">
                         {t.settings.subtitle}
                     </p>
                 </div>
@@ -251,20 +251,20 @@ export default function SettingsPage() {
                 <div className="w-full h-px bg-white/5" />
 
                 {/* STRUCTURAL CLEARANCE SECTION */}
-                <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
-                    <div className="glass p-4 border-white/5 space-y-3">
+                <div className="grid grid-cols-1 md:grid-cols-2 gap-4 text-left">
+                    <div className="bg-[#0a0a0a] p-4 border border-white/5 space-y-3">
                         <div className="flex justify-between items-center">
-                            <span className="text-[9px] font-black uppercase tracking-widest text-white/40">{t.settings.clearanceLevel}</span>
-                            <span className="text-[10px] font-black uppercase tracking-[0.2em] text-[var(--accent)] bg-[var(--accent)]/10 px-2 py-0.5 border border-[var(--accent)]/20">
+                            <span className="text-xs font-semibold text-white/50">{t.settings.clearanceLevel}</span>
+                            <span className="text-[10px] font-bold text-[var(--accent)] bg-[var(--accent)]/10 px-2 py-0.5 border border-[var(--accent)]/20 rounded-sm">
                                 {session?.user?.role || "USER"}
                             </span>
                         </div>
                         <div className="space-y-1">
-                            <div className="flex justify-between items-center text-[8px] uppercase tracking-widest text-white/30">
+                            <div className="flex justify-between items-center text-xs text-white/50">
                                 <span>{t.settings.logosAlignment}</span>
-                                <span className="text-white/70">{alignment.toFixed(1)}%</span>
+                                <span className="text-white">{alignment.toFixed(1)}%</span>
                             </div>
-                            <div className="w-full h-1 bg-white/5 overflow-hidden">
+                            <div className="w-full h-1 bg-white/10 overflow-hidden">
                                 <motion.div
                                     initial={{ width: 0 }}
                                     animate={{ width: `${alignment}%` }}
@@ -275,11 +275,11 @@ export default function SettingsPage() {
                         </div>
                     </div>
 
-                    <div className="glass p-4 border-white/5 space-y-3">
+                    <div className="bg-[#0a0a0a] p-4 border border-white/5 space-y-3">
                         <div className="flex justify-between items-center">
-                            <span className="text-[9px] font-black uppercase tracking-widest text-white/40">{t.settings.terminalAccess}</span>
-                            <span className={`text-[10px] font-black uppercase tracking-[0.2em] px-2 py-0.5 border transition-all duration-700 ${isMfaActive ? "text-[var(--accent)] bg-[var(--accent)]/10 border-[var(--accent)]/20" : "text-white/40 bg-white/5 border-white/10"}`}>
-                                {isMfaActive ? "IDENTITY_HARDENED" : "IDENTITY_VERIFIED"}
+                            <span className="text-xs font-semibold text-white/50">{t.settings.terminalAccess}</span>
+                            <span className={`text-[10px] font-bold px-2 py-0.5 border rounded-sm transition-colors duration-200 ${isMfaActive ? "text-[var(--accent)] bg-[var(--accent)]/10 border-[var(--accent)]/20" : "text-white/70 bg-white/10 border-white/20"}`}>
+                                {isMfaActive ? "IDENTITY HARDENED" : "IDENTITY VERIFIED"}
                             </span>
                         </div>
                         <div className="flex gap-2">
@@ -312,7 +312,7 @@ export default function SettingsPage() {
                             />
                             <div
                                 onClick={() => !avatarUploading && fileInputRef.current?.click()}
-                                className="w-16 h-16 bg-black/50 border border-white/20 flex items-center justify-center text-[var(--accent)] font-bold text-xl uppercase relative group overflow-hidden shrink-0 cursor-pointer hover:border-[var(--accent)] transition-colors"
+                                className="w-16 h-16 bg-black/50 border border-white/20 flex items-center justify-center text-[var(--accent)] font-bold text-xl relative group overflow-hidden shrink-0 cursor-pointer hover:border-[var(--accent)] transition-colors"
                             >
                                 {avatarUploading ? (
                                     <Loader2 className="animate-spin text-white/50" />
@@ -328,10 +328,10 @@ export default function SettingsPage() {
                                 )}
                             </div>
                             <div className="flex-1 space-y-1">
-                                <label className="text-[10px] font-bold tracking-widest uppercase text-white/70">
+                                <label className="text-sm font-semibold text-white">
                                     {t.settings.avatarTitle}
                                 </label>
-                                <p className="text-[9px] text-white/40 uppercase tracking-widest">
+                                <p className="text-xs text-white/50">
                                     {t.settings.avatarSubtitle}
                                 </p>
                             </div>
@@ -344,7 +344,7 @@ export default function SettingsPage() {
                             type="text"
                             value={session?.user?.email || t.settings.unknownEmail}
                             disabled
-                            className="opacity-50 cursor-not-allowed uppercase"
+                            className="opacity-50 cursor-not-allowed text-white/50"
                         />
 
                         <Input
@@ -353,14 +353,14 @@ export default function SettingsPage() {
                             value={name}
                             onChange={(e) => setName(e.target.value)}
                             placeholder={t.settings.handlePlaceholder}
-                            className="uppercase transition-colors text-white"
+                            className="text-white"
                         />
 
                         <div className="w-full h-px bg-white/5 my-4" />
 
                         {/* SECURITY & MFA MATRIX */}
                         <div className="space-y-4">
-                            <label className="text-[10px] font-bold tracking-widest uppercase text-white/70">
+                            <label className="text-sm font-semibold text-white mb-4 block">
                                 {t.settings.mfaTitle}
                             </label>
 
@@ -413,8 +413,8 @@ export default function SettingsPage() {
 
                             {/* ACTIVE SESSIONS TELEMETRY */}
                             <div className="pt-4 space-y-4">
-                                <label className="text-[10px] font-bold tracking-widest uppercase text-white/70 flex items-center gap-2">
-                                    <Smartphone size={12} className="text-[var(--accent)]" />
+                                <label className="text-sm font-semibold text-white flex items-center gap-2">
+                                    <Smartphone size={14} className="text-[var(--accent)]" />
                                     Active Node Connections
                                 </label>
 
@@ -427,20 +427,20 @@ export default function SettingsPage() {
                                 </div>
                             </div>
 
-                            <p className="text-[8px] text-white/30 uppercase tracking-widest text-left">
+                            <p className="text-xs text-white/40 text-left mt-4">
                                 {t.settings.securityDisclaimer}
                             </p>
                         </div>
                     </div>
 
                     <div className="pt-6 border-t border-white/5 flex gap-4">
-                        <Button type="submit" variant="glass-accent" className="flex-1" disabled={loading}>
+                        <Button type="submit" variant="solid-accent" className="flex-1" disabled={loading}>
                             {loading ? t.settings.committing : t.settings.commitChanges}
                             <Save size={14} />
                         </Button>
                     </div>
                 </form>
-            </GlassCard>
+            </SolidCard>
 
             <div className="absolute inset-0 z-[-1] opacity-5 pointer-events-none" aria-hidden="true">
                 <div className="w-full h-full bg-[radial-gradient(circle_at_center,var(--accent)_1px,transparent_1px)] [background-size:32px_32px]" />
@@ -449,7 +449,7 @@ export default function SettingsPage() {
             {/* MFA MODAL */}
             {activeModal && (
                 <div className="fixed inset-0 z-50 flex items-center justify-center p-6 bg-black/80 backdrop-blur-md">
-                    <GlassCard className="max-w-md w-full p-8 border-white/20 relative">
+                    <SolidCard className="max-w-md w-full p-8 border-white/20 relative">
                         <button onClick={() => {
                             setActiveModal(null);
                             setMfaStep("INIT");
@@ -460,28 +460,28 @@ export default function SettingsPage() {
                                 (window as any).recaptchaVerifier.clear();
                                 (window as any).recaptchaVerifier = null;
                             }
-                        }} className="absolute top-4 right-4 text-white/50 hover:text-white transition-colors">
+                        }} className="absolute top-4 right-4 text-white/50 hover:text-white hover:bg-white/10 p-1 rounded-md transition-colors">
                             <X size={20} />
                         </button>
                         <div className="flex justify-center mb-6">
-                            <div className="w-12 h-12 rounded-full glass flex items-center justify-center border border-[var(--accent)] bg-[var(--accent)]/10 text-[var(--accent)]">
+                            <div className="w-12 h-12 rounded-full bg-[#0a0a0a] border border-white/10 rounded-xl shadow-lg flex items-center justify-center border border-[var(--accent)] bg-[var(--accent)]/10 text-[var(--accent)]">
                                 {activeModal === "TOTP" ? <ShieldAlert size={20} /> : <Smartphone size={20} />}
                             </div>
                         </div>
-                        <h2 className="text-xl font-black technical tracking-[0.2em] uppercase text-center mb-2">
-                            {activeModal === "TOTP" ? "AUTHENTICATOR MFA" : "SMS RELAY BINDING"}
+                        <h2 className="text-xl font-bold tracking-normal text-white text-center mb-2">
+                            {activeModal === "TOTP" ? "Authenticator MFA" : "SMS Relay Binding"}
                         </h2>
 
                         {mfaStep === "INIT" && (
                             <>
-                                <p className="text-[10px] text-white/50 uppercase tracking-[0.2em] text-center mb-6 leading-relaxed">
+                                <p className="text-sm text-white/50 text-center mb-6 leading-relaxed">
                                     {activeModal === "TOTP"
                                         ? "Securely bind an Authenticator App (Google/Authy) to your Identity Matrix using native Server Actions. This overrides Firebase Auth MFA entirely."
                                         : "SMS functionality has been deprecated in favor of TOTP."}
                                 </p>
                                 <div className="space-y-4">
-                                    <Button variant="glass" className="w-full" onClick={initiateMfaEnrollment} disabled={loading || activeModal === "SMS"}>
-                                        {loading ? "INITIALIZING MATRIX..." : "INITIATE BINDING PROTOCOL"}
+                                    <Button variant="solid" className="w-full" onClick={initiateMfaEnrollment} disabled={loading || activeModal === "SMS"}>
+                                        {loading ? "Initializing..." : "Initiate Binding Protocol"}
                                     </Button>
                                 </div>
                             </>
@@ -489,9 +489,9 @@ export default function SettingsPage() {
 
                         {mfaStep === "SCAN_QR" && (
                             <div className="flex flex-col items-center space-y-6">
-                                <p className="text-[10px] text-white/50 uppercase tracking-[0.2em] text-center leading-relaxed">
+                                <p className="text-sm text-white/50 text-center leading-relaxed">
                                     {activeModal === "TOTP"
-                                        ? "Scan this cryptographic matrix with your Authenticator App, then enter the 6-digit verification code below."
+                                        ? "Scan this Matrix with your Authenticator App, then enter the 6-digit verification code below."
                                         : `We sent a cryptographic SMS pulse to ${phoneNumber}. Enter the 6-digit verification code below.`}
                                 </p>
 
@@ -507,12 +507,12 @@ export default function SettingsPage() {
                                         value={verificationCode}
                                         onChange={(e) => setVerificationCode(e.target.value)}
                                         placeholder="000000"
-                                        className="text-center text-xl tracking-[0.5em] transition-colors text-white p-4"
+                                        className="text-center text-xl tracking-normal] transition-colors text-white p-4"
                                         maxLength={6}
                                     />
-                                    {mfaError && <p className="text-red-500 text-[10px] uppercase tracking-widest text-center">{mfaError}</p>}
-                                    <Button variant="glass-accent" className="w-full" onClick={verifyAndEnrollTotp} disabled={loading || verificationCode.length !== 6}>
-                                        {loading ? "VERIFYING CRYPTOGRAPHY..." : (activeModal === "TOTP" ? "BIND AUTHENTICATOR" : "BIND SMS RELAY")}
+                                    {mfaError && <p className="text-red-500 text-xs text-center">{mfaError}</p>}
+                                    <Button variant="solid-accent" className="w-full" onClick={verifyAndEnrollTotp} disabled={loading || verificationCode.length !== 6}>
+                                        {loading ? "Verifying..." : (activeModal === "TOTP" ? "Bind Authenticator" : "Bind SMS Relay")}
                                     </Button>
                                 </div>
                             </div>
@@ -520,21 +520,21 @@ export default function SettingsPage() {
 
                         {mfaStep === "DONE" && (
                             <div className="flex flex-col items-center space-y-6">
-                                <p className="text-[10px] text-[var(--accent)] uppercase tracking-[0.2em] text-center font-bold">
+                                <p className="text-sm text-[var(--accent)] text-center font-bold">
                                     {activeModal === "TOTP" ? "Authenticator Bound Successfully." : "SMS Relay Bound Successfully."}<br />Your identity is now cryptographically hardened.
                                 </p>
-                                <Button variant="glass" className="w-full" onClick={() => {
+                                <Button variant="ghost" className="w-full text-white/50 hover:text-white" onClick={() => {
                                     setActiveModal(null);
                                     setMfaStep("INIT");
                                     setVerificationCode("");
                                     setReAuthPassword("");
                                     setPhoneNumber("");
                                 }}>
-                                    CLOSE INTERFACE
+                                    Close Interface
                                 </Button>
                             </div>
                         )}
-                    </GlassCard>
+                    </SolidCard>
                 </div>
             )}
 

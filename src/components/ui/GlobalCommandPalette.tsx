@@ -7,7 +7,9 @@ import { CommandPalette, CommandDefinition } from "./CommandPalette";
 import { useTranslation } from "@/core/i18n/LanguageProvider";
 import { useToast } from "@/components/ui/Toast";
 import { setUIVariant } from "@/core/actions/theme";
-import { setHaltingProtocol, setSandboxMode, setPreLaunchMode, getTelemetryData, deepParseCorpus } from "@/core/actions/system";
+import { setHaltingProtocol, setSandboxMode, setPreLaunchMode } from "@/core/actions/branding";
+import { getTelemetryData } from "@/core/actions/telemetry";
+import { deepParseCorpus } from "@/core/actions/knowledge";
 import { Zap, Book } from "lucide-react";
 
 export function GlobalCommandPalette() {

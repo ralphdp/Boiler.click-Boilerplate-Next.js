@@ -1,7 +1,8 @@
 import { NextResponse } from 'next/server';
 import Stripe from 'stripe';
-import { getAdminDb } from '@/core/firebase/admin';
-import { getGlobalOverrides } from '@/core/actions/system';
+import { getAdminDb, getCollectionName } from '@/core/firebase/admin';
+import { getGlobalOverrides } from '@/core/actions/branding';
+import { emitAuditLog } from '@/core/actions/audit';
 import { z } from 'zod';
 
 const StripeSignatureSchema = z.string().min(5, "Invalid or missing Stripe Signature");
@@ -61,17 +62,19 @@ export async function POST(req: Request) {
 
                 if (workspaceId) {
                     const db = getAdminDb();
-                    await db.collection("omni_workspaces").doc(workspaceId).set({
+                    await db.collection(getCollectionName("omni_workspaces")).doc(workspaceId).set({
                         stripeCustomerId: session.customer as string,
                         subscriptionId: session.subscription as string,
                         billingStatus: "active"
                     }, { merge: true });
 
-                    await db.collection("omni_workspaces").doc(workspaceId).collection("audit_logs").add({
+                    await emitAuditLog({
+                        workspaceId,
+                        actor: { id: "SYSTEM", email: "stripe@vanguard.io", name: "Stripe Substrate" },
                         action: "BILLING_COMPLETED",
-                        details: `Stripe Handshake Verified. Cipher Linked.`,
-                        user: "SYSTEM",
-                        timestamp: Date.now()
+                        resource: "omni_workspaces",
+                        description: "Stripe Handshake Verified. Cipher Linked.",
+                        severity: "INFO",
                     });
                 }
                 console.log(`[Stripe] Checkout Completed mapping to Workspace ID: ${workspaceId}`);
@@ -80,17 +83,19 @@ export async function POST(req: Request) {
             case 'customer.subscription.deleted': {
                 const subscription = event.data.object as Stripe.Subscription;
                 const db = getAdminDb();
-                const snapshot = await db.collection("omni_workspaces").where("subscriptionId", "==", subscription.id).get();
+                const snapshot = await db.collection(getCollectionName("omni_workspaces")).where("subscriptionId", "==", subscription.id).get();
                 if (!snapshot.empty) {
                     const workspaceId = snapshot.docs[0].id;
-                    await db.collection("omni_workspaces").doc(workspaceId).set({
+                    await db.collection(getCollectionName("omni_workspaces")).doc(workspaceId).set({
                         billingStatus: "canceled"
                     }, { merge: true });
-                    await db.collection("omni_workspaces").doc(workspaceId).collection("audit_logs").add({
+                    await emitAuditLog({
+                        workspaceId,
+                        actor: { id: "SYSTEM", email: "stripe@vanguard.io", name: "Stripe Substrate" },
                         action: "BILLING_CANCELED",
-                        details: `Subscription Severed. Access Halting.`,
-                        user: "SYSTEM",
-                        timestamp: Date.now()
+                        resource: "omni_workspaces",
+                        description: "Subscription Severed. Access Halting.",
+                        severity: "CRITICAL",
                     });
                 }
                 console.log(`[Stripe] Subscription Cancelled: ${subscription.id}`);
@@ -99,12 +104,12 @@ export async function POST(req: Request) {
             case 'customer.subscription.updated': {
                 const subscription = event.data.object as Stripe.Subscription;
                 const db = getAdminDb();
-                const snapshot = await db.collection("omni_workspaces").where("subscriptionId", "==", subscription.id).get();
+                const snapshot = await db.collection(getCollectionName("omni_workspaces")).where("subscriptionId", "==", subscription.id).get();
                 if (!snapshot.empty) {
                     const workspaceId = snapshot.docs[0].id;
                     const status = subscription.status; // active, past_due, unpaid, canceled, incomplete
 
-                    await db.collection("omni_workspaces").doc(workspaceId).set({
+                    await db.collection(getCollectionName("omni_workspaces")).doc(workspaceId).set({
                         billingStatus: status
                     }, { merge: true });
                 }

@@ -4,7 +4,7 @@ import { motion } from "framer-motion";
 import { ArrowLeft, Send, Mail, User, MessageSquare } from "lucide-react";
 import Link from "next/link";
 import { Button } from "@/components/ui/Button";
-import { GlassCard } from "@/components/ui/GlassCard";
+import { SolidCard } from "@/components/ui/SolidCard";
 import { useTranslation } from "@/core/i18n/LanguageProvider";
 import { useToast } from "@/components/ui/Toast";
 import { useState } from "react";
@@ -41,11 +41,11 @@ export default function ContactDemoPage() {
                 animate={{ opacity: 1, y: 0 }}
                 className="w-full max-w-4xl text-center space-y-6 mb-24"
             >
-                <div className="inline-flex items-center gap-2 px-3 py-1 bg-[var(--accent)]/10 border border-[var(--accent)]/20 text-[var(--accent)] text-[10px] font-black uppercase tracking-[0.2em] mb-4">
+                <div className="inline-flex items-center gap-2 px-3 py-1 bg-[var(--accent)]/10 border border-[var(--accent)]/20 text-[var(--accent)] text-[10px] font-semibold tracking-normal] mb-4">
                     <Send size={12} />
                     Handshake Protocol v1.0
                 </div>
-                <h1 className="text-4xl md:text-6xl font-black uppercase tracking-widest">
+                <h1 className="text-4xl md:text-6xl font-semibold tracking-normal">
                     Identity <span className="text-[var(--accent)]">Vector</span>
                 </h1>
                 <p className="text-white/50 font-serif italic text-lg max-w-2xl mx-auto">
@@ -54,11 +54,11 @@ export default function ContactDemoPage() {
             </motion.div>
 
             <div className="w-full max-w-2xl z-10 pb-32">
-                <GlassCard className="p-8 md:p-12 border-[var(--accent)]/20 shadow-[0_0_50px_rgba(var(--accent-rgb),0.1)]">
+                <SolidCard className="p-8 md:p-12 border-[var(--accent)]/20 shadow-[0_0_50px_rgba(var(--accent-rgb),0.1)]">
                     <form onSubmit={handleSubmit} className="space-y-8">
                         <div className="grid grid-cols-1 md:grid-cols-2 gap-8">
                             <div className="space-y-2">
-                                <label className="block text-left text-[10px] uppercase tracking-widest text-[var(--accent)] font-black ml-1">
+                                <label className="block text-left text-[10px] tracking-normal text-[var(--accent)] font-semibold ml-1">
                                     {t.auth.identity}
                                 </label>
                                 <div className="relative group">
@@ -72,7 +72,7 @@ export default function ContactDemoPage() {
                                 </div>
                             </div>
                             <div className="space-y-2">
-                                <label className="block text-left text-[10px] uppercase tracking-widest text-[var(--accent)] font-black ml-1">
+                                <label className="block text-left text-[10px] tracking-normal text-[var(--accent)] font-semibold ml-1">
                                     {t.auth.email}
                                 </label>
                                 <div className="relative group">
@@ -88,7 +88,7 @@ export default function ContactDemoPage() {
                         </div>
 
                         <div className="space-y-2">
-                            <label className="block text-left text-[10px] uppercase tracking-widest text-[var(--accent)] font-black ml-1">
+                            <label className="block text-left text-[10px] tracking-normal text-[var(--accent)] font-semibold ml-1">
                                 Message Payload
                             </label>
                             <div className="relative group">
@@ -113,7 +113,7 @@ export default function ContactDemoPage() {
                             </span>
                         </Button>
                     </form>
-                </GlassCard>
+                </SolidCard>
             </div>
 
             {/* Grid Backdrop */}

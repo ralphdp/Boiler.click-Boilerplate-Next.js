@@ -3,7 +3,7 @@
 import { auth } from "@/core/auth";
 import { getAdminAuth, getAdminDb } from "@/core/firebase/admin";
 import { BetaAnalyticsDataClient } from "@google-analytics/data";
-import { getGlobalOverrides } from "./system";
+import { getGlobalOverrides } from "./branding";
 
 // Helper to extract credentials following the core admin pattern
 function getCredentials() {

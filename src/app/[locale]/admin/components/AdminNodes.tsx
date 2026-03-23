@@ -147,10 +147,10 @@ export function AdminNodes({
 
                 <div className="p-4 md:p-6 border-b border-white/5 bg-white/5">
                     <div className="flex flex-col gap-1 shrink-0">
-                        <h3 className="text-xs font-black uppercase tracking-[0.2em] text-[var(--accent)] flex items-center gap-2">
+                        <h3 className="text-xs font-semibold tracking-normal] text-[var(--accent)] flex items-center gap-2">
                             Identity Audit Matrix
                         </h3>
-                        <span className="text-[8px] font-mono text-white/30 uppercase tracking-[0.3em]">Sovereign Node Governance Protocol</span>
+                        <span className="text-[8px] font-mono text-white/30 tracking-normal]">Sovereign Node Governance Protocol</span>
                     </div>
                 </div>
 
@@ -159,9 +159,9 @@ export function AdminNodes({
                         <div className="grid grid-cols-2 gap-2 sm:flex sm:items-center sm:gap-2">
                             <Select
                                 options={[
-                                    { label: "ALL ROLES", value: "ALL" },
-                                    { label: "ROOTS", value: "ADMIN" },
-                                    { label: "USERS", value: "USER" },
+                                    { label: "All Roles", value: "ALL" },
+                                    { label: "Roots", value: "ADMIN" },
+                                    { label: "Users", value: "USER" },
                                 ]}
                                 value={roleFilter}
                                 onChange={(val) => { setRoleFilter(val as any); setNodePage(1); }}
@@ -170,9 +170,9 @@ export function AdminNodes({
 
                             <Select
                                 options={[
-                                    { label: "ALL STATUS", value: "ALL" },
-                                    { label: "ACTIVE", value: "ACTIVE" },
-                                    { label: "BANNED", value: "BANNED" },
+                                    { label: "All Status", value: "ALL" },
+                                    { label: "Active", value: "ACTIVE" },
+                                    { label: "Banned", value: "BANNED" },
                                 ]}
                                 value={statusFilter}
                                 onChange={(val) => { setStatusFilter(val as any); setNodePage(1); }}
@@ -184,7 +184,7 @@ export function AdminNodes({
                             <div className="relative flex-1">
                                 <Input
                                     type="text"
-                                    placeholder="SEARCH BY ID OR EMAIL..."
+                                    placeholder="Search by ID or email..."
                                     value={nodeSearch}
                                     onChange={(e) => { setNodeSearch(e.target.value); setNodePage(1); }}
                                     icon={<Search size={14} />}
@@ -192,9 +192,9 @@ export function AdminNodes({
                                 />
                             </div>
                             <Button
-                                variant="glass"
+                                variant="solid"
                                 onClick={handleExport}
-                                className="shrink-0 px-6 h-[54px] text-[10px] font-black uppercase tracking-widest border-white/10 hover:border-white/20"
+                                className="shrink-0 flex items-center justify-center gap-2 bg-white/5 hover:bg-white/10 border border-white/10 px-6 h-[54px] text-xs font-semibold tracking-normal transition-colors text-white/70 hover:text-white"
                                 tooltip="Export the entire identity audit matrix to a local CSV buffer."
                                 tooltipTerm="EXPORT_AUDIT"
                             >
@@ -213,26 +213,26 @@ export function AdminNodes({
                             className="bg-[var(--accent)]/10 border-b border-[var(--accent)]/30 p-3 flex flex-wrap items-center justify-between px-4 z-20 gap-4"
                         >
                             <div className="flex items-center gap-2">
-                                <span className="text-[10px] font-black uppercase tracking-[0.2em] text-[var(--accent)]">
+                                <span className="text-[10px] font-semibold tracking-normal] text-[var(--accent)]">
                                     {selectedNodes.length} Nodes Selected
                                 </span>
-                                <span className="text-[8px] font-mono text-white/30 uppercase tracking-widest hidden sm:inline">| Bulk Management Mode Active</span>
+                                <span className="text-[8px] font-mono text-white/30 tracking-normal hidden sm:inline">| Bulk Management Mode Active</span>
                             </div>
 
                             <div className="flex flex-wrap gap-2">
                                 <Button
-                                    variant="glass"
+                                    variant="solid"
                                     onClick={() => handleBulkRoleUpdate("ADMIN")}
-                                    className="bg-[var(--accent)]/20 hover:bg-[var(--accent)]/40 border-[var(--accent)]/50 text-[var(--accent)] text-[9px] font-black uppercase tracking-widest h-auto py-2"
+                                    className="bg-[var(--accent)]/20 hover:bg-[var(--accent)]/40 border-[var(--accent)]/50 text-[var(--accent)] text-xs font-semibold tracking-normal h-auto py-2"
                                     tooltip="Escalate all selected nodes to Root administrative status."
                                     tooltipTerm="BULK_ESCALATE"
                                 >
                                     <ShieldCheck size={12} /> Escalate to Root
                                 </Button>
                                 <Button
-                                    variant="glass"
+                                    variant="solid"
                                     onClick={() => handleBulkRoleUpdate("USER")}
-                                    className="border-white/10 text-white/70 text-[9px] font-black uppercase tracking-widest h-auto py-2"
+                                    className="border-white/10 text-white/70 text-xs font-semibold tracking-normal h-auto py-2"
                                     tooltip="Downgrade all selected nodes to standard User status."
                                     tooltipTerm="BULK_DOWNGRADE"
                                 >
@@ -240,18 +240,18 @@ export function AdminNodes({
                                 </Button>
                                 <div className="w-[1px] h-6 bg-white/10 mx-1 hidden sm:block" />
                                 <Button
-                                    variant="glass"
+                                    variant="solid"
                                     onClick={() => handleBulkStatusUpdate(true)}
-                                    className="bg-red-500/10 hover:bg-red-500/20 border-red-500/30 text-red-500 text-[9px] font-black uppercase tracking-widest h-auto py-2"
+                                    className="bg-red-500/10 hover:bg-red-500/20 border-red-500/30 text-red-500 text-xs font-semibold tracking-normal h-auto py-2"
                                     tooltip="Instantly neutralize authorization for all selected nodes."
                                     tooltipTerm="BULK_NEUTRALIZE"
                                 >
                                     <UserX size={12} /> Neutralize Nodes
                                 </Button>
                                 <Button
-                                    variant="glass"
+                                    variant="solid"
                                     onClick={() => handleBulkStatusUpdate(false)}
-                                    className="bg-green-500/10 hover:bg-green-500/20 border-green-500/30 text-green-500 text-[9px] font-black uppercase tracking-widest h-auto py-2"
+                                    className="bg-green-500/10 hover:bg-green-500/20 border-green-500/30 text-green-500 text-xs font-semibold tracking-normal h-auto py-2"
                                     tooltip="Restore authorization protocols for all selected nodes."
                                     tooltipTerm="BULK_RESTORE"
                                 >
@@ -271,13 +271,13 @@ export function AdminNodes({
                                         {selectedNodes.length > 0 && selectedNodes.length === paginatedNodes.filter(n => n.email !== superAdminEmail && n.email !== session?.user?.email).length ? <CheckSquare size={16} className="text-[var(--accent)]" /> : <Square size={16} />}
                                     </button>
                                 </th>
-                                <th className="p-4 font-normal tracking-widest uppercase">{t.admin.users.colId}</th>
-                                <th className="p-4 font-normal tracking-widest uppercase">{t.admin.users.colName}</th>
-                                <th className="p-4 font-normal tracking-widest uppercase">{t.admin.users.colEmail}</th>
-                                <th className="p-4 font-normal tracking-widest uppercase">{t.admin.users.colRole}</th>
-                                <th className="p-4 font-normal tracking-widest uppercase">{t.admin.users.colStatus}</th>
-                                <th className="p-4 font-normal tracking-widest uppercase">{t.admin.users.colAuthType}</th>
-                                <th className="p-4 font-normal tracking-widest uppercase text-right">{t.admin.users.colActions}</th>
+                                <th className="p-4 font-normal tracking-normal">{t.admin.users.colId}</th>
+                                <th className="p-4 font-normal tracking-normal">{t.admin.users.colName}</th>
+                                <th className="p-4 font-normal tracking-normal">{t.admin.users.colEmail}</th>
+                                <th className="p-4 font-normal tracking-normal">{t.admin.users.colRole}</th>
+                                <th className="p-4 font-normal tracking-normal">{t.admin.users.colStatus}</th>
+                                <th className="p-4 font-normal tracking-normal">{t.admin.users.colAuthType}</th>
+                                <th className="p-4 font-normal tracking-normal text-right">{t.admin.users.colActions}</th>
                             </tr>
                         </thead>
                         <tbody className="divide-y divide-white/5">
@@ -303,7 +303,7 @@ export function AdminNodes({
                                         <td className="p-4">
                                             <div className="relative inline-block w-full max-w-[90px]">
                                                 <Button
-                                                    variant="glass"
+                                                    variant="solid"
                                                     onClick={(e) => {
                                                         if (activeRoleNode === node.uid) {
                                                             setActiveRoleNode(null);
@@ -312,7 +312,7 @@ export function AdminNodes({
                                                             setActiveRoleNode(node.uid);
                                                         }
                                                     }}
-                                                    className="border-white/10 text-[10px] h-auto py-2 min-w-[70px] text-left uppercase tracking-widest font-black text-white/80 transition-colors hover:bg-white/5 hover:text-white"
+                                                    className="border-white/10 text-[10px] h-auto py-2 min-w-[70px] text-left tracking-normal font-semibold text-white/80 transition-colors hover:bg-white/5 hover:text-white"
                                                     disabled={updatingNode === node.uid || node.email === superAdminEmail || node.email === session?.user?.email}
                                                     tooltip="Modify the systemic authorization role for this node."
                                                     tooltipTerm="MODIFY_ROLE"
@@ -361,7 +361,7 @@ export function AdminNodes({
                                         </td>
                                         <td className="p-4">
                                             <Button
-                                                variant="glass"
+                                                variant="solid"
                                                 onClick={() => {
                                                     setConfirmModal({
                                                         open: true,
@@ -386,9 +386,9 @@ export function AdminNodes({
                                         <td className="p-4 text-white/50 capitalize">{node.provider.replace('.com', '')}</td>
                                         <td className="p-4 text-right">
                                             <Button
-                                                variant="glass"
+                                                variant="solid"
                                                 onClick={() => onImpersonate(node)}
-                                                className="border-white/10 text-[10px] h-auto py-2 uppercase font-bold tracking-widest hover:bg-[var(--accent)] hover:text-black transition-colors disabled:opacity-30"
+                                                className="border-white/10 text-[10px] h-auto py-2 font-bold tracking-normal hover:bg-[var(--accent)] hover:text-black transition-colors disabled:opacity-30"
                                                 disabled={node.email === session?.user?.email || node.email === superAdminEmail}
                                                 tooltip="Temporarily assume this node's identity for diagnostic observation."
                                                 tooltipTerm="IMPERSONATE_NODE"
@@ -406,8 +406,8 @@ export function AdminNodes({
                     <div className="p-4 border-t border-white/5 bg-white/5 flex justify-between items-center text-xs font-mono text-white/50">
                         <div>{t.admin.overview.showing} {(nodePage - 1) * 50 + 1}-{Math.min(nodePage * 50, filteredNodes.length)} {t.admin.overview.of} {filteredNodes.length}</div>
                         <div className="flex gap-2">
-                            <button onClick={() => setNodePage(p => Math.max(1, p - 1))} disabled={nodePage === 1} className="px-3 py-1 bg-black/50 border border-white/10 disabled:opacity-30 hover:bg-white/5 text-[10px] font-black tracking-widest uppercase text-white transition-colors">{t.admin.overview.prev}</button>
-                            <button onClick={() => setNodePage(p => Math.min(totalNodePages, p + 1))} disabled={nodePage === totalNodePages} className="px-3 py-1 bg-black/50 border border-white/10 disabled:opacity-30 hover:bg-white/5 text-[10px] font-black tracking-widest uppercase text-white transition-colors">{t.admin.overview.next}</button>
+                            <button onClick={() => setNodePage(p => Math.max(1, p - 1))} disabled={nodePage === 1} className="px-3 py-1 bg-black/50 border border-white/10 disabled:opacity-30 hover:bg-white/5 text-[10px] font-semibold tracking-normal text-white transition-colors">{t.admin.overview.prev}</button>
+                            <button onClick={() => setNodePage(p => Math.min(totalNodePages, p + 1))} disabled={nodePage === totalNodePages} className="px-3 py-1 bg-black/50 border border-white/10 disabled:opacity-30 hover:bg-white/5 text-[10px] font-semibold tracking-normal text-white transition-colors">{t.admin.overview.next}</button>
                         </div>
                     </div>
                 )}
@@ -430,16 +430,18 @@ export function AdminNodes({
                 onCancel={closeConfirm}
             />
 
-            {cipherAction?.open && (
-                <CipherGate
-                    t={t}
-                    onSuccess={() => {
-                        cipherAction.onConfirm();
-                        setCipherAction(null);
-                    }}
-                    onCancel={() => setCipherAction(null)}
-                />
-            )}
-        </motion.div>
+            {
+                cipherAction?.open && (
+                    <CipherGate
+                        t={t}
+                        onSuccess={() => {
+                            cipherAction.onConfirm();
+                            setCipherAction(null);
+                        }}
+                        onCancel={() => setCipherAction(null)}
+                    />
+                )
+            }
+        </motion.div >
     );
 }

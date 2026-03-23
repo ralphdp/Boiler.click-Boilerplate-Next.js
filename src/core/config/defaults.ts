@@ -15,7 +15,7 @@ export const FACTORY_DEFAULTS = {
     preLaunchMode: false,
     haltingProtocol: false, // Emergency system halt
     contactEmail: "nexus@rddp.ai",
-    resendFrom: "Boilerplate <noreply@rdp.pub>",
+    resendFrom: "Boilerplate <noreply@boiler.click>",
 
     // Social Vector Shards
     socialX: "https://x.com/ralpdp",

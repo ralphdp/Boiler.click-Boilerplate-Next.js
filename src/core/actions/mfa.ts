@@ -1,11 +1,11 @@
 "use server";
 
 import { auth } from "@/core/auth";
-import { getAdminDb } from "@/core/firebase/admin";
+import { getAdminDb, getCollectionName } from "@/core/firebase/admin";
 import { cookies } from "next/headers";
 import { generateSecret, generateURI, verifySync, NobleCryptoPlugin, ScureBase32Plugin } from 'otplib';
 import QRCode from 'qrcode';
-import { logAuditTrace } from "./admin";
+import { logAuditTrace } from "./nodes";
 
 // Configure defaults for Sovereign entropy standards
 const crypto = new NobleCryptoPlugin();
@@ -26,7 +26,7 @@ export async function generateMFASecret() {
 
     // Store temporarily until verified
     const db = getAdminDb();
-    await db.collection("users").doc(session.user.id).set({
+    await db.collection(getCollectionName("users")).doc(session.user.id).set({
         tempMfaSecret: secret
     }, { merge: true });
 
@@ -38,7 +38,7 @@ export async function verifyAndEnableMFA(token: string) {
     if (!session?.user?.id) throw new Error("UNAUTHORIZED");
 
     const db = getAdminDb();
-    const userDoc = await db.collection("users").doc(session.user.id).get();
+    const userDoc = await db.collection(getCollectionName("users")).doc(session.user.id).get();
 
     if (!userDoc.exists) throw new Error("User record not found in Matrix.");
     const userData = userDoc.data();
@@ -48,7 +48,7 @@ export async function verifyAndEnableMFA(token: string) {
     const isValid = verifySync({ token, secret: userData.tempMfaSecret, crypto });
 
     if (isValid) {
-        await db.collection("users").doc(session.user.id).update({
+        await db.collection(getCollectionName("users")).doc(session.user.id).update({
             mfaSecret: userData.tempMfaSecret,
             mfaEnabled: true,
             tempMfaSecret: null
@@ -74,7 +74,7 @@ export async function verifyLoginMFA(token: string) {
     if (!session?.user?.id) throw new Error("UNAUTHORIZED");
 
     const db = getAdminDb();
-    const userDoc = await db.collection("users").doc(session.user.id).get();
+    const userDoc = await db.collection(getCollectionName("users")).doc(session.user.id).get();
 
     const userData = userDoc.data();
     if (!userData?.mfaEnabled || !userData?.mfaSecret) throw new Error("MFA not enabled.");
@@ -83,7 +83,7 @@ export async function verifyLoginMFA(token: string) {
 
     if (isValid) {
         // Log the successful MFA verification in auth_sessions or update user login trace
-        await db.collection("users").doc(session.user.id).update({
+        await db.collection(getCollectionName("users")).doc(session.user.id).update({
             lastLoginAt: Date.now()
         });
 
@@ -107,7 +107,7 @@ export async function disableMFA() {
 
     // Can optionally demand another TOTP code here to disable, simple approach first
     const db = getAdminDb();
-    await db.collection("users").doc(session.user.id).update({
+    await db.collection(getCollectionName("users")).doc(session.user.id).update({
         mfaSecret: null,
         mfaEnabled: false
     });

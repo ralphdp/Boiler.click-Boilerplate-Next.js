@@ -1,8 +1,9 @@
 "use server";
 
-import { getAdminDb } from "@/core/firebase/admin";
+import { getAdminDb, getCollectionName } from "@/core/firebase/admin";
 import { auth } from "@/core/auth";
-import { logAuditTrace } from "./admin";
+import { logAuditTrace } from "./nodes";
+import { emitAuditLog } from "./audit";
 
 export type VoucherType = 'PLAN_UNLOCK' | 'PERCENTAGE' | 'CREDIT';
 
@@ -24,7 +25,7 @@ export async function createVoucher(
     const db = getAdminDb();
 
     let prefix = "VGRD";
-    const overridesSnap = await db.collection("sovereign_config").doc("global").get();
+    const overridesSnap = await db.collection(getCollectionName("sovereign_config")).doc("global").get();
     if (overridesSnap.exists) {
         const title = overridesSnap.data()?.siteTitle;
         if (title) {
@@ -41,7 +42,7 @@ export async function createVoucher(
         const rawCode = Array.from({ length: 8 }, () => Math.random().toString(36).charAt(2).toUpperCase()).join('');
         const formattedCode = `${prefix}-${rawCode.slice(0, 4)}-${rawCode.slice(4, 8)}`;
 
-        const docRef = db.collection("vouchers").doc(formattedCode);
+        const docRef = db.collection(getCollectionName("vouchers")).doc(formattedCode);
         batch.set(docRef, {
             type,
             value,
@@ -70,7 +71,7 @@ export async function getVouchers() {
     }
 
     const db = getAdminDb();
-    const snap = await db.collection("vouchers").orderBy("createdAt", "desc").get();
+    const snap = await db.collection(getCollectionName("vouchers")).orderBy("createdAt", "desc").get();
 
     return snap.docs.map(doc => ({
         id: doc.id,
@@ -85,7 +86,7 @@ export async function exportVouchersCSV() {
     }
 
     const db = getAdminDb();
-    const snap = await db.collection("vouchers").orderBy("createdAt", "desc").get();
+    const snap = await db.collection(getCollectionName("vouchers")).orderBy("createdAt", "desc").get();
 
     const header = ["Code", "Type", "Value", "Plan", "Duration", "Redemptions", "Max", "Status", "Expiry", "Created"];
     const rows = snap.docs.map(doc => {
@@ -115,7 +116,7 @@ export async function revokeVoucher(code: string) {
     }
 
     const db = getAdminDb();
-    await db.collection("vouchers").doc(code).update({
+    await db.collection(getCollectionName("vouchers")).doc(code).update({
         status: "REVOKED"
     });
 
@@ -128,7 +129,7 @@ export async function redeemVoucher(workspaceId: string, code: string) {
     if (!session?.user?.id) throw new Error("UNAUTHORIZED");
 
     const db = getAdminDb();
-    const voucherRef = db.collection("vouchers").doc(code);
+    const voucherRef = db.collection(getCollectionName("vouchers")).doc(code);
 
     const res = await db.runTransaction(async (t) => {
         const voucherSnap = await t.get(voucherRef);
@@ -145,7 +146,7 @@ export async function redeemVoucher(workspaceId: string, code: string) {
             throw new Error("Voucher redemption limit reached.");
         }
 
-        const workspaceRef = db.collection("omni_workspaces").doc(workspaceId);
+        const workspaceRef = db.collection(getCollectionName("omni_workspaces")).doc(workspaceId);
         const workspaceSnap = await t.get(workspaceRef);
         if (!workspaceSnap.exists) throw new Error("Workspace not found.");
 
@@ -189,11 +190,17 @@ export async function redeemVoucher(workspaceId: string, code: string) {
         return { success: true };
     });
 
-    await db.collection("omni_workspaces").doc(workspaceId).collection("audit_logs").add({
+    await emitAuditLog({
+        workspaceId,
+        actor: {
+            id: session?.user?.id || "SYSTEM",
+            email: session?.user?.email || "SYSTEM",
+            name: session?.user?.name || "System Automated",
+        },
         action: "VOUCHER_REDEEMED",
-        actor: session.user.email,
-        details: `Voucher ${code} applied to Substrate matrix.`,
-        timestamp: Date.now()
+        resource: "omni_workspaces",
+        description: `Voucher ${code} applied to Substrate matrix.`,
+        severity: "INFO",
     });
 
     return res;

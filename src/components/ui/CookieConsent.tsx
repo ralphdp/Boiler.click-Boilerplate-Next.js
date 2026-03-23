@@ -79,14 +79,14 @@ export function CookieConsent() {
                     exit={{ y: 200, opacity: 0 }}
                     className="fixed bottom-0 left-0 right-0 z-[9999] p-4 sm:p-6"
                 >
-                    <div className="max-w-4xl mx-auto bg-zinc-950 border border-zinc-800 p-6 flex flex-col md:flex-row gap-6 shadow-2xl relative overflow-hidden backdrop-blur-xl">
+                    <div className="max-w-4xl mx-auto bg-zinc-950 border border-zinc-800 p-6 flex flex-col md:flex-row gap-6 shadow-2xl relative overflow-hidden">
                         <div className="absolute top-0 left-0 w-1 h-full opacity-50" style={{ backgroundColor: 'var(--accent)' }} />
 
                         <div className="flex-1 space-y-3">
-                            <h3 className="text-[12px] uppercase tracking-[0.2em] font-black">
+                            <h3 className="text-[12px] tracking-normal] font-bold">
                                 {t.cookieConsent.title}
                             </h3>
-                            <p className="text-11px sm:text-xs text-zinc-400 font-serif italic max-w-2xl leading-relaxed">
+                            <p className="text-11px sm:text-xs text-zinc-400 font-sans max-w-2xl leading-relaxed">
                                 {t.cookieConsent.desc}
                             </p>
                         </div>
@@ -94,7 +94,7 @@ export function CookieConsent() {
                         <div className="flex flex-col sm:flex-row gap-3 items-start md:items-center">
                             <button
                                 onClick={() => setShowPreferences(true)}
-                                className="text-[10px] uppercase font-mono text-zinc-500 hover:text-white transition-colors underline decoration-dotted underline-offset-4"
+                                className="text-[10px] font-mono text-zinc-500 hover:text-white transition-colors underline decoration-dotted underline-offset-4"
                             >
                                 {t.cookieConsent.managePreferences}
                             </button>
@@ -102,13 +102,13 @@ export function CookieConsent() {
                             <div className="flex gap-2">
                                 <button
                                     onClick={handleDeclineAll}
-                                    className="px-4 py-2 border border-zinc-800 text-[10px] font-black tracking-widest uppercase hover:bg-zinc-900 transition-colors text-zinc-400"
+                                    className="px-4 py-2 border border-zinc-800 text-[10px] font-bold tracking-normal hover:bg-zinc-900 transition-colors text-zinc-400"
                                 >
                                     {t.cookieConsent.rejectAll}
                                 </button>
                                 <button
                                     onClick={handleAcceptAll}
-                                    className="px-4 py-2 text-[10px] font-black tracking-widest uppercase transition-colors"
+                                    className="px-4 py-2 text-[10px] font-bold tracking-normal transition-colors"
                                     style={{
                                         borderColor: 'var(--accent)',
                                         color: 'var(--accent)',
@@ -137,30 +137,30 @@ export function CookieConsent() {
                     initial={{ opacity: 0 }}
                     animate={{ opacity: 1 }}
                     exit={{ opacity: 0 }}
-                    className="fixed inset-0 z-[10000] bg-black/80 backdrop-blur-sm flex items-center justify-center p-4"
+                    className="fixed inset-0 z-[10000] flex items-center justify-center p-4"
                 >
                     <div className="bg-zinc-950 border border-zinc-800 w-full max-w-lg p-8 relative">
                         <div className="absolute top-0 left-0 w-full h-1 opacity-50" style={{ backgroundColor: 'var(--accent)' }} />
 
-                        <h2 className="text-[14px] uppercase tracking-[0.2em] font-black mb-6 text-white border-b border-zinc-800 pb-4">
+                        <h2 className="text-[14px] tracking-normal] font-bold mb-6 text-white border-b border-zinc-800 pb-4">
                             {t.cookieConsent.cookiePreferences}
                         </h2>
 
                         <div className="space-y-6 mb-8">
                             <div className="flex items-start justify-between gap-4">
                                 <div className="space-y-1">
-                                    <h4 className="text-[11px] font-bold text-white uppercase tracking-wider">{t.cookieConsent.essentialCookies}</h4>
-                                    <p className="text-[11px] text-zinc-500 italic font-serif">{t.cookieConsent.essentialDesc}</p>
+                                    <h4 className="text-[11px] font-bold text-white tracking-normal">{t.cookieConsent.essentialCookies}</h4>
+                                    <p className="text-[11px] text-zinc-500 font-sans">{t.cookieConsent.essentialDesc}</p>
                                 </div>
-                                <div className="text-[10px] text-white/50 font-mono uppercase bg-white/5 px-2 py-1 border border-white/20">
+                                <div className="text-[10px] text-white/50 font-mono bg-white/5 px-2 py-1 border border-white/20">
                                     {t.cookieConsent.alwaysActive}
                                 </div>
                             </div>
 
                             <div className="flex items-start justify-between gap-4">
                                 <div className="space-y-1">
-                                    <h4 className="text-[11px] font-bold text-white uppercase tracking-wider">{t.cookieConsent.analytics}</h4>
-                                    <p className="text-[11px] text-zinc-500 italic font-serif">{t.cookieConsent.analyticsDesc}</p>
+                                    <h4 className="text-[11px] font-bold text-white tracking-normal">{t.cookieConsent.analytics}</h4>
+                                    <p className="text-[11px] text-zinc-500 font-sans">{t.cookieConsent.analyticsDesc}</p>
                                 </div>
                                 <label className="relative inline-flex items-center cursor-pointer">
                                     <input type="checkbox" className="sr-only peer" checked={settings.analytics} onChange={(e) => setSettings({ ...settings, analytics: e.target.checked })} />
@@ -170,8 +170,8 @@ export function CookieConsent() {
 
                             <div className="flex items-start justify-between gap-4">
                                 <div className="space-y-1">
-                                    <h4 className="text-[11px] font-bold text-white uppercase tracking-wider">{t.cookieConsent.marketing}</h4>
-                                    <p className="text-[11px] text-zinc-500 italic font-serif">{t.cookieConsent.marketingDesc}</p>
+                                    <h4 className="text-[11px] font-bold text-white tracking-normal">{t.cookieConsent.marketing}</h4>
+                                    <p className="text-[11px] text-zinc-500 font-sans">{t.cookieConsent.marketingDesc}</p>
                                 </div>
                                 <label className="relative inline-flex items-center cursor-pointer">
                                     <input type="checkbox" className="sr-only peer" checked={settings.marketing} onChange={(e) => setSettings({ ...settings, marketing: e.target.checked })} />
@@ -183,13 +183,13 @@ export function CookieConsent() {
                         <div className="flex justify-end gap-4 border-t border-zinc-800 pt-6">
                             <button
                                 onClick={() => setShowPreferences(false)}
-                                className="px-6 py-2 border border-zinc-800 text-[10px] font-black tracking-widest uppercase hover:text-white transition-colors text-zinc-400"
+                                className="px-6 py-2 border border-zinc-800 text-[10px] font-bold tracking-normal hover:text-white transition-colors text-zinc-400"
                             >
                                 {t.cookieConsent.cancel}
                             </button>
                             <button
                                 onClick={handleSavePreferences}
-                                className="px-6 py-2 text-[10px] font-black tracking-widest uppercase transition-colors"
+                                className="px-6 py-2 text-[10px] font-bold tracking-normal transition-colors"
                                 style={{
                                     borderColor: 'var(--accent)',
                                     color: 'var(--accent)',

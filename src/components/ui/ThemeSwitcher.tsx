@@ -35,24 +35,24 @@ export function ThemeSwitcher({ activeAccentColor }: { activeAccentColor?: strin
         <div className="relative inline-block text-left">
             <button
                 onClick={() => setOpen(!open)}
-                className="flex items-center justify-center h-8 px-3 glass border border-white/5 hover:bg-white/5 hover:border-[var(--accent)] transition-all pointer-events-auto shadow-sm"
+                className="flex items-center justify-center h-8 px-3 bg-[#0a0a0a] border border-white/10 hover:bg-white/5 hover:border-[var(--accent)] transition-all pointer-events-auto rounded-md shadow-sm"
                 aria-label="Toggle Theme Accent"
                 aria-expanded={open}
             >
-                <div className="w-3 h-3 border border-black" style={{ backgroundColor: 'var(--accent)' }} />
+                <div className="w-3 h-3 rounded-full shadow-[0_0_10px_rgba(255,255,255,0.1)]" style={{ backgroundColor: 'var(--accent)' }} />
             </button>
 
             {open && (
                 <>
                     <div className="fixed inset-0 z-40" onClick={() => setOpen(false)} />
-                    <div className="absolute bottom-full left-1/2 -translate-x-1/2 mb-4 w-48 bg-black/90 backdrop-blur-xl border border-white/10 p-2 flex flex-col gap-1 z-50">
+                    <div className="absolute bottom-full left-1/2 -translate-x-1/2 mb-4 w-48 bg-[#0a0a0a] border border-white/10 rounded-md p-2 flex flex-col gap-1 z-50 shadow-2xl">
                         {THEMES.map((theme) => (
                             <button
                                 key={theme.hex}
                                 onClick={() => switchTheme(theme.hex)}
-                                className="flex items-center gap-3 px-3 py-2 hover:bg-white/10 text-[10px] font-bold uppercase tracking-widest text-left transition-colors"
+                                className="flex items-center gap-3 px-3 py-2 hover:bg-white/5 rounded-md text-xs font-semibold text-white/80 text-left transition-colors"
                             >
-                                <span className="w-3 h-3 border border-white/10" style={{ backgroundColor: theme.hex }} />
+                                <span className="w-3 h-3 rounded-full" style={{ backgroundColor: theme.hex }} />
                                 {theme.name}
                             </button>
                         ))}

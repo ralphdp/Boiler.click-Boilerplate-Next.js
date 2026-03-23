@@ -47,20 +47,20 @@ export function WaitlistScreen({ siteName = "Sovereign Substrate" }: { siteName?
                         <ShieldCheck className="w-8 h-8 text-[var(--accent)]" />
                     </div>
                     <div className="space-y-4">
-                        <h1 className="text-4xl md:text-5xl font-black text-white tracking-widest uppercase technical drop-shadow-[0_0_15px_rgba(255,255,255,0.2)]">
+                        <h1 className="text-4xl md:text-5xl font-bold text-white tracking-normal">
                             {siteName}
                         </h1>
-                        <p className="text-[var(--accent)] text-sm md:text-base font-mono uppercase tracking-[0.2em] relative inline-block">
+                        <p className="text-[var(--accent)] text-sm md:text-base font-semibold relative inline-flex items-center gap-2 justify-center">
                             {t.waitlist.calibrationSequence}
-                            <span className="absolute -right-4 top-1/2 -translate-y-1/2 w-2 h-2 bg-[var(--accent)] rounded-full animate-ping"></span>
+                            <span className="w-2 h-2 bg-[var(--accent)] rounded-full animate-pulse" />
                         </p>
                     </div>
-                    <p className="text-white/50 text-sm max-w-md mx-auto leading-relaxed border-l-2 border-[var(--accent)]/30 pl-4 text-left font-serif italic">
+                    <p className="text-white/50 text-sm max-w-md mx-auto leading-relaxed text-center">
                         {t.waitlist.stealthRefinement}
                     </p>
                 </div>
 
-                <div className="bg-white/[0.02] border border-white/10 p-6 backdrop-blur-md relative overflow-hidden group">
+                <div className="bg-white/[0.02] border border-white/10 p-6 relative overflow-hidden group">
                     <div className="absolute inset-0 bg-gradient-to-r from-transparent via-white/[0.02] to-transparent translate-x-[-100%] group-hover:translate-x-[100%] transition-transform duration-1000"></div>
 
                     {status === 'success' ? (
@@ -70,18 +70,18 @@ export function WaitlistScreen({ siteName = "Sovereign Substrate" }: { siteName?
                             className="text-center space-y-4 py-8"
                         >
                             <Send className="w-8 h-8 text-[var(--accent)] mx-auto" />
-                            <p className="text-sm font-mono text-[var(--accent)] uppercase tracking-widest">{t.waitlist.vectorRecorded}</p>
-                            <p className="text-xs text-white/40 font-mono">{t.waitlist.summonedUponLaunch}</p>
+                            <p className="text-sm font-semibold text-[var(--accent)]">{t.waitlist.vectorRecorded}</p>
+                            <p className="text-xs text-white/40">{t.waitlist.summonedUponLaunch}</p>
                         </motion.div>
                     ) : (
                         <form onSubmit={handleSubmit} className="space-y-4">
                             <div className="space-y-2">
-                                <label className="text-[10px] font-mono text-white/40 uppercase tracking-widest">{t.waitlist.digitalVector}</label>
+                                <label className="text-xs font-semibold text-white/50">{t.waitlist.digitalVector}</label>
                                 <input
                                     required
                                     type="email"
                                     placeholder={t.waitlist.enterEmail}
-                                    className="w-full bg-black/50 border border-white/10 px-4 py-4 text-sm tracking-wide outline-none focus:border-[var(--accent)]/50 transition-all text-white placeholder:text-white/20 font-mono"
+                                    className="w-full bg-[#0a0a0a] border border-white/10 px-4 py-4 text-sm outline-none focus:border-[var(--accent)] transition-colors text-white placeholder:text-white/20"
                                     value={email}
                                     onChange={(e) => setEmail(e.target.value)}
                                     disabled={status === 'submitting'}
@@ -90,19 +90,19 @@ export function WaitlistScreen({ siteName = "Sovereign Substrate" }: { siteName?
                             <button
                                 disabled={status === 'submitting'}
                                 type="submit"
-                                className="w-full py-4 bg-[var(--accent)]/10 text-[var(--accent)] border border-[var(--accent)]/30 font-mono uppercase tracking-[0.2em] text-xs hover:bg-[var(--accent)] hover:text-black transition-all disabled:opacity-50 relative overflow-hidden"
+                                className="w-full py-4 bg-[var(--accent)] text-black font-bold text-sm hover:bg-[var(--accent)]/90 transition-colors disabled:opacity-50"
                             >
                                 {status === 'submitting' ? t.waitlist.authenticating : t.waitlist.requestAccess}
                             </button>
                             {status === 'error' && (
-                                <p className="text-[10px] font-mono uppercase text-red-500 text-center tracking-widest pt-2">{t.waitlist.transmissionFailed}</p>
+                                <p className="text-xs text-red-500 font-semibold text-center pt-2">{t.waitlist.transmissionFailed}</p>
                             )}
                         </form>
                     )}
                 </div>
 
-                <div className="text-center opacity-30 pointer-events-none">
-                    <span className="text-[8px] font-mono uppercase tracking-[0.3em] inline-block border-t border-white/20 pt-4 px-8">
+                <div className="text-center opacity-30 pointer-events-none mt-8">
+                    <span className="text-xs font-semibold inline-block border-t border-white/20 pt-4 px-8">
                         {t.waitlist.securedBy}
                     </span>
                 </div>

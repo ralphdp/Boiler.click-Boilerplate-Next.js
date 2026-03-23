@@ -25,7 +25,7 @@ export default function MarketplaceDemoPage() {
     if (loading) {
         return (
             <main className="min-h-screen flex flex-col items-center justify-center p-6 bg-black text-white">
-                <div className="text-xs text-[var(--accent)] font-mono animate-pulse tracking-widest uppercase">
+                <div className="text-xs text-[var(--accent)] font-mono animate-pulse tracking-normal">
                     [ Replicating Marketplace State ]
                 </div>
             </main>
@@ -46,11 +46,11 @@ export default function MarketplaceDemoPage() {
                 animate={{ opacity: 1, y: 0 }}
                 className="w-full max-w-4xl text-center space-y-6 mb-24"
             >
-                <div className="inline-flex items-center gap-2 px-3 py-1 bg-[var(--accent)]/10 border border-[var(--accent)]/20 text-[var(--accent)] text-[10px] font-black uppercase tracking-[0.2em] mb-4">
+                <div className="inline-flex items-center gap-2 px-3 py-1 bg-[var(--accent)]/10 border border-[var(--accent)]/20 text-[var(--accent)] text-[10px] font-semibold tracking-normal] mb-4">
                     <ShoppingBag size={12} />
                     E-Commerce Substrate v1.0
                 </div>
-                <h1 className="text-4xl md:text-6xl font-black uppercase tracking-widest">
+                <h1 className="text-4xl md:text-6xl font-semibold tracking-normal">
                     Sovereign <span className="text-[var(--accent)]">Marketplace</span>
                 </h1>
                 <p className="text-white/50 font-serif italic text-lg max-w-2xl mx-auto">

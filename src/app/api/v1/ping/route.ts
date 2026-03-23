@@ -1,7 +1,7 @@
 import { NextResponse } from 'next/server';
 import crypto from 'crypto';
-import { getAdminDb } from '@/core/firebase/admin';
-import { getGlobalOverrides } from '@/core/actions/system';
+import { getAdminDb, getCollectionName } from '@/core/firebase/admin';
+import { getGlobalOverrides } from '@/core/actions/branding';
 import { z } from 'zod';
 
 const AuthHeaderSchema = z.string().regex(/^Bearer\s+([A-Za-z0-9\-\._~\+/]+=*)$/, "Malformed Bearer Token Structure");
@@ -32,7 +32,7 @@ export async function GET(req: Request) {
 
     try {
         const db = getAdminDb();
-        const snap = await db.collection("omni_api_keys")
+        const snap = await db.collection(getCollectionName("omni_api_keys"))
             .where("keyHash", "==", hash)
             .where("status", "==", "ACTIVE")
             .limit(1)

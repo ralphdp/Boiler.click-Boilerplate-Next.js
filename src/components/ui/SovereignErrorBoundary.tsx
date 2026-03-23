@@ -45,12 +45,12 @@ export class SovereignErrorBoundary extends Component<Props, State> {
                         {/* Fake Terminal Header */}
                         <div className="flex items-center px-4 py-2 bg-red-500/10 border-b border-red-500/20">
                             <Terminal className="w-4 h-4 text-red-500 mr-2" />
-                            <span className="text-xs uppercase tracking-widest text-red-500/80">System Exception</span>
+                            <span className="text-xs tracking-normal text-red-500/80">System Exception</span>
                         </div>
 
                         <div className="p-6 space-y-6">
                             <div>
-                                <h1 className="text-xl font-black text-red-500 uppercase tracking-widest border-l-4 border-red-500 pl-4 mb-2">
+                                <h1 className="text-xl font-bold text-red-500 tracking-normal border-l-4 border-red-500 pl-4 mb-2">
                                     Substrate Failure Detected
                                 </h1>
                                 <p className="text-white/60 text-sm">
@@ -64,7 +64,7 @@ export class SovereignErrorBoundary extends Component<Props, State> {
 
                             <button
                                 onClick={() => window.location.reload()}
-                                className="w-full py-3 bg-red-500/10 text-red-500 hover:bg-red-500 hover:text-black border border-red-500/30 uppercase tracking-[0.2em] font-black text-xs transition-colors"
+                                className="w-full py-3 bg-red-500/10 text-red-500 hover:bg-red-500 hover:text-black border border-red-500/30 tracking-normal] font-bold text-xs transition-colors"
                             >
                                 Reboot Node
                             </button>

@@ -59,7 +59,7 @@ export function LanguageProvider({ children, initialLocale, taglineOverride, sit
     };
 
     const baseT = dictionary[language] || dictionary["en"];
-    const t = { ...baseT };
+    const t = { ...baseT } as LanguageContextType["t"];
     if (taglineOverride) t.tagline = taglineOverride;
     if (siteTitleOverride) t.siteName = siteTitleOverride;
 

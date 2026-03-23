@@ -1,9 +1,10 @@
 "use server";
 
-import { getAdminDb } from "@/core/firebase/admin";
+import { getAdminDb, getCollectionName } from "@/core/firebase/admin";
 import { auth } from "@/core/auth";
 import Stripe from "stripe";
 import { logWorkspaceAction } from "./workspaces";
+import { logAuditTrace } from "./audit";
 
 const stripe = new Stripe(process.env.STRIPE_SECRET_KEY as string, {
     apiVersion: "2024-12-18.acacia" as any
@@ -14,14 +15,14 @@ export async function createCheckoutSession(workspaceId: string, priceId: string
     if (!session?.user?.id) throw new Error("UNAUTHORIZED");
 
     const db = getAdminDb();
-    const callerMemberSnap = await db.collection("omni_workspaces").doc(workspaceId).collection("members").doc(session.user.id).get();
+    const callerMemberSnap = await db.collection(getCollectionName("omni_workspaces")).doc(workspaceId).collection("members").doc(session.user.id).get();
 
     if (!callerMemberSnap.exists || !["OWNER", "ADMIN"].includes(callerMemberSnap.data()?.role)) {
         throw new Error("UNAUTHORIZED_ACCESS: Only ADMINs can modify billing matrices.");
     }
 
     try {
-        const workspaceSnap = await db.collection("omni_workspaces").doc(workspaceId).get();
+        const workspaceSnap = await db.collection(getCollectionName("omni_workspaces")).doc(workspaceId).get();
         const workspaceData = workspaceSnap.data();
         let customerId = workspaceData?.stripeCustomerId;
 
@@ -35,7 +36,7 @@ export async function createCheckoutSession(workspaceId: string, priceId: string
                 }
             });
             customerId = customer.id;
-            await db.collection("omni_workspaces").doc(workspaceId).update({ stripeCustomerId: customerId });
+            await db.collection(getCollectionName("omni_workspaces")).doc(workspaceId).update({ stripeCustomerId: customerId });
         }
 
         const siteUrl = process.env.NEXT_PUBLIC_SITE_URL || "http://localhost:3000";
@@ -56,6 +57,7 @@ export async function createCheckoutSession(workspaceId: string, priceId: string
         });
 
         await logWorkspaceAction(workspaceId, "BILLING_CHECKOUT_INITIATED", `Checkout pulse mapped to ${priceId}`);
+        await logAuditTrace("BILLING_HANDSHAKE", "INFO", `Workspace ${workspaceId} initiated Stripe session for ${priceId}`, session.user.email || "SYSTEM", "RECURSION");
 
         return { url: checkoutSession.url };
     } catch (e: any) {
@@ -69,13 +71,13 @@ export async function createBillingPortal(workspaceId: string, locale: string = 
     if (!session?.user?.id) throw new Error("UNAUTHORIZED");
 
     const db = getAdminDb();
-    const callerMemberSnap = await db.collection("omni_workspaces").doc(workspaceId).collection("members").doc(session.user.id).get();
+    const callerMemberSnap = await db.collection(getCollectionName("omni_workspaces")).doc(workspaceId).collection("members").doc(session.user.id).get();
 
     if (!callerMemberSnap.exists || !["OWNER", "ADMIN"].includes(callerMemberSnap.data()?.role)) {
         throw new Error("UNAUTHORIZED_ACCESS: Only ADMINs can access the billing portal.");
     }
 
-    const workspaceSnap = await db.collection("omni_workspaces").doc(workspaceId).get();
+    const workspaceSnap = await db.collection(getCollectionName("omni_workspaces")).doc(workspaceId).get();
     const customerId = workspaceSnap.data()?.stripeCustomerId;
 
     if (!customerId) {
@@ -102,7 +104,7 @@ export async function getWorkspaceBilling(workspaceId: string) {
     if (!session?.user?.id) return null;
 
     const db = getAdminDb();
-    const snap = await db.collection("omni_workspaces").doc(workspaceId).get();
+    const snap = await db.collection(getCollectionName("omni_workspaces")).doc(workspaceId).get();
 
     if (!snap.exists) return null;
 

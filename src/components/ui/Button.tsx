@@ -4,7 +4,7 @@ import React from "react";
 import { cn } from "@/core/utils";
 import { Tooltip } from "./Tooltip";
 
-type ButtonVariants = "glass" | "glass-accent" | "outline" | "ghost";
+type ButtonVariants = "solid" | "solid-accent" | "outline" | "ghost";
 
 interface ButtonProps extends React.ButtonHTMLAttributes<HTMLButtonElement> {
     variant?: ButtonVariants;
@@ -15,12 +15,12 @@ interface ButtonProps extends React.ButtonHTMLAttributes<HTMLButtonElement> {
 }
 
 export const Button = React.forwardRef<HTMLButtonElement, ButtonProps>(
-    ({ className, variant = "glass", as: Component = "button", children, tooltip, tooltipTerm, ...props }, ref) => {
+    ({ className, variant = "solid", as: Component = "button", children, tooltip, tooltipTerm, ...props }, ref) => {
         const variants: Record<ButtonVariants, string> = {
-            glass: "glass hover:bg-white/5 border-white/5",
-            "glass-accent": "glass glass-accent hover:bg-white/10 border-white/10",
-            outline: "border border-white/10 hover:border-white/20 hover:bg-white/5 text-white/60 hover:text-white",
-            ghost: "hover:bg-white/5 text-white/40 hover:text-white border-transparent"
+            solid: "bg-[#050505] hover:bg-white/5 border border-white/10 hover:border-white/20",
+            "solid-accent": "bg-[var(--accent)] hover:opacity-90 text-white border border-transparent",
+            outline: "border border-white/10 hover:border-white/20 hover:bg-white/5 text-white/70 hover:text-white",
+            ghost: "hover:bg-white/5 text-white/50 hover:text-white border-transparent"
         };
 
         const Element = Component as any;
@@ -29,7 +29,7 @@ export const Button = React.forwardRef<HTMLButtonElement, ButtonProps>(
             <Element
                 ref={ref}
                 className={cn(
-                    "px-8 py-4 transition-all text-xs font-black technical tracking-[0.2em] flex items-center justify-center gap-2 group cursor-pointer disabled:opacity-30 disabled:cursor-not-allowed",
+                    "px-6 py-3 rounded-md transition-colors text-sm font-semibold flex items-center justify-center gap-2 group cursor-pointer disabled:opacity-30 disabled:cursor-not-allowed",
                     // Only default to w-full if no width class is present in the provided className
                     (!className || !/\bw-(full|fit|auto|[\d/]+)/.test(className)) && "w-full",
                     variants[variant],

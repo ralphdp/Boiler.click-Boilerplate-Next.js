@@ -65,7 +65,7 @@ export function ToastProvider({ children }: { children: ReactNode }) {
                                 {t.type === "info" && <CheckCircle2 size={18} className="text-[var(--accent)]" />}
                             </div>
                             <div className="flex-1">
-                                <h4 className="font-bold text-sm tracking-widest uppercase">{t.title}</h4>
+                                <h4 className="font-bold text-sm tracking-normal">{t.title}</h4>
                                 {t.description && <p className="text-xs font-mono opacity-80 mt-1 leading-relaxed">{t.description}</p>}
                             </div>
                             <button onClick={() => removeToast(t.id)} className="shrink-0 opacity-50 hover:opacity-100 transition-opacity">

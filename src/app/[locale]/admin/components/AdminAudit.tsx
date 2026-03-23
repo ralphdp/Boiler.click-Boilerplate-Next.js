@@ -3,6 +3,7 @@
 import { useState } from "react";
 import { motion } from "framer-motion";
 import { Search, Download, ShieldCheck } from "lucide-react";
+import { Button } from "@/components/ui/Button";
 import { Input } from "@/components/ui/Input";
 import { Select } from "@/components/ui/Select";
 
@@ -65,10 +66,10 @@ export function AdminAudit({
 
                 <div className="p-4 md:p-6 border-b border-white/5 bg-white/5">
                     <div className="flex flex-col gap-1 shrink-0">
-                        <h3 className="text-xs font-black uppercase tracking-[0.2em] text-[var(--accent)] flex items-center gap-2">
+                        <h3 className="text-xs font-semibold tracking-normal] text-[var(--accent)] flex items-center gap-2">
                             Sovereign Audit Log
                         </h3>
-                        <span className="text-[8px] font-mono text-white/30 uppercase tracking-[0.3em]">Temporal Trace & Canon Audit Matrix</span>
+                        <span className="text-[8px] font-mono text-white/30 tracking-normal]">Temporal Trace & Canon Audit Matrix</span>
                     </div>
                 </div>
 
@@ -77,10 +78,10 @@ export function AdminAudit({
                         <div className="sm:w-48">
                             <Select
                                 options={[
-                                    { label: "ALL SEVERITIES", value: "ALL" },
-                                    { label: "INFO - TRANSMISSION", value: "INFO" },
-                                    { label: "WARN - ANOMALY", value: "WARN" },
-                                    { label: "CRIT - BREACH", value: "CRIT" },
+                                    { label: "All severities", value: "ALL" },
+                                    { label: "Info - transmission", value: "INFO" },
+                                    { label: "Warn - anomaly", value: "WARN" },
+                                    { label: "Crit - breach", value: "CRIT" },
                                 ]}
                                 value={auditFilter}
                                 onChange={(val) => { setAuditFilter(val as any); setAuditPage(1); }}
@@ -92,19 +93,21 @@ export function AdminAudit({
                             <div className="relative flex-1">
                                 <Input
                                     type="text"
-                                    placeholder="SEARCH TRACES OR NODES..."
+                                    placeholder="Search traces or nodes..."
                                     value={auditSearch}
                                     onChange={(e) => { setAuditSearch(e.target.value); setAuditPage(1); }}
                                     icon={<Search size={14} />}
                                     className="h-[54px]"
                                 />
                             </div>
-                            <button
+                            <Button
                                 onClick={exportAuditCSV}
-                                className="shrink-0 flex items-center justify-center gap-2 bg-white/5 hover:bg-white/10 border border-white/10 px-6 h-[54px] text-[10px] font-black uppercase tracking-widest transition-colors text-white/70 hover:text-white"
+                                className="shrink-0 flex items-center justify-center gap-2 bg-white/5 hover:bg-white/10 border border-white/10 px-6 h-[54px] text-xs font-semibold tracking-normal transition-colors text-white/70 hover:text-white"
+                                tooltip="Export the current audit trace snapshot to a CSV local buffer."
+                                tooltipTerm="AUDIT_EXPORT"
                             >
                                 <Download size={14} /> <span>Export Traces</span>
-                            </button>
+                            </Button>
                         </div>
                     </div>
                 </div>
@@ -112,12 +115,12 @@ export function AdminAudit({
                     <table className="w-full min-w-[800px] text-left border-collapse text-xs font-mono">
                         <thead>
                             <tr className="bg-white/5 text-white/50 sticky top-0 z-10 backdrop-blur-md">
-                                <th className="p-4 font-normal tracking-widest uppercase">{t.admin.overview.colTime}</th>
-                                <th className="p-4 font-normal tracking-widest uppercase">{t.admin.overview.colAction}</th>
-                                <th className="p-4 font-normal tracking-widest uppercase">{t.admin.overview.colSeverity}</th>
-                                <th className="p-4 font-normal tracking-widest uppercase">CANON</th>
-                                <th className="p-4 font-normal tracking-widest uppercase">{t.admin.overview.colUser}</th>
-                                <th className="p-4 font-normal tracking-widest uppercase">{t.admin.overview.colDetails}</th>
+                                <th className="p-4 font-normal tracking-normal">{t.admin.overview.colTime}</th>
+                                <th className="p-4 font-normal tracking-normal">{t.admin.overview.colAction}</th>
+                                <th className="p-4 font-normal tracking-normal">{t.admin.overview.colSeverity}</th>
+                                <th className="p-4 font-normal tracking-normal">CANON</th>
+                                <th className="p-4 font-normal tracking-normal">{t.admin.overview.colUser}</th>
+                                <th className="p-4 font-normal tracking-normal">{t.admin.overview.colDetails}</th>
                             </tr>
                         </thead>
                         <tbody className="divide-y divide-white/5 focus:outline-none">
@@ -129,7 +132,7 @@ export function AdminAudit({
                                 paginatedTraces.map((trace, i) => (
                                     <tr key={trace.id || i} className="hover:bg-white/5 transition-colors">
                                         <td className="p-4 text-white/40 whitespace-nowrap">{new Date(trace.timestamp).toLocaleString()}</td>
-                                        <td className="p-4 font-bold tracking-widest">{trace.action}</td>
+                                        <td className="p-4 font-bold tracking-normal">{trace.action}</td>
                                         <td className="p-4">
                                             <div className={`text-[10px] px-3 py-1 min-w-[70px] uppercase tracking-widest font-black inline-block text-center ${trace.severity === 'FATAL' || trace.severity === 'ERROR' || trace.severity === 'CRIT' ? 'bg-red-500/10 text-red-500 border border-red-500/20' : trace.severity === 'WARN' ? 'bg-yellow-500/10 text-yellow-500 border border-yellow-500/20' : 'bg-blue-500/10 text-blue-500 border border-blue-500/20'}`}>
                                                 {trace.severity}
@@ -152,8 +155,8 @@ export function AdminAudit({
                     <div className="p-4 border-t border-white/5 bg-white/5 flex justify-between items-center text-xs font-mono text-white/50">
                         <div>{t.admin.overview.showing} {(auditPage - 1) * 50 + 1}-{Math.min(auditPage * 50, filteredTraces.length)} {t.admin.overview.of} {filteredTraces.length}</div>
                         <div className="flex gap-2">
-                            <button onClick={() => setAuditPage(p => Math.max(1, p - 1))} disabled={auditPage === 1} className="px-3 py-1 bg-black/50 border border-white/10 disabled:opacity-30 hover:bg-white/5 text-[10px] font-black tracking-widest uppercase text-white transition-colors">{t.admin.overview.prev}</button>
-                            <button onClick={() => setAuditPage(p => Math.min(totalAuditPages, p + 1))} disabled={auditPage === totalAuditPages} className="px-3 py-1 bg-black/50 border border-white/10 disabled:opacity-30 hover:bg-white/5 text-[10px] font-black tracking-widest uppercase text-white transition-colors">{t.admin.overview.next}</button>
+                            <button onClick={() => setAuditPage(p => Math.max(1, p - 1))} disabled={auditPage === 1} className="px-3 py-1 bg-black/50 border border-white/10 disabled:opacity-30 hover:bg-white/5 text-[10px] font-semibold tracking-normal text-white transition-colors">{t.admin.overview.prev}</button>
+                            <button onClick={() => setAuditPage(p => Math.min(totalAuditPages, p + 1))} disabled={auditPage === totalAuditPages} className="px-3 py-1 bg-black/50 border border-white/10 disabled:opacity-30 hover:bg-white/5 text-[10px] font-semibold tracking-normal text-white transition-colors">{t.admin.overview.next}</button>
                         </div>
                     </div>
                 )}

@@ -34,7 +34,7 @@ export function DataGrid({
     const totalPages = Math.ceil(filteredData.length / itemsPerPage);
 
     return (
-        <div className="w-full border border-white/10 bg-black/50 backdrop-blur-md rounded-lg overflow-hidden shadow-xl text-sm font-sans flex flex-col">
+        <div className="w-full border border-white/10 rounded-lg overflow-hidden shadow-xl text-sm font-sans flex flex-col">
 
             {/* Toolbar */}
             {searchable && (
@@ -43,7 +43,7 @@ export function DataGrid({
                         <Search className="w-4 h-4 absolute left-3 top-1/2 -translate-y-1/2 text-white/50" />
                         <input
                             placeholder="Search records..."
-                            className="bg-black/50 border border-white/10 rounded-md pl-9 pr-4 py-2 w-full text-white placeholder-white/30 focus:outline-none focus:ring-1 focus:ring-[var(--accent)] text-xs transition-colors"
+                            className="border border-white/10 rounded-md pl-9 pr-4 py-2 w-full text-white placeholder-white/30 focus:outline-none focus:ring-1 focus:ring-[var(--accent)] text-xs transition-colors"
                             value={searchTerm}
                             onChange={(e) => {
                                 setSearchTerm(e.target.value);
@@ -52,7 +52,7 @@ export function DataGrid({
                         />
                     </div>
                     <div className="flex gap-2">
-                        <span className="text-xs uppercase tracking-wider text-[var(--accent)] font-mono border border-[var(--accent)]/30 px-3 py-1.5 rounded-sm bg-[var(--accent)]/10">
+                        <span className="text-xs tracking-normal text-[var(--accent)] font-mono border border-[var(--accent)]/30 px-3 py-1.5 rounded-sm bg-[var(--accent)]/10">
                             {filteredData.length} Records
                         </span>
                     </div>
@@ -67,7 +67,7 @@ export function DataGrid({
                             {columns.map((col) => (
                                 <th
                                     key={col.id}
-                                    className="p-4 text-xs font-mono uppercase tracking-widest text-white/60 font-semibold"
+                                    className="p-4 text-xs font-mono tracking-normal text-white/60 font-semibold"
                                     style={{ width: col.width }}
                                 >
                                     {col.header}
@@ -99,7 +99,7 @@ export function DataGrid({
                             ))
                         ) : (
                             <tr>
-                                <td colSpan={columns.length + 1} className="p-8 text-center text-white/40 italic font-mono text-xs uppercase tracking-widest">
+                                <td colSpan={columns.length + 1} className="p-8 text-center text-white/40 font-mono text-xs tracking-normal">
                                     [No Data Found in Current Manifold]
                                 </td>
                             </tr>
@@ -110,8 +110,8 @@ export function DataGrid({
 
             {/* Pagination */}
             {totalPages > 1 && (
-                <div className="flex justify-between items-center p-3 border-t border-white/10 bg-black/60 text-xs">
-                    <span className="text-white/40 font-mono tracking-widest uppercase ml-2">
+                <div className="flex justify-between items-center p-3 border-t border-white/10 text-xs">
+                    <span className="text-white/40 font-mono tracking-normal ml-2">
                         Page {page} of {totalPages}
                     </span>
                     <div className="flex gap-1">

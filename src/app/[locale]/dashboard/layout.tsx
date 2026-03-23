@@ -1,7 +1,7 @@
 import { auth } from "@/core/auth";
 import { redirect } from "next/navigation";
 import { cookies } from "next/headers";
-import { getAdminDb } from "@/core/firebase/admin";
+import { getAdminDb, getCollectionName } from "@/core/firebase/admin";
 import { ForceMFA } from "@/components/ui/ForceMFA";
 
 export default async function DashboardLayout({ children, params }: { children: React.ReactNode, params: Promise<{ locale: string }> }) {
@@ -18,7 +18,7 @@ export default async function DashboardLayout({ children, params }: { children: 
     const mfaVerifiedCookie = cookieStore.get("mfa_verified");
 
     // Check if they need to verify
-    const userDoc = await getAdminDb().collection("users").doc(session.user.id).get();
+    const userDoc = await getAdminDb().collection(getCollectionName("users")).doc(session.user.id).get();
 
     if (mfaVerifiedCookie?.value !== session.user.id) {
         // Fetch DB to see if MFA is even enabled
@@ -41,7 +41,7 @@ export default async function DashboardLayout({ children, params }: { children: 
 
     if (!mfaEnabled && hasWorkspaces) {
         // Only fetch config if we need it
-        const configDoc = await getAdminDb().collection("sovereign_config").doc("global").get();
+        const configDoc = await getAdminDb().collection(getCollectionName("sovereign_config")).doc("global").get();
         if (configDoc.exists && configDoc.data()?.mfaEnforced) {
             mfaEnforcedOnWorkspace = true;
         }

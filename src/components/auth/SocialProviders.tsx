@@ -11,7 +11,7 @@ export function SocialProviders({ lastUsed, markLastUsed }: { lastUsed?: string 
     return (
         <div className="space-y-4">
             <Button
-                variant="glass"
+                variant="solid"
                 onClick={() => {
                     markLastUsed?.("github");
                     signIn("github", { callbackUrl: "/" });
@@ -23,14 +23,14 @@ export function SocialProviders({ lastUsed, markLastUsed }: { lastUsed?: string 
                     <Github size={16} /> {t.auth.github}
                 </div>
                 {lastUsed === "github" && (
-                    <span className="absolute -top-[9px] right-6 text-[8px] bg-[var(--accent)] text-white h-[18px] px-2 flex items-center justify-center rounded-sm uppercase tracking-widest font-bold z-10 ring-1 ring-white/20 shadow-lg">
+                    <span className="absolute -top-[9px] right-6 text-[8px] bg-[var(--accent)] text-white h-[18px] px-2 flex items-center justify-center rounded-sm tracking-normal font-bold z-10 ring-1 ring-white/20 shadow-lg">
                         {t.auth.lastUsed}
                     </span>
                 )}
             </Button>
 
             <Button
-                variant="glass"
+                variant="solid"
                 onClick={() => {
                     markLastUsed?.("google");
                     signIn("google", { callbackUrl: "/" });
@@ -42,7 +42,7 @@ export function SocialProviders({ lastUsed, markLastUsed }: { lastUsed?: string 
                     <Chrome size={16} /> {t.auth.google}
                 </div>
                 {lastUsed === "google" && (
-                    <span className="absolute -top-[9px] right-6 text-[8px] bg-[var(--accent)] text-white h-[18px] px-2 flex items-center justify-center rounded-sm uppercase tracking-widest font-bold z-10 ring-1 ring-white/20 shadow-lg">
+                    <span className="absolute -top-[9px] right-6 text-[8px] bg-[var(--accent)] text-white h-[18px] px-2 flex items-center justify-center rounded-sm tracking-normal font-bold z-10 ring-1 ring-white/20 shadow-lg">
                         {t.auth.lastUsed}
                     </span>
                 )}

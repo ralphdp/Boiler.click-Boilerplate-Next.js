@@ -3,7 +3,7 @@
 import { useState, useEffect } from "react";
 import { motion, AnimatePresence } from "framer-motion";
 import { Activity, ShieldCheck, Zap } from "lucide-react";
-import { getTelemetryData } from "@/core/actions/system";
+import { getTelemetryData } from "@/core/actions/telemetry";
 
 export function SystemHeartbeat() {
     const [status, setStatus] = useState<any>(null);
@@ -35,7 +35,7 @@ export function SystemHeartbeat() {
                 animate={{ opacity: 1, y: 0 }}
                 className="flex flex-col items-center gap-3"
             >
-                <div className="flex items-center gap-6 px-6 py-3 bg-black/40 border border-white/5 backdrop-blur-2xl rounded-sm">
+                <div className="flex items-center gap-6 px-6 py-3 bg-[#0a0a0a] border border-white/10 rounded-lg shadow-sm">
                     <div className="flex items-center gap-3">
                         <div className="relative flex items-center justify-center w-3 h-3">
                             <motion.div
@@ -43,37 +43,37 @@ export function SystemHeartbeat() {
                                 animate={{ scale: [1, 2, 1] }}
                                 transition={{ duration: 2, repeat: Infinity }}
                             />
-                            <div className={`w-1.5 h-1.5 rounded-full ${status?.firebaseSync === 'NOMINAL' ? 'bg-[var(--accent)] shadow-[0_0_10px_var(--accent)]' : 'bg-red-500 shadow-[0_0_10px_red]'}`} />
+                            <div className={`w-1.5 h-1.5 rounded-full ${status?.firebaseSync === 'NOMINAL' ? 'bg-[var(--accent)]' : 'bg-red-500'}`} />
                         </div>
-                        <span className="text-[10px] font-black uppercase tracking-[0.3em] text-white/50">Substrate Pulse</span>
+                        <span className="text-xs font-semibold text-white/50">Substrate Pulse</span>
+                    </div>
+
+                    <div className="w-px h-4 bg-white/10" />
+
+                    <div className="flex items-center gap-6">
+                        <div className="flex items-center gap-2">
+                            <span className="text-[10px] font-semibold text-white/40 tracking-normal">Latency</span>
+                            <div className="flex items-center gap-1.5 text-xs font-mono font-bold text-[var(--accent)]">
+                                <Activity size={12} />
+                                <span>{status?.latency || 0}ms</span>
+                            </div>
+                        </div>
+
+                        <div className="flex items-center gap-2">
+                            <span className="text-[10px] font-semibold text-white/40 tracking-normal">Protocol</span>
+                            <div className="flex items-center gap-1.5 text-xs font-mono font-bold text-green-500">
+                                <ShieldCheck size={12} />
+                                <span>Secured</span>
+                            </div>
+                        </div>
                     </div>
 
                     <div className="w-px h-4 bg-white/10" />
 
                     <div className="flex items-center gap-4">
-                        <div className="flex flex-col items-start gap-0.5">
-                            <span className="text-[8px] font-mono text-white/20 uppercase tracking-widest">Latency</span>
-                            <div className="flex items-center gap-1.5 text-[10px] font-mono font-bold text-[var(--accent)]">
-                                <Activity size={10} />
-                                <span>{status?.latency || 0}MS</span>
-                            </div>
-                        </div>
-
-                        <div className="flex flex-col items-start gap-0.5">
-                            <span className="text-[8px] font-mono text-white/20 uppercase tracking-widest">Protocol</span>
-                            <div className="flex items-center gap-1.5 text-[10px] font-mono font-bold text-green-500">
-                                <ShieldCheck size={10} />
-                                <span>SECURED</span>
-                            </div>
-                        </div>
-                    </div>
-
-                    <div className="w-px h-4 bg-white/10" />
-
-                    <div className="flex items-center gap-4">
-                        <div className="flex flex-col items-start gap-0.5" title="Infrastructure Status">
-                            <span className="text-[8px] font-mono text-white/20 uppercase tracking-widest">Nodes</span>
-                            <div className="flex gap-0.5">
+                        <div className="flex items-center gap-2" title="Infrastructure Status">
+                            <span className="text-[10px] font-semibold text-white/40 tracking-normal">Nodes</span>
+                            <div className="flex gap-1">
                                 {[1, 2, 3, 4].map(i => (
                                     <motion.div
                                         key={i}
@@ -87,10 +87,10 @@ export function SystemHeartbeat() {
                     </div>
                 </div>
 
-                <div className="flex items-center gap-2 opacity-30">
-                    <span className="text-[8px] font-mono uppercase tracking-[0.4em]">Vanguard Substrate v2.8.5</span>
-                    <span className="text-[8px] font-mono text-[var(--accent)]">•</span>
-                    <span className="text-[8px] font-mono uppercase tracking-[0.4em]">Active Handshake</span>
+                <div className="flex items-center gap-2 opacity-50 mt-1">
+                    <span className="text-[10px] font-mono text-white tracking-normal">Vanguard Substrate v2.8.5</span>
+                    <span className="text-[10px] font-mono text-[var(--accent)]">•</span>
+                    <span className="text-[10px] font-mono text-white tracking-normal">Active Handshake</span>
                 </div>
             </motion.div>
         </div>

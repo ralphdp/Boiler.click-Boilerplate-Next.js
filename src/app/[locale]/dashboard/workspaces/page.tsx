@@ -1,7 +1,7 @@
 "use client";
 
 import { useSession } from "next-auth/react";
-import { GlassCard } from "@/components/ui/GlassCard";
+import { SolidCard } from "@/components/ui/SolidCard";
 import { Button } from "@/components/ui/Button";
 import { DataGrid } from "@/components/ui/DataGrid";
 import { Input } from "@/components/ui/Input";
@@ -142,18 +142,18 @@ export default function WorkspacesPage() {
             <div className="w-full max-w-4xl space-y-8">
                 {/* Header Context */}
                 <div className="space-y-2 text-left">
-                    <h1 className="text-2xl font-black technical tracking-[0.2em] uppercase text-[var(--accent)] flex items-center gap-3">
-                        <LayoutGrid size={24} />
+                    <h1 className="text-2xl font-bold tracking-normal text-white flex items-center gap-3">
+                        <LayoutGrid size={24} className="text-[var(--accent)]" />
                         {t.workspaces.title}
                     </h1>
-                    <p className="text-[10px] uppercase tracking-[0.2em] font-bold text-white/50">
+                    <p className="text-sm text-white/50">
                         {t.workspaces.subtitle}
                     </p>
                 </div>
 
-                {/* 1. Command Center GlassCard */}
-                <GlassCard className="w-full p-6">
-                    <h2 className="text-[10px] font-black technical tracking-[0.2em] uppercase text-white/70 mb-4">{t.workspaces.initNew}</h2>
+                {/* 1. Command Center SolidCard */}
+                <SolidCard className="w-full p-6 text-left">
+                    <h2 className="text-xs font-semibold text-white/70 mb-4">{t.workspaces.initNew}</h2>
                     <div className="flex flex-col sm:flex-row gap-3 items-stretch sm:items-center">
                         <div className="flex-1">
                             <Input
@@ -161,13 +161,13 @@ export default function WorkspacesPage() {
                                 value={newWsName}
                                 onChange={(e) => setNewWsName(e.target.value)}
                                 placeholder={t.workspaces.wsTitlePlaceholder}
-                                className="tracking-widest bg-black/40"
+                                className="bg-[#0a0a0a]"
                             />
                         </div>
                         <Button
                             onClick={handleCreate}
                             disabled={!newWsName || isCreating}
-                            variant="glass-accent"
+                            variant="solid-accent"
                             className="sm:w-fit h-[54px] px-8 shrink-0"
                             tooltip="Initialize a new sovereign workspace node."
                             tooltipTerm="WS_INIT"
@@ -175,18 +175,18 @@ export default function WorkspacesPage() {
                             <Plus size={14} /> {t.workspaces.create}
                         </Button>
                     </div>
-                </GlassCard>
+                </SolidCard>
 
                 {/* 2. The Roster */}
-                <GlassCard className="w-full p-6 space-y-6">
-                    <h2 className="text-[10px] font-black technical tracking-[0.2em] uppercase text-white/70 flex items-center justify-between">
+                <SolidCard className="w-full p-6 space-y-6 text-left">
+                    <h2 className="text-xs font-semibold text-white/70 flex items-center justify-between">
                         {t.workspaces.activeDirs}
                         {(session?.user as any)?.activeWorkspace && (
                             <Button
                                 variant="outline"
                                 onClick={handleExitContext}
                                 disabled={loading}
-                                className="text-[9px] h-6 px-3 border-red-500/30 text-red-500 hover:bg-red-500/10"
+                                className="text-[9px] h-6 px-3 border-red-500/30 text-red-500 hover:bg-red-500/10 w-fit"
                             >
                                 {t.workspaces.exitWorkspace}
                             </Button>
@@ -194,14 +194,14 @@ export default function WorkspacesPage() {
                     </h2>
 
                     {loading ? (
-                        <p className="text-white/30 text-xs font-mono uppercase tracking-widest animate-pulse">{t.workspaces.scanning}</p>
+                        <p className="text-white/30 text-sm animate-pulse">{t.workspaces.scanning}</p>
                     ) : workspaces.length === 0 ? (
-                        <motion.div initial={{ opacity: 0 }} animate={{ opacity: 1 }} className="p-8 border border-dashed border-white/10 bg-black/20 flex flex-col items-center justify-center space-y-3">
+                        <motion.div initial={{ opacity: 0 }} animate={{ opacity: 1 }} className="p-8 border border-white/5 bg-[#0a0a0a] flex flex-col items-center justify-center space-y-3">
                             <div className="w-8 h-8 rounded-full border border-white/5 bg-white/5 flex items-center justify-center mb-2">
                                 <LayoutGrid size={14} className="text-white/30" />
                             </div>
-                            <p className="text-white/40 text-[10px] font-black technical tracking-[0.2em] uppercase">{t.workspaces.noWorkspaces}</p>
-                            <p className="text-white/20 text-[9px] font-mono tracking-widest uppercase text-center max-w-xs">Initialize a new node via the Command Center above.</p>
+                            <p className="text-white/50 text-sm font-semibold">{t.workspaces.noWorkspaces}</p>
+                            <p className="text-white/30 text-xs text-center max-w-xs">Initialize a new node via the Command Center above.</p>
                         </motion.div>
                     ) : (
                         <motion.div
@@ -225,26 +225,26 @@ export default function WorkspacesPage() {
                                             show: { opacity: 1, y: 0 }
                                         }}
                                         key={ws.id}
-                                        className={cn("p-5 bg-white/5 border flex flex-col justify-between gap-6 transition-all duration-500", isActive ? "border-[var(--accent)]/50 shadow-[0_0_15px_var(--accent)_inset]" : "border-white/10")}
+                                        className={cn("p-5 bg-[#050505] border flex flex-col justify-between gap-6 transition-colors duration-200", isActive ? "border-[var(--accent)]" : "border-white/10 hover:border-white/20")}
                                     >
                                         <div className="flex items-start justify-between">
                                             <div>
-                                                <h3 className="font-black uppercase tracking-widest text-sm flex items-center gap-2">
+                                                <h3 className="font-semibold text-lg flex items-center gap-2">
                                                     {ws.name}
                                                     {isActive && (
-                                                        <span className="text-[9px] bg-[var(--accent)] text-black font-bold px-2 py-0.5 rounded-sm">{t.workspaces.activeBadge}</span>
+                                                        <span className="text-[10px] bg-[var(--accent)]/10 text-[var(--accent)] border border-[var(--accent)]/20 font-bold px-2 py-0.5 rounded-sm">{t.workspaces.activeBadge}</span>
                                                     )}
                                                 </h3>
-                                                <p className="text-[9px] uppercase font-mono text-white/40 mt-1.5">{t.workspaces.idLabel} {ws.id}</p>
+                                                <p className="text-xs font-mono text-white/40 mt-1">{t.workspaces.idLabel} {ws.id}</p>
                                             </div>
-                                            <div className="px-2.5 py-1 bg-black text-[9px] font-bold font-mono text-white/50 border border-white/20">
+                                            <div className="px-2.5 py-1 bg-black text-[10px] font-bold text-white/70 border border-white/10 rounded-sm">
                                                 {ws.role}
                                             </div>
                                         </div>
 
                                         <div className="flex items-center gap-2 mt-auto pt-4 border-t border-white/5">
                                             <Button
-                                                variant={isActive ? "ghost" : "glass"}
+                                                variant={isActive ? "ghost" : "solid"}
                                                 onClick={() => handleSwitchContext(ws)}
                                                 className={cn("flex-1 h-10 text-[10px]", isActive && "text-[var(--accent)] opacity-50 cursor-default")}
                                                 disabled={loading || isActive}
@@ -290,28 +290,28 @@ export default function WorkspacesPage() {
                             })}
                         </motion.div>
                     )}
-                </GlassCard>
+                </SolidCard>
 
                 {/* 3. Audit Substrate */}
                 {activeWorkspace && (
-                    <GlassCard className="w-full p-6 space-y-4">
-                        <h2 className="text-[10px] font-black technical tracking-[0.2em] uppercase text-white/70 flex items-center gap-2">
+                    <SolidCard className="w-full p-6 space-y-4 text-left">
+                        <h2 className="text-xs font-semibold text-white/70 flex items-center gap-2">
                             <FileText size={14} /> {t.workspaces.auditLogTitle}
                         </h2>
-                        <p className="text-[10px] uppercase font-mono text-white/50 mb-4">
+                        <p className="text-sm text-white/50 mb-4">
                             {t.workspaces.auditLogDesc}
                         </p>
                         <DataGrid
                             data={auditLogs}
                             columns={[
-                                { id: "timestamp", header: t.workspaces.gridTime, width: "15%", render: (row: any) => new Date(row.timestamp).toLocaleString() },
+                                { id: "timestamp", header: t.workspaces.gridTime, width: "15%", render: (row: any) => new Date(row.timestamp || Date.now()).toLocaleString() },
                                 { id: "action", header: t.workspaces.gridAction, width: "20%" },
-                                { id: "user", header: t.workspaces.gridUser, width: "25%", render: (row: any) => <span className="opacity-75">{row.user}</span> },
-                                { id: "details", header: t.workspaces.gridDetails, width: "40%", render: (row: any) => <span className="text-white/40">{row.details}</span> }
+                                { id: "user", header: t.workspaces.gridUser, width: "25%", render: (row: any) => <span className="opacity-75">{row.actor?.email || row.user || "SYSTEM"}</span> },
+                                { id: "details", header: t.workspaces.gridDetails, width: "40%", render: (row: any) => <span className="text-white/40">{row.description || row.details || row.message || "Automated operation."}</span> }
                             ]}
                             searchable={true}
                         />
-                    </GlassCard>
+                    </SolidCard>
                 )}
             </div>
 
@@ -338,7 +338,7 @@ export default function WorkspacesPage() {
             >
                 <div className="space-y-6">
                     <div className="space-y-2">
-                        <label className="text-[10px] uppercase tracking-widest font-bold text-white/50">{t.workspaces.targetEmail}</label>
+                        <label className="text-[10px] tracking-normal font-bold text-white/50">{t.workspaces.targetEmail}</label>
                         <Input
                             type="email"
                             value={inviteEmail}
@@ -348,7 +348,7 @@ export default function WorkspacesPage() {
                         />
                     </div>
                     <div className="space-y-2">
-                        <label className="text-[10px] uppercase tracking-widest font-bold text-white/50">Node Clearance</label>
+                        <label className="text-[10px] tracking-normal font-bold text-white/50">Node Clearance</label>
                         <Select
                             options={[
                                 { value: "VIEWER", label: "VIEWER (READ ONLY)" },
@@ -369,7 +369,7 @@ export default function WorkspacesPage() {
                             {t.workspaces.cancel}
                         </Button>
                         <Button
-                            variant="glass-accent"
+                            variant="solid-accent"
                             className="px-8"
                             onClick={() => activeWsIdForInvite && handleInvite(activeWsIdForInvite)}
                             disabled={!inviteEmail || isCreating}
@@ -388,7 +388,7 @@ export default function WorkspacesPage() {
             >
                 <div className="space-y-6">
                     <div className="space-y-2">
-                        <label className="text-[10px] uppercase tracking-widest font-bold text-[var(--accent)]">Target Endpoint URL</label>
+                        <label className="text-[10px] tracking-normal font-bold text-[var(--accent)]">Target Endpoint URL</label>
                         <Input
                             type="url"
                             value={webhookUrl}
@@ -398,7 +398,7 @@ export default function WorkspacesPage() {
                         />
                     </div>
                     <div className="space-y-2">
-                        <label className="text-[10px] uppercase tracking-widest font-bold text-white/50">{t.workspaces.descOptional}</label>
+                        <label className="text-[10px] tracking-normal font-bold text-white/50">{t.workspaces.descOptional}</label>
                         <Input
                             type="text"
                             value={webhookDesc}
@@ -416,7 +416,7 @@ export default function WorkspacesPage() {
                             {t.workspaces.cancel}
                         </Button>
                         <Button
-                            variant="glass"
+                            variant="solid"
                             className="border-[var(--accent)]/50 text-[var(--accent)] hover:bg-[var(--accent)]/10 px-8"
                             onClick={() => activeWsIdForWebhook && handleRegisterWebhook(activeWsIdForWebhook)}
                             disabled={!webhookUrl || isCreating}

@@ -2,7 +2,7 @@
 
 import { useState, useEffect } from "react";
 import { motion } from "framer-motion";
-import { GlassCard } from "@/components/ui/GlassCard";
+import { SolidCard } from "@/components/ui/SolidCard";
 import {
     Users,
     MousePointer2,
@@ -43,7 +43,7 @@ export function AdminAnalytics({ t }: { t: any }) {
         return (
             <div className="flex flex-col items-center justify-center p-24 text-white/30 animate-pulse">
                 <Loader2 className="animate-spin mb-4" />
-                <span className="uppercase tracking-[0.3em] text-[10px] font-black">Syncing Analytics Vault</span>
+                <span className="tracking-normal] text-[10px] font-semibold">Syncing Analytics Vault</span>
             </div>
         );
     }
@@ -52,7 +52,7 @@ export function AdminAnalytics({ t }: { t: any }) {
     const noData = data?.status === 'no_data';
 
     const StatCard = ({ icon: Icon, label, value, change, history }: any) => (
-        <GlassCard className="p-6 border border-white/5 bg-black/40 hover:bg-black/60 transition-all group overflow-hidden">
+        <SolidCard className="p-6 border border-white/5 bg-black/40 hover:bg-black/60 transition-all group overflow-hidden">
             <div className="flex justify-between items-start mb-4">
                 <div className="w-10 h-10 bg-[var(--accent)]/10 border border-[var(--accent)]/20 flex items-center justify-center text-[var(--accent)] rounded-lg">
                     <Icon size={20} />
@@ -63,8 +63,8 @@ export function AdminAnalytics({ t }: { t: any }) {
                 </div>
             </div>
 
-            <h3 className="text-[10px] uppercase tracking-widest text-white/40 font-black mb-1">{label}</h3>
-            <div className="text-2xl font-black mb-4 font-mono">{value?.toLocaleString() || 0}</div>
+            <h3 className="text-[10px] tracking-normal text-white/40 font-semibold mb-1">{label}</h3>
+            <div className="text-2xl font-semibold mb-4 font-mono">{value?.toLocaleString() || 0}</div>
 
             {/* Sparkline Overlay */}
             <div className="h-10 w-full flex items-end gap-[2px]">
@@ -82,7 +82,7 @@ export function AdminAnalytics({ t }: { t: any }) {
                     <div className="w-full h-px bg-white/5" />
                 )}
             </div>
-        </GlassCard>
+        </SolidCard>
     );
 
     return (
@@ -96,10 +96,10 @@ export function AdminAnalytics({ t }: { t: any }) {
 
                 <div className="p-4 md:p-6 border-b border-white/5 bg-white/5">
                     <div className="flex flex-col gap-1 shrink-0">
-                        <h3 className="text-xs font-black uppercase tracking-[0.2em] text-[var(--accent)] flex items-center gap-2">
+                        <h3 className="text-xs font-semibold tracking-normal] text-[var(--accent)] flex items-center gap-2">
                             Structural Analytics Matrix
                         </h3>
-                        <span className="text-[8px] font-mono text-white/30 uppercase tracking-[0.3em]">Temporal Traffic & Behavioral Telemetry Hub</span>
+                        <span className="text-[8px] font-mono text-white/30 tracking-normal]">Temporal Traffic & Behavioral Telemetry Hub</span>
                     </div>
                 </div>
 
@@ -107,7 +107,7 @@ export function AdminAnalytics({ t }: { t: any }) {
                     <div className="flex flex-col md:flex-row items-center gap-4">
                         <div className="flex items-center gap-3">
                             <div className={`w-2 h-2 rounded-full ${isError ? 'bg-red-500' : (noData ? 'bg-yellow-500 animate-pulse' : 'bg-green-500 animate-pulse')} shadow-[0_0_10px_rgba(34,197,94,0.5)]`} />
-                            <span className="text-[10px] uppercase font-black tracking-widest">
+                            <span className="text-[10px] font-semibold tracking-normal">
                                 {isError ? 'GA4 Bridge Offline' : (noData ? 'GA4 Connected // Standing By' : 'GA4 Analytics Pulse Nominal')}
                             </span>
                         </div>
@@ -117,7 +117,7 @@ export function AdminAnalytics({ t }: { t: any }) {
                                     <span className={`absolute inline-flex h-full w-full rounded-full bg-green-400 opacity-75 ${data.realtime.activeNow > 0 ? 'animate-ping' : ''}`}></span>
                                     <span className="relative inline-flex rounded-full h-2 w-2 bg-green-500"></span>
                                 </span>
-                                <span className="text-[10px] font-black text-green-500 uppercase tracking-tighter">
+                                <span className="text-[10px] font-semibold text-green-500 tracking-normal">
                                     {data.realtime.activeNow} Active Now
                                 </span>
                             </div>
@@ -139,39 +139,39 @@ export function AdminAnalytics({ t }: { t: any }) {
             </div>
 
             {isError && (
-                <GlassCard className="p-8 border border-yellow-500/20 bg-yellow-500/5 text-center space-y-4">
+                <SolidCard className="p-8 border border-yellow-500/20 bg-yellow-500/5 text-center space-y-4">
                     <ShieldAlert size={32} className="mx-auto text-yellow-500/50" />
                     <div className="space-y-1">
-                        <h4 className="text-xs font-black uppercase tracking-[0.2em]">Permission Required</h4>
-                        <p className="text-[10px] text-white/40 uppercase tracking-widest leading-relaxed">
+                        <h4 className="text-xs font-semibold tracking-normal]">Permission Required</h4>
+                        <p className="text-[10px] text-white/40 tracking-normal leading-relaxed">
                             Ensure `firebase-adminsdk-fbsvc@boiler-click-next-js.iam.gserviceaccount.com` <br />
                             is added as a **VIEWER** to GA4 Property **528435699**.
                         </p>
                     </div>
-                </GlassCard>
+                </SolidCard>
             )}
 
             {noData && !isError && (
-                <GlassCard className="p-8 border border-[var(--accent)]/20 bg-[var(--accent)]/5 text-center space-y-4">
+                <SolidCard className="p-8 border border-[var(--accent)]/20 bg-[var(--accent)]/5 text-center space-y-4">
                     <TrendingUp size={32} className="mx-auto text-[var(--accent)]/50 animate-pulse" />
                     <div className="space-y-1">
-                        <h4 className="text-xs font-black uppercase tracking-[0.2em]">Identity Synchronized</h4>
-                        <p className="text-[10px] text-white/40 uppercase tracking-widest leading-relaxed">
+                        <h4 className="text-xs font-semibold tracking-normal]">Identity Synchronized</h4>
+                        <p className="text-[10px] text-white/40 tracking-normal leading-relaxed">
                             Bridge established with Property **528435699**. <br />
                             <span className="text-[var(--accent)] font-bold">Latency Warning:</span> GA4 historical data (Charts, Top Routes, Hardware) <br />
                             requires **24-48 hours** to process. Real-time "Active Now" is live.
                         </p>
                     </div>
-                </GlassCard>
+                </SolidCard>
             )}
 
             {/* Primary Traffic Chart */}
-            <GlassCard className="p-6 border border-white/5 bg-black/40 h-[350px]">
+            <SolidCard className="p-6 border border-white/5 bg-black/40 h-[350px]">
                 <div className="flex justify-between items-center mb-6">
-                    <h3 className="text-xs font-black uppercase tracking-[0.3em] flex items-center gap-2">
+                    <h3 className="text-xs font-semibold tracking-normal] flex items-center gap-2">
                         <TrendingUp size={14} className="text-[var(--accent)]" /> Traffic Temporal Matrix
                     </h3>
-                    <div className="flex gap-4 text-[10px] uppercase font-bold tracking-tighter text-white/30">
+                    <div className="flex gap-4 text-[10px] font-bold tracking-normal text-white/30">
                         <span className="flex items-center gap-1"><div className="w-2 h-2 rounded-full bg-[var(--accent)]" /> Active Users</span>
                         <span className="flex items-center gap-1"><div className="w-2 h-2 rounded-full bg-white/20" /> Sessions</span>
                     </div>
@@ -181,7 +181,7 @@ export function AdminAnalytics({ t }: { t: any }) {
                     {(!data?.fullHistory || data.fullHistory.length === 0) ? (
                         <div className="absolute inset-0 flex flex-col items-center justify-center text-white/10 space-y-2">
                             <Activity size={32} className="animate-pulse" />
-                            <p className="text-[10px] uppercase font-black tracking-[0.3em]">Waiting for Temporal Historical Pulses</p>
+                            <p className="text-[10px] font-semibold tracking-normal]">Waiting for Temporal Historical Pulses</p>
                         </div>
                     ) : (
                         <ResponsiveContainer width="100%" height="100%">
@@ -232,7 +232,7 @@ export function AdminAnalytics({ t }: { t: any }) {
                         </ResponsiveContainer>
                     )}
                 </div>
-            </GlassCard>
+            </SolidCard>
 
             {/* Metrics Grid */}
             <div className="grid grid-cols-1 md:grid-cols-3 gap-6">
@@ -261,27 +261,27 @@ export function AdminAnalytics({ t }: { t: any }) {
 
             <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
                 {/* Top Pages Table */}
-                <GlassCard className="p-6 border border-white/5 bg-black/40">
-                    <h3 className="text-xs font-black uppercase tracking-widest mb-6 flex items-center gap-2">
+                <SolidCard className="p-6 border border-white/5 bg-black/40">
+                    <h3 className="text-xs font-semibold tracking-normal mb-6 flex items-center gap-2">
                         <TrendingUp size={14} className="text-[var(--accent)]" /> Top VFS Routes
                     </h3>
                     <div className="space-y-4">
                         {data?.topPages && data.topPages.length > 0 ? data.topPages.map((page: any, i: number) => (
                             <div key={i} className="flex items-center justify-between p-3 bg-white/5 border border-white/5 hover:border-[var(--accent)]/30 transition-colors">
                                 <span className="font-mono text-[10px] text-white/50">{page.path}</span>
-                                <span className="font-black text-xs">{page.views?.toLocaleString()}</span>
+                                <span className="font-semibold text-xs">{page.views?.toLocaleString()}</span>
                             </div>
                         )) : (
-                            <div className="p-12 text-center text-white/20 uppercase tracking-widest text-[10px] font-black border border-dashed border-white/5 h-[200px] flex items-center justify-center">
+                            <div className="p-12 text-center text-white/20 tracking-normal text-[10px] font-semibold border border-dashed border-white/5 h-[200px] flex items-center justify-center">
                                 No data yet
                             </div>
                         )}
                     </div>
-                </GlassCard>
+                </SolidCard>
 
                 {/* Device Distribution */}
-                <GlassCard className="p-6 border border-white/5 bg-black/40">
-                    <h3 className="text-xs font-black uppercase tracking-widest mb-6 flex items-center gap-2">
+                <SolidCard className="p-6 border border-white/5 bg-black/40">
+                    <h3 className="text-xs font-semibold tracking-normal mb-6 flex items-center gap-2">
                         <Monitor size={14} className="text-[var(--accent)]" /> Hardware Distribution
                     </h3>
                     <div className="space-y-6">
@@ -289,7 +289,7 @@ export function AdminAnalytics({ t }: { t: any }) {
                             const Icon = device.type === 'Desktop' ? Monitor : device.type === 'Mobile' ? Smartphone : Tablet;
                             return (
                                 <div key={i} className="space-y-2">
-                                    <div className="flex justify-between items-center text-[10px] uppercase font-bold tracking-widest text-white/50">
+                                    <div className="flex justify-between items-center text-[10px] font-bold tracking-normal text-white/50">
                                         <span className="flex items-center gap-2"><Icon size={12} /> {device.type}</span>
                                         <span>{device.percentage}%</span>
                                     </div>
@@ -303,12 +303,12 @@ export function AdminAnalytics({ t }: { t: any }) {
                                 </div>
                             );
                         }) : (
-                            <div className="p-12 text-center text-white/20 uppercase tracking-widest text-[10px] font-black border border-dashed border-white/5 h-[200px] flex items-center justify-center">
+                            <div className="p-12 text-center text-white/20 tracking-normal text-[10px] font-semibold border border-dashed border-white/5 h-[200px] flex items-center justify-center">
                                 No data yet
                             </div>
                         )}
                     </div>
-                </GlassCard>
+                </SolidCard>
             </div>
         </motion.div>
     );

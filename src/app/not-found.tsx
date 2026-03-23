@@ -4,7 +4,7 @@ import { ACTIVE_THEME } from "@/theme/config";
 import Link from "next/link";
 import { CopyX, ChevronLeft } from "lucide-react";
 import { Button } from "@/components/ui/Button";
-import { GlassCard } from "@/components/ui/GlassCard";
+import { SolidCard } from "@/components/ui/SolidCard";
 import { useTranslation } from "@/core/i18n/LanguageProvider";
 
 export default function NotFound() {
@@ -15,23 +15,23 @@ export default function NotFound() {
             <div className="absolute inset-0 pointer-events-none z-10 opacity-[0.03] bg-[linear-gradient(rgba(18,16,16,0)_50%,rgba(0,0,0,0.25)_50%),linear-gradient(90deg,rgba(255,0,0,0.06),rgba(0,255,0,0.02),rgba(0,0,255,0.06))] bg-[length:100%_2px,3px_100%]" aria-hidden="true" />
 
             <div className="z-20 w-full max-w-md">
-                <GlassCard>
+                <SolidCard>
                     <header className="space-y-4">
                         <div className="flex justify-center">
-                            <div className="p-4 rounded-full glass text-accent">
+                            <div className="p-4 rounded-full bg-[#0a0a0a] border border-white/10 rounded-xl shadow-lg text-accent">
                                 <CopyX size={32} strokeWidth={1.5} />
                             </div>
                         </div>
                         <div className="text-center">
-                            <h1 className="text-2xl font-black technical tracking-[0.2em]">{t["404"].title}</h1>
-                            <p className="text-[10px] text-white/40 uppercase tracking-[0.3em] font-bold mt-2">
+                            <h1 className="text-2xl font-bold tracking-normal]">{t["404"].title}</h1>
+                            <p className="text-[10px] text-white/40 tracking-normal] font-bold mt-2">
                                 {t["404"].subtitle}
                             </p>
                         </div>
                     </header>
 
                     <div className="space-y-4 text-center mt-6">
-                        <p className="text-[10px] text-white/50 uppercase tracking-widest leading-loose max-w-[350px] mx-auto">
+                        <p className="text-[10px] text-white/50 tracking-normal leading-loose max-w-[350px] mx-auto">
                             {t["404"].description}
                         </p>
 
@@ -39,7 +39,7 @@ export default function NotFound() {
                             <Button
                                 as={Link}
                                 href={`/${language}`}
-                                variant="glass-accent"
+                                variant="solid-accent"
                                 className="w-full"
                             >
                                 <ChevronLeft size={14} className="group-hover:-translate-x-1 transition-transform mr-1" />
@@ -47,7 +47,7 @@ export default function NotFound() {
                             </Button>
                         </div>
                     </div>
-                </GlassCard>
+                </SolidCard>
             </div>
         </main>
     );

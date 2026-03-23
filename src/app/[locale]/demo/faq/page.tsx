@@ -24,11 +24,11 @@ export default function FAQDemoPage() {
                 animate={{ opacity: 1, y: 0 }}
                 className="w-full max-w-4xl text-center space-y-6 mb-24"
             >
-                <div className="inline-flex items-center gap-2 px-3 py-1 bg-[var(--accent)]/10 border border-[var(--accent)]/20 text-[var(--accent)] text-[10px] font-black uppercase tracking-[0.2em] mb-4">
+                <div className="inline-flex items-center gap-2 px-3 py-1 bg-[var(--accent)]/10 border border-[var(--accent)]/20 text-[var(--accent)] text-[10px] font-semibold tracking-normal] mb-4">
                     <HelpCircle size={12} />
                     Knowledge Matrix v1.0
                 </div>
-                <h1 className="text-4xl md:text-6xl font-black uppercase tracking-widest">
+                <h1 className="text-4xl md:text-6xl font-semibold tracking-normal">
                     Protocol <span className="text-[var(--accent)]">Knowledge</span>
                 </h1>
                 <p className="text-white/50 font-serif italic text-lg max-w-2xl mx-auto">

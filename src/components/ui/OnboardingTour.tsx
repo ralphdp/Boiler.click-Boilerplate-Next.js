@@ -55,7 +55,7 @@ export function OnboardingTour({ userId }: { userId?: string }) {
                 initial={{ opacity: 0 }}
                 animate={{ opacity: 1 }}
                 exit={{ opacity: 0 }}
-                className="fixed inset-0 z-[9999] flex items-center justify-center bg-black/80 backdrop-blur-md p-4"
+                className="fixed inset-0 z-[9999] flex items-center justify-center p-4"
             >
                 <div className="absolute inset-0 z-0 pointer-events-none" onClick={completeTour} />
 
@@ -63,7 +63,7 @@ export function OnboardingTour({ userId }: { userId?: string }) {
                     initial={{ opacity: 0, scale: 0.9, y: 20 }}
                     animate={{ opacity: 1, scale: 1, y: 0 }}
                     transition={{ type: "spring", damping: 25, stiffness: 300, delay: 0.2 }}
-                    className="relative z-10 w-full max-w-lg bg-black border border-white/20 shadow-2xl overflow-hidden glass-accent shadow-[var(--accent)]/10"
+                    className="relative z-10 w-full max-w-lg bg-[#0a0a0a] border border-white/10 shadow-2xl overflow-hidden rounded-md shadow-[var(--accent)]/10"
                 >
                     <div className="absolute top-0 left-0 w-full h-1 bg-white/5">
                         <motion.div
@@ -79,15 +79,15 @@ export function OnboardingTour({ userId }: { userId?: string }) {
                     </button>
 
                     <div className="p-8 space-y-6 text-center">
-                        <div className="w-16 h-16 rounded-full bg-[var(--accent)]/10 text-[var(--accent)] flex items-center justify-center mx-auto mb-2 border border-[var(--accent)]/30">
+                        <div className="w-16 h-16 rounded-md bg-[var(--accent)]/10 text-[var(--accent)] flex items-center justify-center mx-auto mb-2 border border-[var(--accent)]/30">
                             <Sparkles size={24} />
                         </div>
 
                         <div className="space-y-3">
-                            <h2 className="text-xl font-black uppercase tracking-widest text-white font-mono">
+                            <h2 className="text-xl font-bold tracking-normal text-white font-mono">
                                 {steps[step].title}
                             </h2>
-                            <p className="text-sm font-serif italic text-white/50 leading-relaxed max-w-xs mx-auto">
+                            <p className="text-sm font-sans text-white/50 leading-relaxed max-w-xs mx-auto">
                                 {steps[step].description}
                             </p>
                         </div>
@@ -106,14 +106,14 @@ export function OnboardingTour({ userId }: { userId?: string }) {
                                 {step < steps.length - 1 ? (
                                     <button
                                         onClick={() => setStep(step + 1)}
-                                        className="bg-white/5 border border-white/10 hover:bg-white/10 px-6 py-2 text-xs font-black uppercase tracking-widest hover:text-[var(--accent)] hover:border-[var(--accent)] transition-colors flex items-center gap-2 text-white"
+                                        className="bg-white/5 border border-white/10 hover:bg-white/10 px-6 py-2 text-xs font-bold tracking-normal hover:text-[var(--accent)] hover:border-[var(--accent)] transition-colors flex items-center gap-2 text-white"
                                     >
                                         Next <ChevronRight size={14} />
                                     </button>
                                 ) : (
                                     <button
                                         onClick={completeTour}
-                                        className="bg-[var(--accent)] text-black border border-[var(--accent)] hover:bg-black hover:text-[var(--accent)] px-6 py-2 text-xs font-black uppercase tracking-widest transition-colors flex items-center gap-2"
+                                        className="bg-[var(--accent)] text-black border border-[var(--accent)] hover:bg-black hover:text-[var(--accent)] px-6 py-2 text-xs font-bold tracking-normal transition-colors flex items-center gap-2"
                                     >
                                         Initialize <Check size={14} />
                                     </button>

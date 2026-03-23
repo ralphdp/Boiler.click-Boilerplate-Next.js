@@ -2,7 +2,7 @@
 
 import { motion, AnimatePresence } from "framer-motion";
 import { AlertCircle, X, Check } from "lucide-react";
-import { GlassCard } from "./GlassCard";
+import { SolidCard } from "./SolidCard";
 import { Button } from "./Button";
 
 interface ConfirmationModalProps {
@@ -22,8 +22,8 @@ export function ConfirmationModal({
     description,
     onConfirm,
     onCancel,
-    confirmText = "CONFIRM",
-    cancelText = "CANCEL",
+    confirmText = "Confirm",
+    cancelText = "Cancel",
     variant = "danger"
 }: ConfirmationModalProps) {
     const variantColors = {
@@ -45,7 +45,7 @@ export function ConfirmationModal({
                     initial={{ opacity: 0 }}
                     animate={{ opacity: 1 }}
                     exit={{ opacity: 0 }}
-                    className="fixed inset-0 z-[100] flex items-center justify-center p-4 bg-black/60 backdrop-blur-sm"
+                    className="fixed inset-0 z-[100] flex items-center justify-center p-4 bg-[#050505]/95"
                 >
                     <motion.div
                         initial={{ scale: 0.9, opacity: 0, y: 20 }}
@@ -53,7 +53,7 @@ export function ConfirmationModal({
                         exit={{ scale: 0.9, opacity: 0, y: 20 }}
                         className="max-w-md w-full"
                     >
-                        <GlassCard className={`border ${variantColors[variant].split(' ')[1]} p-8 space-y-6 relative overflow-hidden`}>
+                        <SolidCard className={`border ${variantColors[variant].split(' ')[1]} p-8 space-y-6 relative overflow-hidden bg-[#0a0a0a]`}>
                             <div className={`absolute top-0 left-0 w-full h-[1px] bg-gradient-to-r ${variantColors[variant].split(' ')[0]}`} />
 
                             <div className="flex flex-col items-center text-center space-y-4">
@@ -61,10 +61,10 @@ export function ConfirmationModal({
                                     <AlertCircle className={variantColors[variant].split(' ')[2]} size={24} />
                                 </div>
                                 <div className="space-y-2">
-                                    <h2 className="text-xl font-black tracking-tighter uppercase text-white">
+                                    <h2 className="text-xl font-bold tracking-normal text-white">
                                         {title}
                                     </h2>
-                                    <p className="text-xs text-white/50 font-mono leading-relaxed uppercase tracking-widest">
+                                    <p className="text-sm text-white/50 leading-relaxed">
                                         {description}
                                     </p>
                                 </div>
@@ -74,7 +74,7 @@ export function ConfirmationModal({
                                 <Button
                                     variant="outline"
                                     onClick={onCancel}
-                                    className="flex-1 uppercase text-[10px] font-black tracking-widest border-white/5 bg-white/5 hover:bg-white/10"
+                                    className="flex-1 font-bold border-white/10 bg-white/5 hover:bg-white/10 text-white/70 hover:text-white"
                                     tooltip="Abort the current operation and close the modal."
                                     tooltipTerm="PROTOCOL_ABORT"
                                 >
@@ -82,14 +82,14 @@ export function ConfirmationModal({
                                 </Button>
                                 <Button
                                     onClick={onConfirm}
-                                    className={`flex-2 ${buttonColors[variant]} text-white uppercase text-[10px] font-black tracking-widest h-[52px]`}
+                                    className={`flex-2 ${buttonColors[variant]} text-white font-bold h-[52px]`}
                                     tooltip="Confirm and execute the requested structural modification."
                                     tooltipTerm="PROTOCOL_EXECUTE"
                                 >
                                     <Check size={14} className="mr-2" /> {confirmText}
                                 </Button>
                             </div>
-                        </GlassCard>
+                        </SolidCard>
                     </motion.div>
                 </motion.div>
             )}

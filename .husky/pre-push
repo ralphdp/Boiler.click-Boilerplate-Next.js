@@ -1,0 +1,11 @@
+#!/bin/sh
+. "$(dirname "$0")/_/husky.sh"
+
+echo "[VANGUARD PRE-PUSH] Triggering L0 Resilience Scanner..."
+npx ts-node scripts/resilience-scanner.ts
+
+# Exit if logic drift detected
+if [ $? -ne 0 ]; then
+  echo "❌ [ERROR] Pre-push aborted: Critical Logic Drift Detected (ΔS_CRITICAL)"
+  exit 1
+fi

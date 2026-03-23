@@ -107,14 +107,14 @@ export function Tooltip({ content, children, term, className }: TooltipProps) {
                     }}
                     className="z-[9999] pointer-events-none"
                 >
-                    <div className="bg-black/95 border border-white/20 px-4 py-3 shadow-[0_20px_50px_rgba(0,0,0,0.8)] backdrop-blur-3xl pointer-events-none text-left rounded-sm relative">
+                    <div className="bg-[#000000] border border-white/20 px-4 py-3 shadow-2xl pointer-events-none text-left rounded-sm relative">
                         {term && (
-                            <div className="text-[0.625rem] font-black uppercase tracking-[0.2em] text-[var(--accent)] mb-1.5 border-b border-white/10 pb-1.5 flex items-center justify-between">
+                            <div className="text-[0.625rem] font-bold tracking-normal] text-[var(--accent)] mb-1.5 border-b border-white/10 pb-1.5 flex items-center justify-between">
                                 <span>{term}</span>
                                 <span className="w-1.5 h-1.5 bg-[var(--accent)] animate-pulse rounded-full" />
                             </div>
                         )}
-                        <div className="text-[0.6875rem] leading-relaxed text-zinc-300 font-sans uppercase tracking-[0.15em]">
+                        <div className="text-[0.6875rem] leading-relaxed text-zinc-300 font-sans tracking-normal]">
                             {content}
                         </div>
                         {/* Shadow Arrow */}

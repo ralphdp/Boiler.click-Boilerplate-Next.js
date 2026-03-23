@@ -1,7 +1,7 @@
 "use client";
 
 import { ShoppingCart } from "lucide-react";
-import { GlassCard } from "@/components/ui/GlassCard";
+import { SolidCard } from "@/components/ui/SolidCard";
 
 interface Product {
     id: string;
@@ -27,17 +27,17 @@ export function MarketplaceShowcase({
 }: MarketplaceShowcaseProps) {
     if (products.length === 0) {
         return (
-            <GlassCard className="p-12 text-center flex flex-col items-center justify-center border-dashed border-white/20">
+            <SolidCard className="p-12 text-center flex flex-col items-center justify-center border-dashed border-white/20">
                 <ShoppingCart size={32} className="text-white/20 mb-4" />
                 <div className="text-sm font-mono text-white/50">{noProductsText}</div>
-            </GlassCard>
+            </SolidCard>
         );
     }
 
     return (
         <div className="grid grid-cols-1 md:grid-cols-3 gap-6">
             {products.map(product => (
-                <GlassCard key={product.id} className="flex flex-col overflow-hidden hover:border-[var(--accent)]/50 transition-colors group">
+                <SolidCard key={product.id} className="flex flex-col overflow-hidden hover:border-[var(--accent)]/50 transition-colors group">
                     <div className="w-full h-48 bg-black/50 border-b border-white/5 relative flex items-center justify-center overflow-hidden">
                         {product.imageUrl ? (
                             <img
@@ -46,7 +46,7 @@ export function MarketplaceShowcase({
                                 className="w-full h-full object-cover group-hover:scale-105 transition-transform duration-500"
                             />
                         ) : (
-                            <div className="font-mono text-[10px] text-white/20 uppercase tracking-widest">
+                            <div className="font-mono text-[10px] text-white/20 tracking-normal">
                                 {noImageAssetText}
                             </div>
                         )}
@@ -63,12 +63,12 @@ export function MarketplaceShowcase({
                             href={product.stripeLink || "#"}
                             target="_blank"
                             rel="noopener noreferrer"
-                            className="w-full bg-white/5 border border-white/10 hover:bg-[var(--accent)] hover:text-white hover:border-[var(--accent)] uppercase tracking-widest text-xs font-bold transition-all p-2 text-center block"
+                            className="w-full bg-white/5 border border-white/10 hover:bg-[var(--accent)] hover:text-white hover:border-[var(--accent)] tracking-normal text-xs font-bold transition-all p-2 text-center block"
                         >
                             {acquireAssetText}
                         </a>
                     </div>
-                </GlassCard>
+                </SolidCard>
             ))}
         </div>
     );

@@ -1,7 +1,7 @@
 "use client";
 
 import { useSession } from "next-auth/react";
-import { GlassCard } from "@/components/ui/GlassCard";
+import { SolidCard } from "@/components/ui/SolidCard";
 import { Button } from "@/components/ui/Button";
 import { Input } from "@/components/ui/Input";
 import Link from "next/link";
@@ -147,7 +147,7 @@ export default function DeveloperPage() {
     };
 
     return (
-        <main className="relative min-h-screen flex flex-col items-center justify-center p-6 text-white overflow-hidden">
+        <main className="relative min-h-[100dvh] flex flex-col items-center justify-start p-6 pt-24 pb-32 text-white overflow-hidden">
             <div className="w-full max-w-2xl mb-6">
                 <Button as={Link} href={`/${language}/dashboard`} variant="ghost" className="w-fit text-white/50 px-0">
                     <ArrowLeft size={14} />
@@ -155,13 +155,13 @@ export default function DeveloperPage() {
                 </Button>
             </div>
 
-            <GlassCard className="w-full max-w-2xl space-y-8">
+            <SolidCard className="w-full max-w-2xl space-y-8">
                 <div className="space-y-2 text-left">
-                    <h1 className="text-2xl font-black technical tracking-[0.2em] uppercase text-[var(--accent)] flex items-center gap-3">
-                        <KeyRound size={24} />
-                        DEVELOPER API KEYS
+                    <h1 className="text-2xl font-bold tracking-normal text-white flex items-center gap-3">
+                        <KeyRound size={24} className="text-[var(--accent)]" />
+                        Developer API Keys
                     </h1>
-                    <p className="text-[10px] uppercase tracking-[0.2em] font-bold text-white/50">
+                    <p className="text-sm text-white/50">
                         Cryptographic Access Management
                     </p>
                 </div>
@@ -169,11 +169,11 @@ export default function DeveloperPage() {
                 <div className="w-full h-px bg-white/5" />
 
                 {revealedKey && (
-                    <div className="bg-[var(--accent)]/10 border border-[var(--accent)]/50 p-6 rounded-lg space-y-4 mb-8">
-                        <div className="flex items-center gap-3 text-[var(--accent)] font-bold text-sm tracking-widest uppercase">
-                            <ShieldAlert size={16} /> NEW KEY GENERATED
+                    <div className="bg-[#0a0a0a] border border-white/10 p-6 space-y-4 mb-8">
+                        <div className="flex items-center gap-3 text-[var(--accent)] font-semibold text-sm">
+                            <ShieldAlert size={16} /> New Key Generated
                         </div>
-                        <p className="text-[10px] uppercase font-mono text-white/70">
+                        <p className="text-xs font-mono text-white/70">
                             Please copy this key immediately. For security, it will never be displayed again.
                         </p>
                         <div className="flex flex-col sm:flex-row gap-4 items-center">
@@ -181,33 +181,33 @@ export default function DeveloperPage() {
                                 <Input
                                     readOnly
                                     value={revealedKey}
-                                    className="font-mono text-sm tracking-widest text-[var(--accent)] border-[var(--accent)]/30 h-[52px]"
+                                    className="font-mono text-sm text-[var(--accent)] border-[var(--accent)]/30 bg-[var(--accent)]/5"
                                 />
                             </div>
-                            <Button variant="glass-accent" onClick={handleCopy} className="shrink-0 h-[52px]">
-                                COPY KEY
+                            <Button variant="solid-accent" onClick={handleCopy} className="w-full sm:w-fit shrink-0">
+                                Copy Key
                             </Button>
                         </div>
                         <Button variant="ghost" onClick={() => setRevealedKey(null)} className="w-fit text-xs px-0 text-white/40 hover:text-white">
-                            I HAVE SAVED IT DIRECTLY
+                            I have saved it directly
                         </Button>
                     </div>
                 )}
 
                 <div className="space-y-6">
                     <div>
-                        <h2 className="text-[10px] font-black technical tracking-[0.2em] uppercase text-white/70 mb-4">Provision New Client Key</h2>
+                        <h2 className="text-xs font-semibold text-white/70 mb-4">Provision New Client Key</h2>
                         <div className="flex flex-col sm:flex-row gap-4">
                             <div className="flex-1 w-full">
                                 <Input
                                     value={newKeyName}
                                     onChange={(e) => setNewKeyName(e.target.value)}
-                                    placeholder="IDENTIFIER (E.G. PRODUCTION SUBSTRATE)"
-                                    className="uppercase tracking-widest text-white h-[52px]"
+                                    placeholder="Identifier (e.g. Production Substrate)"
+                                    className="text-white bg-[#0a0a0a]"
                                 />
                             </div>
-                            <Button onClick={handleGenerate} disabled={!newKeyName || isGenerating} variant="glass-accent" className="shrink-0 h-[52px]">
-                                <Plus size={14} /> GENERATE
+                            <Button onClick={handleGenerate} disabled={!newKeyName || isGenerating} variant="solid-accent" className="w-full sm:w-fit shrink-0">
+                                <Plus size={14} /> Generate
                             </Button>
                         </div>
                     </div>
@@ -215,16 +215,16 @@ export default function DeveloperPage() {
                     <div className="w-full h-px bg-white/5" />
 
                     <div>
-                        <h2 className="text-[10px] font-black technical tracking-[0.2em] uppercase text-white/70 mb-4">Active API Keys</h2>
+                        <h2 className="text-xs font-semibold text-white/70 mb-4">Active API Keys</h2>
 
                         {loading ? (
-                            <p className="text-white/30 text-xs font-mono uppercase tracking-widest animate-pulse">Decrypting matrix...</p>
+                            <p className="text-white/30 text-sm animate-pulse">Decrypting matrix...</p>
                         ) : keys.length === 0 ? (
-                            <motion.div initial={{ opacity: 0 }} animate={{ opacity: 1 }} className="p-8 border border-dashed border-white/10 bg-black/20 flex flex-col items-center justify-center space-y-3">
+                            <motion.div initial={{ opacity: 0 }} animate={{ opacity: 1 }} className="p-8 border border-white/5 bg-[#0a0a0a] flex flex-col items-center justify-center space-y-3">
                                 <div className="w-8 h-8 rounded-full border border-white/5 bg-white/5 flex items-center justify-center mb-2">
                                     <KeyRound size={14} className="text-white/30" />
                                 </div>
-                                <p className="text-white/40 text-[10px] font-black technical tracking-[0.2em] uppercase">No Access Tokens Detected</p>
+                                <p className="text-white/50 text-sm font-semibold">No Access Tokens Detected</p>
                             </motion.div>
                         ) : (
                             <motion.div
@@ -242,20 +242,20 @@ export default function DeveloperPage() {
                                             show: { opacity: 1, y: 0 }
                                         }}
                                         key={k.id}
-                                        className="p-4 bg-white/5 border border-white/10 flex items-center justify-between transition-all duration-300 hover:border-white/20 hover:bg-white/10"
+                                        className="p-4 bg-[#0a0a0a] border border-white/5 flex items-center justify-between transition-colors hover:border-white/20"
                                     >
                                         <div className="flex flex-col gap-2 w-full">
                                             <div className="flex items-center justify-between">
-                                                <h3 className="font-bold uppercase tracking-widest text-xs text-white p-1 bg-white/10">{k.name}</h3>
+                                                <h3 className="font-semibold text-sm text-white px-2 py-1 bg-white/5">{k.name}</h3>
                                                 <Button variant="ghost" onClick={() => handleRevoke(k.id, k.name)} disabled={isGenerating} className="shrink-0 text-red-500 hover:text-red-400 hover:bg-red-500/10 h-8 w-8 !p-0 rounded-full flex items-center justify-center">
                                                     <Trash2 size={14} />
                                                 </Button>
                                             </div>
                                             <div className="flex flex-col sm:flex-row justify-between text-white/40 gap-4 w-full">
-                                                <div className="bg-black/80 px-4 py-2 border border-white/5 font-mono text-sm tracking-widest w-full">
+                                                <div className="bg-black px-4 py-2 border border-white/5 font-mono text-sm w-full">
                                                     {k.preview}
                                                 </div>
-                                                <div className="font-mono text-[9px] uppercase tracking-widest self-end whitespace-nowrap">
+                                                <div className="font-mono text-xs self-end whitespace-nowrap">
                                                     {new Date(k.createdAt).toLocaleDateString()}
                                                 </div>
                                             </div>
@@ -268,114 +268,118 @@ export default function DeveloperPage() {
                 </div>
                 <div className="w-full h-px bg-white/5" />
 
-                {activeWorkspace && (
-                    <div className="space-y-6">
-                        <div className="space-y-2 text-left">
-                            <h2 className="text-xl font-black technical tracking-[0.2em] uppercase text-[#00E676] flex items-center gap-3">
-                                <Webhook size={20} />
-                                CRYPTOGRAPHIC WEBHOOKS
-                            </h2>
-                            <p className="text-[10px] uppercase tracking-[0.2em] font-bold text-white/50">
-                                Bind event streams to external URLs.
-                            </p>
-                        </div>
+                {
+                    activeWorkspace && (
+                        <div className="space-y-6">
+                            <div className="space-y-2 text-left">
+                                <h2 className="text-xl font-bold tracking-normal text-[#00E676] flex items-center gap-3">
+                                    <Webhook size={20} />
+                                    Cryptographic Webhooks
+                                </h2>
+                                <p className="text-sm text-white/50">
+                                    Bind event streams to external URLs.
+                                </p>
+                            </div>
 
-                        <div>
-                            <h2 className="text-[10px] font-black technical tracking-[0.2em] uppercase text-white/70 mb-4">Mount New Webhook</h2>
-                            <div className="flex flex-col space-y-4">
-                                <Input
-                                    value={newWebhookDesc}
-                                    onChange={(e) => setNewWebhookDesc(e.target.value)}
-                                    placeholder="DESCRIPTION (E.G. PRIMARY INGEST NODE)"
-                                    className="uppercase tracking-widest text-white h-[52px]"
-                                />
-                                <div className="flex flex-col sm:flex-row gap-4">
-                                    <div className="flex-1 w-full">
-                                        <Input
-                                            value={newWebhookUrl}
-                                            onChange={(e) => setNewWebhookUrl(e.target.value)}
-                                            placeholder="HTTPS://..."
-                                            className="font-mono text-white/80 focus:border-[#00E676] h-[52px]"
-                                        />
+                            <div>
+                                <h2 className="text-xs font-semibold text-white/70 mb-4">Mount New Webhook</h2>
+                                <div className="flex flex-col space-y-4">
+                                    <Input
+                                        value={newWebhookDesc}
+                                        onChange={(e) => setNewWebhookDesc(e.target.value)}
+                                        placeholder="Description (e.g. Primary Ingest Node)"
+                                        className="text-white bg-[#0a0a0a]"
+                                    />
+                                    <div className="flex flex-col sm:flex-row gap-4">
+                                        <div className="flex-1 w-full">
+                                            <Input
+                                                value={newWebhookUrl}
+                                                onChange={(e) => setNewWebhookUrl(e.target.value)}
+                                                placeholder="https://..."
+                                                className="font-mono text-white/80 focus:border-[#00E676] bg-[#0a0a0a]"
+                                            />
+                                        </div>
+                                        <Button onClick={handleRegisterWebhook} disabled={!newWebhookUrl || !newWebhookDesc || isGenerating} variant="solid-accent" className="w-full sm:w-fit shrink-0 bg-[#00E676]/20 text-[#00E676] border border-[#00E676]/50 hover:bg-[#00E676]/40">
+                                            <Plus size={14} /> Mount
+                                        </Button>
                                     </div>
-                                    <Button onClick={handleRegisterWebhook} disabled={!newWebhookUrl || !newWebhookDesc || isGenerating} variant="glass-accent" className="shrink-0 bg-[#00E676]/20 text-[#00E676] border-[#00E676]/50 hover:bg-[#00E676]/40 h-[52px]">
-                                        <Plus size={14} /> MOUNT
-                                    </Button>
                                 </div>
                             </div>
-                        </div>
 
-                        <div className="w-full h-px bg-white/5" />
+                            <div className="w-full h-px bg-white/5" />
 
-                        <div>
-                            <h2 className="text-[10px] font-black technical tracking-[0.2em] uppercase text-white/70 mb-4">Active Sinks</h2>
+                            <div>
+                                <h2 className="text-xs font-semibold text-white/70 mb-4">Active Sinks</h2>
 
-                            {webhooks.length === 0 ? (
-                                <motion.div initial={{ opacity: 0 }} animate={{ opacity: 1 }} className="p-8 border border-dashed border-white/10 bg-black/20 flex flex-col items-center justify-center space-y-3">
-                                    <div className="w-8 h-8 rounded-full border border-white/5 bg-white/5 flex items-center justify-center mb-2">
-                                        <Webhook size={14} className="text-white/30" />
-                                    </div>
-                                    <p className="text-white/40 text-[10px] font-black technical tracking-[0.2em] uppercase">No active webhooks mounted</p>
-                                </motion.div>
-                            ) : (
-                                <motion.div
-                                    initial="hidden" animate="show"
-                                    variants={{
-                                        hidden: { opacity: 0 },
-                                        show: { opacity: 1, transition: { staggerChildren: 0.1 } }
-                                    }}
-                                    className="space-y-3"
-                                >
-                                    {webhooks.map((w, i) => (
-                                        <motion.div
-                                            variants={{
-                                                hidden: { opacity: 0, y: 10 },
-                                                show: { opacity: 1, y: 0 }
-                                            }}
-                                            key={w.id}
-                                            className="p-4 bg-white/5 border border-white/10 flex items-center justify-between transition-all duration-300 hover:border-white/20 hover:bg-white/10"
-                                        >
-                                            <div className="flex flex-col gap-2 w-full">
-                                                <div className="flex items-center justify-between">
-                                                    <h3 className="font-bold uppercase tracking-widest text-xs text-white p-1 bg-white/10">{w.description}</h3>
-                                                    <Button variant="ghost" onClick={() => handleUnregisterWebhook(w.id, w.description)} disabled={isGenerating} className="shrink-0 text-red-500 hover:text-red-400 hover:bg-red-500/10 h-8 w-8 !p-0 rounded-full flex items-center justify-center">
-                                                        <Trash2 size={14} />
-                                                    </Button>
-                                                </div>
-                                                <div className="flex flex-col sm:flex-row justify-between text-white/40 gap-2 w-full">
-                                                    <div className="bg-black/80 px-4 py-2 border border-white/5 font-mono text-xs tracking-widest w-full truncate">
-                                                        {w.url}
+                                {webhooks.length === 0 ? (
+                                    <motion.div initial={{ opacity: 0 }} animate={{ opacity: 1 }} className="p-8 border border-white/5 bg-[#0a0a0a] flex flex-col items-center justify-center space-y-3">
+                                        <div className="w-8 h-8 rounded-full border border-white/5 bg-white/5 flex items-center justify-center mb-2">
+                                            <Webhook size={14} className="text-white/30" />
+                                        </div>
+                                        <p className="text-white/50 text-sm font-semibold">No active webhooks mounted</p>
+                                    </motion.div>
+                                ) : (
+                                    <motion.div
+                                        initial="hidden" animate="show"
+                                        variants={{
+                                            hidden: { opacity: 0 },
+                                            show: { opacity: 1, transition: { staggerChildren: 0.1 } }
+                                        }}
+                                        className="space-y-3"
+                                    >
+                                        {webhooks.map((w, i) => (
+                                            <motion.div
+                                                variants={{
+                                                    hidden: { opacity: 0, y: 10 },
+                                                    show: { opacity: 1, y: 0 }
+                                                }}
+                                                key={w.id}
+                                                className="p-4 bg-[#0a0a0a] border border-white/5 flex items-center justify-between transition-colors hover:border-white/20"
+                                            >
+                                                <div className="flex flex-col gap-2 w-full">
+                                                    <div className="flex items-center justify-between">
+                                                        <h3 className="font-semibold text-sm text-white px-2 py-1 bg-white/5">{w.description}</h3>
+                                                        <Button variant="ghost" onClick={() => handleUnregisterWebhook(w.id, w.description)} disabled={isGenerating} className="shrink-0 text-red-500 hover:text-red-400 hover:bg-red-500/10 h-8 w-8 !p-0 rounded-full flex items-center justify-center">
+                                                            <Trash2 size={14} />
+                                                        </Button>
                                                     </div>
-                                                    <div className="font-mono text-[9px] uppercase tracking-widest self-end whitespace-nowrap">
-                                                        MOUNTED: {new Date(w.createdAt).toLocaleDateString()}
+                                                    <div className="flex flex-col sm:flex-row justify-between text-white/40 gap-2 w-full">
+                                                        <div className="bg-black px-4 py-2 border border-white/5 font-mono text-xs w-full truncate">
+                                                            {w.url}
+                                                        </div>
+                                                        <div className="font-mono text-[10px] self-end whitespace-nowrap">
+                                                            Mounted: {new Date(w.createdAt).toLocaleDateString()}
+                                                        </div>
                                                     </div>
                                                 </div>
-                                            </div>
-                                        </motion.div>
-                                    ))}
-                                </motion.div>
-                            )}
+                                            </motion.div>
+                                        ))}
+                                    </motion.div>
+                                )}
+                            </div>
                         </div>
+                    )
+                }
+
+                <div className="w-full h-px bg-white/5" />
+
+                {/* API Trace Embedded Inside Card */}
+                <div className="space-y-4 text-left w-full mt-4">
+                    <h2 className="text-sm font-bold tracking-normal text-[#00E676] flex items-center gap-2">
+                        <KeyRound size={16} /> API Integration Trace
+                    </h2>
+                    <p className="text-xs text-white/50">
+                        Hit the ping route using the <span className="text-white">Authorization: Bearer</span> matrix to test your cryptocipher.
+                    </p>
+                    <div className="relative group p-4 bg-black/50 border border-white/10 overflow-x-auto rounded-md">
+                        <pre className="text-xs font-mono text-white/70">
+                            <span className="text-[#00E676]">curl</span> -X GET \{"\n"}
+                            {'  '}https://yourapi.com/api/v1/ping \{"\n"}
+                            {'  '}-H <span className="text-[var(--accent)]">"Authorization: Bearer sk_van_YOUR_SECRET_KEY"</span>
+                        </pre>
                     </div>
-                )}
-            </GlassCard>
-
-            {activeWorkspace && <div className="w-full h-px bg-white/5" />}
-            <div className="space-y-4">
-                <h2 className="text-[10px] font-black technical tracking-[0.2em] uppercase text-[#00E676] mb-4 flex items-center gap-2">
-                    <KeyRound size={12} /> API Integration Trace
-                </h2>
-                <p className="text-[10px] uppercase font-mono text-white/50">
-                    Hit the ping route using the <span className="text-white">Authorization: Bearer</span> matrix to test your cryptocipher.
-                </p>
-                <div className="relative group p-4 bg-black/50 border border-white/10 overflow-x-auto">
-                    <pre className="text-xs font-mono text-white/70">
-                        <span className="text-[#00E676]">curl</span> -X GET \{"\n"}
-                        {'  '}https://yourapi.com/api/v1/ping \{"\n"}
-                        {'  '}-H <span className="text-[var(--accent)]">"Authorization: Bearer sk_van_YOUR_SECRET_KEY"</span>
-                    </pre>
                 </div>
-            </div>
+            </SolidCard>
 
             <div className="absolute inset-0 z-[-1] opacity-5 pointer-events-none" aria-hidden="true">
                 <div className="w-full h-full bg-[radial-gradient(circle_at_center,var(--accent)_1px,transparent_1px)] [background-size:32px_32px]" />
@@ -398,16 +402,18 @@ export default function DeveloperPage() {
                 onCancel={closeConfirm}
             />
 
-            {cipherAction?.open && (
-                <CipherGate
-                    t={t}
-                    onSuccess={() => {
-                        cipherAction.onConfirm();
-                        setCipherAction(null);
-                    }}
-                    onCancel={() => setCipherAction(null)}
-                />
-            )}
-        </main>
+            {
+                cipherAction?.open && (
+                    <CipherGate
+                        t={t}
+                        onSuccess={() => {
+                            cipherAction.onConfirm();
+                            setCipherAction(null);
+                        }}
+                        onCancel={() => setCipherAction(null)}
+                    />
+                )
+            }
+        </main >
     );
 }

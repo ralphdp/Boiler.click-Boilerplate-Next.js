@@ -41,6 +41,10 @@ jobs:
       - name: Type Integrity Check
         run: npx tsc --noEmit
         
+      - name: Sovereign Resilience Autoscanner (ΔS_CRITICAL Check)
+        run: npx ts-node scripts/resilience-scanner.ts
+
+        
       - name: Unit & Integration Matrix
         run: npm run test
         

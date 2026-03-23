@@ -1,6 +1,6 @@
 "use server";
 
-import { getAdminDb } from "@/core/firebase/admin";
+import { getAdminDb, getCollectionName } from "@/core/firebase/admin";
 import { auth } from "@/core/auth";
 
 export async function checkSessionValidity() {
@@ -9,7 +9,7 @@ export async function checkSessionValidity() {
 
     try {
         const db = getAdminDb();
-        const userSnap = await db.collection("users").doc(session.user.id).get();
+        const userSnap = await db.collection(getCollectionName("users")).doc(session.user.id).get();
         if (!userSnap.exists) return { valid: true, forceRefresh: false }; // Normal case if users document isn't fully established yet
 
         const data = userSnap.data();

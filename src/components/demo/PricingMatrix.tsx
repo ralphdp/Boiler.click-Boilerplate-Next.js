@@ -2,7 +2,7 @@
 
 import { motion } from "framer-motion";
 import { CheckCircle2, X } from "lucide-react";
-import { GlassCard } from "@/components/ui/GlassCard";
+import { SolidCard } from "@/components/ui/SolidCard";
 import { Button } from "@/components/ui/Button";
 
 interface Tier {
@@ -32,9 +32,9 @@ export function PricingMatrix({ tiers, recommendedPlan, perMonthText = "/month",
             {tiers.map(tier => {
                 const isRecommended = tier.recommended || recommendedPlan === tier.id;
                 return (
-                    <GlassCard key={tier.id} className={`p-8 flex flex-col justify-between transition-all relative overflow-hidden ${isRecommended ? 'border-[var(--accent)]/50 bg-[var(--accent)]/10 shadow-[0_0_30px_rgba(var(--accent-rgb),0.1)]' : 'hover:border-white/20'}`}>
+                    <SolidCard key={tier.id} className={`p-8 flex flex-col justify-between transition-all relative overflow-hidden ${isRecommended ? 'border-[var(--accent)]/50 bg-[var(--accent)]/10 shadow-[0_0_30px_rgba(var(--accent-rgb),0.1)]' : 'hover:border-white/20'}`}>
                         {isRecommended && (
-                            <div className="absolute top-0 right-0 bg-[var(--accent)] text-white text-[10px] uppercase font-bold tracking-widest px-3 py-1">
+                            <div className="absolute top-0 right-0 bg-[var(--accent)] text-white text-[10px] font-bold tracking-normal px-3 py-1">
                                 {recommendedLabel}
                             </div>
                         )}
@@ -43,7 +43,7 @@ export function PricingMatrix({ tiers, recommendedPlan, perMonthText = "/month",
                                 <h3 className={`text-xl font-bold uppercase tracking-widest ${isRecommended ? 'text-[var(--accent)]' : ''}`}>
                                     {tier.name}
                                 </h3>
-                                <div className="text-4xl font-black">
+                                <div className="text-4xl font-bold">
                                     ${tier.price}
                                     <span className="text-sm font-normal text-white/50">{perMonthText}</span>
                                 </div>
@@ -71,7 +71,7 @@ export function PricingMatrix({ tiers, recommendedPlan, perMonthText = "/month",
                         >
                             {tier.buttonText}
                         </Button>
-                    </GlassCard>
+                    </SolidCard>
                 );
             })}
         </div>

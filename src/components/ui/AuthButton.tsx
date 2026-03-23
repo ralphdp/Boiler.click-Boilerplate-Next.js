@@ -26,7 +26,7 @@ export function AuthButton() {
     if (status === "loading") {
         return (
             <Button
-                variant="glass-accent"
+                variant="solid-accent"
                 className="opacity-50 cursor-wait w-fit"
                 tooltip="Synchronizing identity handshake with the authentication matrix."
                 tooltipTerm="HANDSHAKE_PULSE"
@@ -41,8 +41,8 @@ export function AuthButton() {
             <div className="flex flex-col sm:flex-row items-end sm:items-center gap-4 w-fit ml-auto">
                 {session?.user?.impersonating && (
                     <Button
-                        variant="glass"
-                        className="group bg-red-500/20 border-red-500/30 text-red-500 hover:bg-red-500/40 hover:text-white transition-colors uppercase tracking-widest font-black text-[10px] w-fit"
+                        variant="solid"
+                        className="group bg-red-500/20 border-red-500/30 text-red-500 hover:bg-red-500/40 hover:text-white transition-colors font-semibold text-xs w-fit"
                         onClick={() => update({ revertImpersonation: true }).then(() => window.location.href = `/${language}/admin#nodes`)}
                         tooltip="Revert to original administrative identity and terminate impersonation."
                         tooltipTerm="GOD_MODE_REVERT"
@@ -52,8 +52,8 @@ export function AuthButton() {
                 )}
                 {(session?.user as any)?.activeWorkspace && (
                     <Button
-                        variant="glass"
-                        className="group bg-[var(--accent)]/10 border-[var(--accent)]/30 text-[var(--accent)] hover:bg-[var(--accent)]/20 transition-colors uppercase tracking-widest font-black text-[10px] w-fit"
+                        variant="solid"
+                        className="group bg-[var(--accent)]/10 border-[var(--accent)]/30 text-[var(--accent)] hover:bg-[var(--accent)]/20 transition-colors font-semibold text-xs w-fit"
                         onClick={() => update({ activeWorkspace: null })}
                         tooltip="Exit the current workspace and return to the root identity matrix."
                         tooltipTerm="WORKSPACE_EXIT"
@@ -65,7 +65,7 @@ export function AuthButton() {
                     <Button
                         as={Link}
                         href={`/${language}/dashboard`}
-                        variant="glass"
+                        variant="solid"
                         className="w-fit"
                         aria-label="Dashboard"
                         tooltip="Access your primary administrative dashboard and configuration nodes."
@@ -75,7 +75,7 @@ export function AuthButton() {
                     </Button>
                 )}
                 <Button
-                    variant="glass-accent"
+                    variant="solid-accent"
                     className="group w-fit"
                     onClick={() => signOut({ callbackUrl: `/${language}` })}
                     aria-label="Logout"
@@ -94,7 +94,7 @@ export function AuthButton() {
             <Button
                 as={Link}
                 href={`/${language}`}
-                variant="glass-accent"
+                variant="solid-accent"
                 className="w-fit group"
                 aria-label="Return to Dashboard"
                 tooltip="Abort the current handshake and return to the primary landing node."
@@ -110,7 +110,7 @@ export function AuthButton() {
         <Button
             as={Link}
             href={`/${language}/auth/handshake`}
-            variant="glass-accent"
+            variant="solid-accent"
             className="w-fit"
             aria-label="Establish Handshake and login"
             tooltip="Initiate the secure identity handshake protocol to access the substrate."

@@ -1,6 +1,9 @@
 import GitHub from "next-auth/providers/github";
 import Google from "next-auth/providers/google";
 import Credentials from "next-auth/providers/credentials";
+import Resend from "next-auth/providers/resend";
+import { sendVanguardEmail } from "./email/service";
+import MagicLink from "./email/templates/MagicLink";
 import type { NextAuthConfig } from "next-auth";
 import { getEdgeConfig } from "./security/edge-config";
 import { SecurityUtils } from "./security/security-config";
@@ -18,6 +21,18 @@ export const authConfig = {
             clientId: process.env.AUTH_GOOGLE_ID,
             clientSecret: process.env.AUTH_GOOGLE_SECRET,
             allowDangerousEmailAccountLinking: true,
+        }),
+        Resend({
+            apiKey: process.env.RESEND_API_KEY,
+            from: process.env.RESEND_DEFAULT_FROM || "Boilerplate <noreply@boiler.click>",
+            sendVerificationRequest: async ({ identifier, url, provider }) => {
+                const host = new URL(url).host;
+                await sendVanguardEmail({
+                    to: identifier,
+                    subject: `Log In To ${host}`,
+                    template: MagicLink({ url, host }),
+                });
+            }
         }),
         Credentials({
             name: "Sovereign Credentials",
@@ -138,9 +153,9 @@ export const authConfig = {
 
                 // Fetch security status from Substrate DB
                 try {
-                    const { getAdminDb } = await import("./firebase/admin");
+                    const { getAdminDb, getCollectionName } = await import("./firebase/admin");
                     const db = getAdminDb();
-                    const userDoc = await db.collection("users").doc(user.id as string).get();
+                    const userDoc = await db.collection(getCollectionName("users")).doc(user.id as string).get();
                     if (userDoc.exists) {
                         const data = userDoc.data();
                         token.mfaEnabled = data?.mfaEnabled || false;
@@ -158,9 +173,9 @@ export const authConfig = {
 
             if (uid && (now - lastAuthCheck > 60000)) { // 60s TTL for local node status
                 try {
-                    const { getAdminDb } = await import("./firebase/admin");
+                    const { getAdminDb, getCollectionName } = await import("./firebase/admin");
                     const db = getAdminDb();
-                    const userDoc = await db.collection("users").doc(uid).get();
+                    const userDoc = await db.collection(getCollectionName("users")).doc(uid).get();
                     if (userDoc.exists) {
                         const data = userDoc.data();
                         token.tokensValidAfterTime = data?.tokensValidAfterTime || 0;
@@ -196,7 +211,7 @@ export const authConfig = {
 
                     // Only update the Substrate Matrix every 10 minutes to prevent DB spam during navigation
                     if (now - lastStewardshipCheck > 600000) {
-                        const { getAdminDb } = await import("./firebase/admin");
+                        const { getAdminDb, getCollectionName } = await import("./firebase/admin");
                         const { headers } = await import("next/headers");
 
                         const db = getAdminDb();
@@ -209,7 +224,7 @@ export const authConfig = {
                             nodeType: typeof window === "undefined" ? "CLOUD_NODE" : "CLIENT_NODE"
                         };
 
-                        await db.collection("users")
+                        await db.collection(getCollectionName("users"))
                             .doc(uid)
                             .collection("active_sessions")
                             .doc(sid)

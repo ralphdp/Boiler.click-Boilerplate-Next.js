@@ -1,7 +1,7 @@
 "use client";
 
 import { useState, useEffect } from "react";
-import { getGlobalOverrides } from "@/core/actions/system";
+import { getGlobalOverrides } from "@/core/actions/branding";
 
 export function useFeatureFlags() {
     const [modules, setModules] = useState<any>({

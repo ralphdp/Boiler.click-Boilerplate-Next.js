@@ -3,10 +3,10 @@
 import { useState } from "react";
 import { motion, AnimatePresence } from "framer-motion";
 import { ShieldAlert, Loader2, Key } from "lucide-react";
-import { GlassCard } from "./GlassCard";
+import { SolidCard } from "./SolidCard";
 import { Input } from "./Input";
 import { Button } from "./Button";
-import { verifySovereignCipher } from "@/core/actions/system";
+import { verifySovereignCipher } from "@/core/actions/telemetry";
 
 interface CipherGateProps {
     t: any;
@@ -42,9 +42,9 @@ export function CipherGate({ t, onSuccess, onCancel }: CipherGateProps) {
             initial={{ opacity: 0 }}
             animate={{ opacity: 1 }}
             exit={{ opacity: 0 }}
-            className="fixed inset-0 z-[100] flex items-center justify-center p-4 bg-black/80 backdrop-blur-xl"
+            className="fixed inset-0 z-[100] flex items-center justify-center p-4 bg-[#050505]/95"
         >
-            <GlassCard className="max-w-md w-full border border-red-500/20 bg-black/60 p-8 space-y-6 relative overflow-hidden">
+            <SolidCard className="max-w-md w-full border border-red-500/30 bg-[#0a0a0a] p-8 space-y-6 relative overflow-hidden">
                 <div className="absolute top-0 left-0 w-full h-1 bg-gradient-to-r from-transparent via-red-500 to-transparent" />
 
                 <div className="flex flex-col items-center text-center space-y-4">
@@ -52,10 +52,10 @@ export function CipherGate({ t, onSuccess, onCancel }: CipherGateProps) {
                         <ShieldAlert className="text-red-500 w-8 h-8" />
                     </div>
                     <div className="space-y-2">
-                        <h2 className="text-xl font-black tracking-tighter uppercase text-white">
+                        <h2 className="text-xl font-bold tracking-normal text-white">
                             {t.admin.vouchers.cipherTitle}
                         </h2>
-                        <p className="text-xs text-white/50 font-mono leading-relaxed uppercase tracking-widest">
+                        <p className="text-sm text-white/50 leading-relaxed">
                             {t.admin.vouchers.cipherDesc}
                         </p>
                     </div>
@@ -75,7 +75,7 @@ export function CipherGate({ t, onSuccess, onCancel }: CipherGateProps) {
                             <motion.span
                                 initial={{ opacity: 0, y: -5 }}
                                 animate={{ opacity: 1, y: 0 }}
-                                className="absolute -bottom-6 left-0 w-full text-center text-[10px] text-red-500 font-black uppercase tracking-widest"
+                                className="absolute -bottom-6 left-0 w-full text-center text-xs text-red-500 font-semibold"
                             >
                                 {t.admin.vouchers.cipherInvalid}
                             </motion.span>
@@ -85,18 +85,18 @@ export function CipherGate({ t, onSuccess, onCancel }: CipherGateProps) {
                     <div className="flex gap-2 pt-4">
                         <Button
                             type="button"
-                            variant="outline"
+                            variant="ghost"
                             onClick={onCancel}
-                            className="flex-1 opacity-50 hover:opacity-100 uppercase text-[10px] font-black tracking-widest"
+                            className="flex-1 text-white/50 hover:text-white"
                             tooltip="Abort cipher entry and close the gate."
                             tooltipTerm="GATE_CLOSE"
                         >
-                            CANCEL
+                            Cancel
                         </Button>
                         <Button
                             type="submit"
                             disabled={loading || !cipher}
-                            className="flex-3 bg-red-500 hover:bg-red-600 text-white uppercase text-[10px] font-black tracking-widest font-mono h-[54px]"
+                            className="flex-3 bg-red-500 hover:bg-red-600 text-white font-bold h-[54px]"
                             tooltip="Verify the entered cipher and unlock the requested node."
                             tooltipTerm="CIPHER_SYNC"
                         >
@@ -111,7 +111,7 @@ export function CipherGate({ t, onSuccess, onCancel }: CipherGateProps) {
 
                 {/* Animated background pulse */}
                 <div className="absolute inset-0 bg-red-500/5 pointer-events-none animate-pulse" />
-            </GlassCard>
+            </SolidCard>
         </motion.div>
     );
 }

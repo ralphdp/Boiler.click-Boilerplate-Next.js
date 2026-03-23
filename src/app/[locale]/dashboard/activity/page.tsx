@@ -2,7 +2,7 @@
 
 import { useState, useEffect } from "react";
 import { useSession } from "next-auth/react";
-import { GlassCard } from "@/components/ui/GlassCard";
+import { SolidCard } from "@/components/ui/SolidCard";
 import { Button } from "@/components/ui/Button";
 import Link from "next/link";
 import { ArrowLeft, Clock, ShieldCheck, Activity } from "lucide-react";
@@ -36,11 +36,11 @@ export default function ActivityLogsPage() {
         return (
             <main className="min-h-screen flex flex-col items-center justify-center p-8 text-center space-y-6">
                 <ShieldAlert size={64} className="text-red-500 opacity-50" />
-                <h1 className="text-2xl font-black technical tracking-[0.2em] uppercase">ACCESS RESTRICTED</h1>
-                <p className="text-white/40 text-xs font-mono max-w-sm uppercase tracking-widest">
+                <h1 className="text-2xl font-bold tracking-normal">Access Restricted</h1>
+                <p className="text-white/50 text-sm max-w-sm text-center">
                     Citizen Audit Visibility has been deactivated by the system administrator.
                 </p>
-                <Button as={Link} href={`/${language}/dashboard`} variant="glass">
+                <Button as={Link} href={`/${language}/dashboard`} variant="solid">
                     Return to Dashboard
                 </Button>
             </main>
@@ -55,14 +55,14 @@ export default function ActivityLogsPage() {
                     {t.dashboard.backToDashboard || "Back to Dashboard"}
                 </Button>
 
-                <GlassCard className="space-y-6">
+                <SolidCard className="space-y-6">
                     <div className="flex items-center justify-between">
                         <div className="space-y-1">
-                            <h1 className="text-2xl font-black technical tracking-[0.2em] uppercase flex items-center gap-3">
+                            <h1 className="text-2xl font-bold tracking-normal flex items-center gap-3">
                                 <Activity size={24} className="text-[var(--accent)]" />
                                 Activity Logs
                             </h1>
-                            <p className="text-[10px] uppercase tracking-[0.3em] font-bold text-white/40">
+                            <p className="text-sm font-semibold text-white/50">
                                 Personal Audit Trace History
                             </p>
                         </div>
@@ -75,28 +75,28 @@ export default function ActivityLogsPage() {
                             <div key={trace.id} className="p-4 bg-white/5 border border-white/5 flex flex-col sm:flex-row sm:items-center justify-between gap-4">
                                 <div className="space-y-1">
                                     <div className="flex items-center gap-2">
-                                        <span className={`text-[8px] font-black px-2 py-0.5 rounded-sm uppercase tracking-wider ${trace.severity === 'WARN' ? 'bg-yellow-500/20 text-yellow-500' :
+                                        <span className={`text-[10px] font-bold px-2 py-0.5 rounded-sm uppercase tracking-wider ${trace.severity === 'WARN' ? 'bg-yellow-500/20 text-yellow-500' :
                                             trace.severity === 'ERROR' ? 'bg-red-500/20 text-red-500' :
                                                 'bg-blue-500/20 text-blue-500'
                                             }`}>
                                             {trace.severity}
                                         </span>
-                                        <span className="text-[10px] font-bold uppercase tracking-widest text-white/80">{trace.action}</span>
+                                        <span className="font-semibold text-sm text-white">{trace.action}</span>
                                     </div>
-                                    <p className="text-xs text-white/60 font-mono italic">{trace.message}</p>
+                                    <p className="text-xs text-white/50 font-mono mt-1">{trace.message}</p>
                                 </div>
-                                <div className="flex items-center gap-2 text-[9px] font-mono text-white/20 whitespace-nowrap">
+                                <div className="flex items-center gap-2 text-xs text-white/40 whitespace-nowrap">
                                     <Clock size={10} />
                                     {new Date(trace.timestamp).toLocaleString()}
                                 </div>
                             </div>
                         )) : (
-                            <div className="py-12 text-center text-white/20 uppercase tracking-[0.2em] text-[10px] font-black border border-dashed border-white/10 rounded-lg">
-                                No activity recorded yet
+                            <div className="py-12 text-center text-white/40 text-sm border border-dashed border-white/10">
+                                No activity recorded yet.
                             </div>
                         )}
                     </div>
-                </GlassCard>
+                </SolidCard>
             </div>
 
             {/* Grid Backdrop */}

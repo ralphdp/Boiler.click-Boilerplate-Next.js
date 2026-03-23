@@ -2,7 +2,7 @@
 
 import { useSession } from "next-auth/react";
 import { ACTIVE_THEME } from "@/theme/config";
-import { GlassCard } from "@/components/ui/GlassCard";
+import { SolidCard } from "@/components/ui/SolidCard";
 import { Button } from "@/components/ui/Button";
 import Link from "next/link";
 import { Settings, CreditCard, ArrowLeft, ShieldAlert, KeyRound, LayoutGrid, Clock } from "lucide-react";
@@ -29,10 +29,10 @@ export default function DashboardPage() {
                 </Button>
             </div>
 
-            <GlassCard className="w-full max-w-xl space-y-6">
+            <SolidCard className="w-full max-w-xl space-y-6">
                 <div className="space-y-2 text-center md:text-left">
-                    <h1 className="text-3xl font-black technical tracking-[0.2em] uppercase">{t.dashboard.title}</h1>
-                    <p className="text-[10px] uppercase tracking-[0.3em] font-bold text-[var(--accent)]">
+                    <h1 className="text-3xl font-bold tracking-normal">{t.dashboard.title}</h1>
+                    <p className="text-sm font-semibold text-[var(--accent)]">
                         {t.dashboard.accessAuthorized}
                     </p>
                 </div>
@@ -41,7 +41,7 @@ export default function DashboardPage() {
 
                 <div className="space-y-4">
                     <div className="flex items-center gap-4">
-                        <div className="w-12 h-12 rounded-full glass border border-white/10 flex items-center justify-center font-bold text-[var(--accent)] bg-[var(--accent)]/10 overflow-hidden shrink-0">
+                        <div className="w-12 h-12 rounded-full bg-white/5 border border-white/10 flex items-center justify-center font-bold text-xl text-[var(--accent)] overflow-hidden shrink-0">
                             {session?.user?.image ? (
                                 <img src={session.user.image} alt={name} className="w-full h-full object-cover" />
                             ) : (
@@ -49,8 +49,8 @@ export default function DashboardPage() {
                             )}
                         </div>
                         <div className="text-left">
-                            <p className="font-bold tracking-widest uppercase">{name}</p>
-                            <p className="text-xs text-white/50 uppercase tracking-widest opacity-80">{session?.user?.email}</p>
+                            <p className="font-bold">{name}</p>
+                            <p className="text-sm text-white/50">{session?.user?.email}</p>
                         </div>
                     </div>
                 </div>
@@ -59,7 +59,7 @@ export default function DashboardPage() {
                     <Button
                         as={Link}
                         href={`/${language}/dashboard/settings`}
-                        variant="glass"
+                        variant="solid"
                         className="justify-start pl-6"
                         tooltip="Configure your architecture preferences and identity handshake."
                         tooltipTerm="PREFERENCES"
@@ -71,7 +71,7 @@ export default function DashboardPage() {
                         <Button
                             as={Link}
                             href={`/${language}/dashboard/billing`}
-                            variant="glass"
+                            variant="solid"
                             className="justify-start pl-6"
                             tooltip="Manage your commerce matrices and payment protocols."
                             tooltipTerm="COMMERCE"
@@ -84,7 +84,7 @@ export default function DashboardPage() {
                         <Button
                             as={Link}
                             href={`/${language}/dashboard/activity`}
-                            variant="glass"
+                            variant="solid"
                             className="justify-start pl-6"
                             tooltip="Review the temporal audit trace of all systemic actions."
                             tooltipTerm="TELEMETRY"
@@ -97,7 +97,7 @@ export default function DashboardPage() {
                         <Button
                             as={Link}
                             href={`/${language}/dashboard/workspaces`}
-                            variant="glass"
+                            variant="solid"
                             className="justify-start pl-6 border-[var(--accent)]/30 text-white/70"
                             tooltip="Initialize and govern distributed collaborative nodes."
                             tooltipTerm="NODES"
@@ -110,7 +110,7 @@ export default function DashboardPage() {
                         <Button
                             as={Link}
                             href={`/${language}/dashboard/developer`}
-                            variant="glass"
+                            variant="solid"
                             className="justify-start pl-6 border-[var(--accent)]/30 text-white/70"
                             tooltip="Configure programmatic bridge access and secure ciphers."
                             tooltipTerm="API_CONFIG"
@@ -126,7 +126,7 @@ export default function DashboardPage() {
                         <Button
                             as={Link}
                             href={`/${language}/admin`}
-                            variant="glass"
+                            variant="solid"
                             className="w-full justify-start pl-6 border-[var(--accent)]/20 text-[var(--accent)] hover:bg-[var(--accent)]/10 hover:border-[var(--accent)]/50"
                             tooltip="Full-spectrum governance of the underlying administrative substrate."
                             tooltipTerm="ROOT_ADMIN"
@@ -137,10 +137,10 @@ export default function DashboardPage() {
                     </div>
                 )}
 
-                <div className="pt-8 text-[8px] text-white/20 tracking-widest uppercase font-mono mt-8">
+                <div className="pt-8 text-[10px] text-white/20 font-mono mt-8 text-center sm:text-left w-full truncate">
                     &gt; {t.dashboard.handshakeConfirmed}: {new Date().toISOString()}
                 </div>
-            </GlassCard>
+            </SolidCard>
 
             {/* Grid Backdrop */}
             <div className="absolute inset-0 z-[-1] opacity-5 pointer-events-none" aria-hidden="true">

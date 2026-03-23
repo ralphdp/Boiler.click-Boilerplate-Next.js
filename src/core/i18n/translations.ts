@@ -1,11 +1,12 @@
-import { en } from './locales/en';
-import { es } from './locales/es';
-import { it } from './locales/it';
+import { en } from './locales/en/index';
+import { es } from './locales/es/index';
+import { it } from './locales/it/index';
+import { common } from './locales/common';
 
 export const dictionary = {
-    en,
-    es,
-    it
+    en: { ...common, ...en },
+    es: { ...common, ...es },
+    it: { ...common, ...it }
 };
 
 export const SUPPORTED_LOCALES = Object.keys(dictionary) as Language[];

@@ -4,7 +4,7 @@ import { motion } from "framer-motion";
 import { ArrowLeft, Sparkles, Send, Mail, Rocket, Globe, Zap, Timer } from "lucide-react";
 import Link from "next/link";
 import { Button } from "@/components/ui/Button";
-import { GlassCard } from "@/components/ui/GlassCard";
+import { SolidCard } from "@/components/ui/SolidCard";
 import { useTranslation } from "@/core/i18n/LanguageProvider";
 import { useToast } from "@/components/ui/Toast";
 import { useState, useEffect } from "react";
@@ -55,7 +55,7 @@ export default function WaitlistDemoPage() {
                     <ArrowLeft size={16} className="mr-2" />
                     Back to Hub
                 </Button>
-                <div className="flex items-center gap-2 opacity-30 text-[10px] uppercase font-black tracking-widest text-[var(--accent)]">
+                <div className="flex items-center gap-2 opacity-30 text-[10px] font-semibold tracking-normal text-[var(--accent)]">
                     <Globe size={12} />
                     Protocol L6.8
                 </div>
@@ -79,14 +79,14 @@ export default function WaitlistDemoPage() {
                     transition={{ delay: 0.1 }}
                     className="space-y-6"
                 >
-                    <div className="inline-flex items-center gap-2 px-3 py-1 bg-[var(--accent)]/5 border border-[var(--accent)]/10 text-white/40 text-[9px] font-black uppercase tracking-[0.3em] mb-4">
+                    <div className="inline-flex items-center gap-2 px-3 py-1 bg-[var(--accent)]/5 border border-[var(--accent)]/10 text-white/40 text-[9px] font-semibold tracking-normal] mb-4">
                         <Sparkles size={10} className="text-[var(--accent)]" />
                         STEALTH PROTOCOL ACTIVE
                     </div>
-                    <h1 className="text-5xl md:text-8xl font-black uppercase tracking-tighter leading-none text-transparent bg-clip-text bg-gradient-to-b from-white to-white/40">
+                    <h1 className="text-5xl md:text-8xl font-semibold tracking-normal leading-none text-transparent bg-clip-text bg-gradient-to-b from-white to-white/40">
                         PREPARING <br /> <span className="text-[var(--accent)]">ZENITH NODE</span>
                     </h1>
-                    <p className="text-white/40 font-mono text-sm max-w-xl mx-auto uppercase tracking-widest leading-relaxed">
+                    <p className="text-white/40 font-mono text-sm max-w-xl mx-auto tracking-normal leading-relaxed">
                         The architecture is currently in a high-fidelity refinement phase. Provide your communications vector to be notified upon public deployment.
                     </p>
                 </motion.div>
@@ -95,10 +95,10 @@ export default function WaitlistDemoPage() {
                 <div className="grid grid-cols-4 gap-4 md:gap-8 mt-16 mb-24 max-w-xl w-full">
                     {Object.entries(timeLeft).map(([label, value]) => (
                         <div key={label} className="flex flex-col items-center space-y-2">
-                            <div className="text-3xl md:text-5xl font-black font-mono text-white/90">
+                            <div className="text-3xl md:text-5xl font-semibold font-mono text-white/90">
                                 {String(value).padStart(2, '0')}
                             </div>
-                            <div className="text-[8px] font-black uppercase tracking-[0.2em] text-[var(--accent)]/50">{label}</div>
+                            <div className="text-[8px] font-semibold tracking-normal] text-[var(--accent)]/50">{label}</div>
                         </div>
                     ))}
                 </div>
@@ -110,7 +110,7 @@ export default function WaitlistDemoPage() {
                     transition={{ delay: 0.3 }}
                     className="w-full max-w-2xl"
                 >
-                    <div className="glass p-2 border border-white/5 rounded-0 flex items-center relative group focus-within:border-[var(--accent)]/30 transition-all">
+                    <div className="bg-[#0a0a0a] border border-white/10 rounded-xl shadow-lg p-2 border border-white/5 rounded-0 flex items-center relative group focus-within:border-[var(--accent)]/30 transition-all">
                         <div className="pl-4 pr-2 text-white/20 group-focus-within:text-[var(--accent)] transition-colors">
                             <Mail size={16} />
                         </div>
@@ -122,7 +122,7 @@ export default function WaitlistDemoPage() {
                         />
                         <Button
                             onClick={handleJoin}
-                            className="w-fit bg-[var(--accent)] text-white hover:bg-white hover:text-black transition-all px-6 py-3 text-[10px] font-black uppercase tracking-widest h-fit"
+                            className="w-fit bg-[var(--accent)] text-white hover:bg-white hover:text-black transition-all px-6 py-3 text-[10px] font-semibold tracking-normal h-fit"
                         >
                             JOIN
                         </Button>
@@ -139,7 +139,7 @@ export default function WaitlistDemoPage() {
                         <div key={f.title} className="flex gap-4">
                             <div className="p-2 border border-white/10 h-fit"><f.icon size={14} className="text-[var(--accent)]" /></div>
                             <div className="space-y-1">
-                                <h4 className="text-[10px] font-black uppercase tracking-widest">{f.title}</h4>
+                                <h4 className="text-[10px] font-semibold tracking-normal">{f.title}</h4>
                                 <p className="text-[9px] font-mono text-white/50 leading-tight">{f.desc}</p>
                             </div>
                         </div>

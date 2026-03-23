@@ -6,7 +6,7 @@ import {
     Send, Bot, User, Loader2, Maximize2, Minimize2,
     Trash2, Settings, Shield, Sparkles, X, MessageSquare
 } from "lucide-react";
-import { GlassCard } from "@/components/ui/GlassCard";
+import { SolidCard } from "@/components/ui/SolidCard";
 import { Input } from "@/components/ui/Input";
 import { cn } from "@/core/utils";
 import { ConfirmationModal } from "@/components/ui/ConfirmationModal";
@@ -155,7 +155,7 @@ export function ChatUI({ className, isMinimized, onToggleMinimize, onClose }: Ch
     if (isMinimized) return null;
 
     return (
-        <GlassCard className={cn(
+        <SolidCard className={cn(
             "flex flex-col h-[600px] w-full max-w-md border-white/10 bg-black/80 backdrop-blur-2xl shadow-2xl overflow-hidden",
             className
         )}>
@@ -166,10 +166,10 @@ export function ChatUI({ className, isMinimized, onToggleMinimize, onClose }: Ch
                         <Sparkles size={16} className="text-[var(--accent)]" />
                     </div>
                     <div>
-                        <h3 className="text-xs font-black uppercase tracking-widest">Sovereign AI</h3>
+                        <h3 className="text-xs font-bold tracking-normal">Sovereign AI</h3>
                         <div className="flex items-center gap-1">
                             <div className="w-1.5 h-1.5 rounded-full bg-green-500 animate-pulse" />
-                            <span className="text-[8px] text-white/30 uppercase tracking-tighter">Substrate Active</span>
+                            <span className="text-[8px] text-white/30 tracking-normal">Substrate Active</span>
                         </div>
                     </div>
                 </div>
@@ -208,7 +208,7 @@ export function ChatUI({ className, isMinimized, onToggleMinimize, onClose }: Ch
                             className="absolute inset-0 z-10 p-6 bg-black/95 flex flex-col gap-4 overflow-y-auto admin-scrollbar"
                         >
                             <div className="space-y-2">
-                                <label className="text-[10px] font-bold uppercase tracking-[0.2em] text-[var(--accent)]">Provider Configuration</label>
+                                <label className="text-[10px] font-bold tracking-normal] text-[var(--accent)]">Provider Configuration</label>
                                 <p className="text-[10px] text-white/40 italic font-serif leading-relaxed">
                                     The Sovereign Substrate uses a local-first memory model. Your API keys are stored encrypted in your browser's persistent storage node.
                                 </p>
@@ -217,7 +217,7 @@ export function ChatUI({ className, isMinimized, onToggleMinimize, onClose }: Ch
                             <div className="space-y-4 pt-4">
                                 <div className="space-y-2">
                                     <div className="flex items-center justify-between">
-                                        <span className="text-[9px] uppercase font-bold text-white/60">OpenAI API Key</span>
+                                        <span className="text-[9px] font-bold text-white/60">OpenAI API Key</span>
                                         <Shield size={10} className="text-white/20" />
                                     </div>
                                     <Input
@@ -232,7 +232,7 @@ export function ChatUI({ className, isMinimized, onToggleMinimize, onClose }: Ch
 
                                 <button
                                     onClick={() => setShowSettings(false)}
-                                    className="w-full py-2 bg-[var(--accent)]/10 border border-[var(--accent)]/30 text-[var(--accent)] text-[10px] font-black uppercase tracking-widest hover:bg-[var(--accent)]/20 transition-colors mt-4"
+                                    className="w-full py-2 bg-[var(--accent)]/10 border border-[var(--accent)]/30 text-[var(--accent)] text-[10px] font-bold tracking-normal hover:bg-[var(--accent)]/20 transition-colors mt-4"
                                 >
                                     Close Settings
                                 </button>
@@ -249,7 +249,7 @@ export function ChatUI({ className, isMinimized, onToggleMinimize, onClose }: Ch
                                         <Bot size={32} className="text-white/20" />
                                     </div>
                                     <div className="space-y-1">
-                                        <h4 className="text-[11px] font-black uppercase tracking-widest">Substrate Ready</h4>
+                                        <h4 className="text-[11px] font-bold tracking-normal">Substrate Ready</h4>
                                         <p className="text-[10px] font-serif italic text-white/40">Initiate identity handshake to begin conversation.</p>
                                     </div>
                                 </div>
@@ -306,7 +306,7 @@ export function ChatUI({ className, isMinimized, onToggleMinimize, onClose }: Ch
                         onChange={(e) => setInput(e.target.value)}
                         onKeyDown={(e) => e.key === "Enter" && handleSend()}
                         disabled={isLoading}
-                        className="w-full bg-white/5 border border-white/10 text-xs px-4 py-3 pr-12 focus:outline-none focus:border-[var(--accent)]/40 transition-colors placeholder:text-white/20 uppercase tracking-widest font-bold"
+                        className="w-full bg-white/5 border border-white/10 text-xs px-4 py-3 pr-12 focus:outline-none focus:border-[var(--accent)]/40 transition-colors placeholder:text-white/20 tracking-normal font-bold"
                     />
                     <button
                         onClick={handleSend}
@@ -317,8 +317,8 @@ export function ChatUI({ className, isMinimized, onToggleMinimize, onClose }: Ch
                     </button>
                 </div>
                 <div className="mt-2 flex justify-between items-center">
-                    <span className="text-[8px] text-white/20 uppercase tracking-widest">Encryption: AES-256</span>
-                    <span className="text-[8px] text-white/20 uppercase tracking-widest">{messages.length} Matrix Exchanges</span>
+                    <span className="text-[8px] text-white/20 tracking-normal">Encryption: AES-256</span>
+                    <span className="text-[8px] text-white/20 tracking-normal">{messages.length} Matrix Exchanges</span>
                 </div>
             </div>
 
@@ -333,6 +333,6 @@ export function ChatUI({ className, isMinimized, onToggleMinimize, onClose }: Ch
                 }}
                 onCancel={() => setConfirmModal(prev => ({ ...prev, open: false }))}
             />
-        </GlassCard>
+        </SolidCard>
     );
 }

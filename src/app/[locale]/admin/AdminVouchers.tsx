@@ -1,7 +1,7 @@
 "use client";
 
 import { useState, useEffect } from "react";
-import { GlassCard } from "@/components/ui/GlassCard";
+import { SolidCard } from "@/components/ui/SolidCard";
 import { Button } from "@/components/ui/Button";
 import { Input } from "@/components/ui/Input";
 import { Select } from "@/components/ui/Select";
@@ -135,10 +135,10 @@ export function AdminVouchers({ t }: { t: any }) {
 
     return (
         <div className="space-y-6">
-            <GlassCard className="border border-white/5 bg-black/40 p-6">
+            <SolidCard className="border border-white/5 bg-black/40 p-6">
                 <div className="flex flex-col md:flex-row justify-between items-start gap-4 mb-6">
                     <div>
-                        <h2 className="text-[var(--accent)] font-black technical tracking-[0.2em] uppercase flex items-center gap-2">
+                        <h2 className="text-[var(--accent)] font-bold tracking-normal] flex items-center gap-2">
                             <ShieldAlert size={16} /> {t.admin.vouchers.title}
                         </h2>
                         <p className="text-xs text-white/50 font-serif italic mt-1">
@@ -146,11 +146,11 @@ export function AdminVouchers({ t }: { t: any }) {
                         </p>
                     </div>
                     <div className="flex gap-2 shrink-0">
-                        <button onClick={handleExport} disabled={exporting} className="flex items-center justify-center gap-2 bg-white/5 hover:bg-[var(--accent)]/10 border border-white/10 px-6 h-[54px] text-[10px] font-black uppercase tracking-widest transition-all text-white/70 hover:text-[var(--accent)]">
+                        <button onClick={handleExport} disabled={exporting} className="flex items-center justify-center gap-2 bg-white/5 hover:bg-[var(--accent)]/10 border border-white/10 px-6 h-[54px] text-[10px] font-bold tracking-normal transition-all text-white/70 hover:text-[var(--accent)]">
                             <Download size={14} className={exporting ? "animate-pulse" : ""} />
                             {t.admin.vouchers.exportAudit}
                         </button>
-                        <button onClick={loadVouchers} disabled={loading} className="flex items-center justify-center gap-2 bg-white/5 hover:bg-white/10 border border-white/10 px-6 h-[54px] text-[10px] font-black uppercase tracking-widest transition-colors text-white/70 hover:text-white disabled:opacity-50 disabled:cursor-not-allowed">
+                        <button onClick={loadVouchers} disabled={loading} className="flex items-center justify-center gap-2 bg-white/5 hover:bg-white/10 border border-white/10 px-6 h-[54px] text-[10px] font-bold tracking-normal transition-colors text-white/70 hover:text-white disabled:opacity-50 disabled:cursor-not-allowed">
                             <RefreshCw size={14} className={`${loading ? 'animate-spin' : ''}`} />
                             {t.admin.vouchers.refreshMatrix}
                         </button>
@@ -252,29 +252,29 @@ export function AdminVouchers({ t }: { t: any }) {
 
                 <div className="bg-black/40 border border-white/5 mt-8">
                     <div className="p-4 border-b border-white/5 bg-white/5 flex flex-col md:flex-row justify-between items-start md:items-center gap-4">
-                        <h3 className="text-xs font-black uppercase tracking-[0.2em] shrink-0">{t.admin.vouchers.mintedTitle}</h3>
+                        <h3 className="text-xs font-bold tracking-normal] shrink-0">{t.admin.vouchers.mintedTitle}</h3>
                     </div>
                     <div className="w-full max-h-[600px] overflow-y-auto overflow-x-auto admin-scrollbar">
                         <table className="w-full min-w-[800px] text-left border-collapse text-xs font-mono">
                             <thead>
                                 <tr className="bg-white/5 text-white/50 sticky top-0 z-10 backdrop-blur-md">
-                                    <th className="p-4 font-normal tracking-widest uppercase">{t.admin.vouchers.colSecret}</th>
-                                    <th className="p-4 font-normal tracking-widest uppercase">{t.admin.vouchers.colType}</th>
-                                    <th className="p-4 font-normal tracking-widest uppercase">{t.admin.vouchers.colValue} / {t.admin.vouchers.colPlan}</th>
-                                    <th className="p-4 font-normal tracking-widest uppercase">{t.admin.vouchers.colUsed}</th>
-                                    <th className="p-4 font-normal tracking-widest uppercase">{t.admin.vouchers.colStatus}</th>
-                                    <th className="p-4 font-normal tracking-widest uppercase">{t.admin.vouchers.colCreated}</th>
-                                    <th className="p-4 font-normal text-right tracking-widest uppercase">{t.admin.users.colActions}</th>
+                                    <th className="p-4 font-normal tracking-normal">{t.admin.vouchers.colSecret}</th>
+                                    <th className="p-4 font-normal tracking-normal">{t.admin.vouchers.colType}</th>
+                                    <th className="p-4 font-normal tracking-normal">{t.admin.vouchers.colValue} / {t.admin.vouchers.colPlan}</th>
+                                    <th className="p-4 font-normal tracking-normal">{t.admin.vouchers.colUsed}</th>
+                                    <th className="p-4 font-normal tracking-normal">{t.admin.vouchers.colStatus}</th>
+                                    <th className="p-4 font-normal tracking-normal">{t.admin.vouchers.colCreated}</th>
+                                    <th className="p-4 font-normal text-right tracking-normal">{t.admin.users.colActions}</th>
                                 </tr>
                             </thead>
                             <tbody className="divide-y divide-white/5">
                                 {loading && vouchers.length === 0 ? (
                                     <tr>
-                                        <td colSpan={7} className="p-8 text-center text-white/30 animate-pulse uppercase tracking-widest">{t.admin.vouchers.loading}</td>
+                                        <td colSpan={7} className="p-8 text-center text-white/30 animate-pulse tracking-normal">{t.admin.vouchers.loading}</td>
                                     </tr>
                                 ) : vouchers.length === 0 ? (
                                     <tr>
-                                        <td colSpan={7} className="p-8 text-center text-white/30 uppercase tracking-widest">{t.admin.vouchers.notFound}</td>
+                                        <td colSpan={7} className="p-8 text-center text-white/30 tracking-normal">{t.admin.vouchers.notFound}</td>
                                     </tr>
                                 ) : vouchers.map((v) => (
                                     <tr key={v.id} className="hover:bg-white/5 transition-colors group">
@@ -315,7 +315,7 @@ export function AdminVouchers({ t }: { t: any }) {
                         </table>
                     </div>
                 </div>
-            </GlassCard>
+            </SolidCard>
 
             <ConfirmationModal
                 isOpen={confirmModal.open}

@@ -39,7 +39,7 @@ export function Select({ label, options, value, onChange, placeholder = "Select 
     return (
         <div ref={containerRef} className={cn("w-full space-y-2 group relative", className)}>
             {label && (
-                <label className="text-[9px] font-black uppercase tracking-widest text-white/20 group-focus-within:text-accent/60 transition-colors ml-1">
+                <label className="text-xs font-bold text-white/50 group-focus-within:text-[var(--accent)] transition-colors ml-1">
                     {label}
                 </label>
             )}
@@ -48,18 +48,18 @@ export function Select({ label, options, value, onChange, placeholder = "Select 
                 type="button"
                 onClick={() => setIsOpen(!isOpen)}
                 className={cn(
-                    "w-full bg-black/50 border border-white/5 p-4 text-sm technical tracking-widest flex items-center justify-between transition-all hover:bg-white/[0.02]",
-                    isOpen ? "border-accent/50 shadow-[0_0_5px_var(--accent)_inset]" : "hover:border-white/10"
+                    "w-full bg-[#050505] border border-white/10 rounded-md p-3.5 text-sm font-medium flex items-center justify-between transition-colors hover:bg-[#0a0a0a]",
+                    isOpen ? "border-[var(--accent)]" : "hover:border-white/20"
                 )}
                 aria-haspopup="listbox"
                 aria-expanded={isOpen}
             >
-                <span className={cn(selectedOption ? "text-white" : "text-white/20 uppercase tracking-[0.2em]")}>
+                <span className={cn(selectedOption ? "text-white" : "text-white/20")}>
                     {selectedOption ? selectedOption.label : placeholder}
                 </span>
                 <ChevronDown
                     size={16}
-                    className={cn("text-white/20 transition-transform duration-300", isOpen && "rotate-180")}
+                    className={cn("text-white/20 transition-transform duration-200", isOpen && "rotate-180")}
                 />
             </button>
 
@@ -69,7 +69,8 @@ export function Select({ label, options, value, onChange, placeholder = "Select 
                         initial={{ opacity: 0, y: -4, scaleY: 0.95 }}
                         animate={{ opacity: 1, y: 0, scaleY: 1 }}
                         exit={{ opacity: 0, y: -4, scaleY: 0.95 }}
-                        className="absolute z-50 mt-1 w-full bg-black border border-white/10 shadow-2xl overflow-hidden origin-top"
+                        transition={{ duration: 0.15, ease: "easeOut" }}
+                        className="absolute z-50 mt-1 w-full bg-[#000000] border border-white/10 rounded-md shadow-2xl overflow-hidden origin-top"
                         role="listbox"
                     >
                         {options.map((option) => (
@@ -80,14 +81,14 @@ export function Select({ label, options, value, onChange, placeholder = "Select 
                                     setIsOpen(false);
                                 }}
                                 className={cn(
-                                    "p-4 text-xs technical tracking-widest cursor-pointer hover:bg-white/[0.05] flex items-center justify-between",
-                                    value === option.value ? "text-accent" : "text-white/60"
+                                    "p-3.5 text-sm font-medium cursor-pointer hover:bg-white/5 flex items-center justify-between transition-colors",
+                                    value === option.value ? "text-[var(--accent)] bg-[var(--accent)]/5" : "text-white/70"
                                 )}
                                 role="option"
                                 aria-selected={value === option.value}
                             >
                                 {option.label}
-                                {value === option.value && <Check size={14} className="text-accent" />}
+                                {value === option.value && <Check size={14} className="text-[var(--accent)]" />}
                             </li>
                         ))}
                     </motion.ul>

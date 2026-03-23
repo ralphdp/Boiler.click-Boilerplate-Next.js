@@ -1,9 +1,9 @@
 import type { Metadata } from "next";
 import { cookies } from "next/headers";
-import { Inter, Fustat } from "next/font/google";
+import { Inter, Space_Grotesk } from "next/font/google";
 import "@/theme/globals.css";
 import { ACTIVE_THEME } from "@/theme/config";
-import { getGlobalOverrides } from "@/core/actions/system";
+import { getGlobalOverrides } from "@/core/actions/branding";
 import { auth } from "@/core/auth";
 import { ClientProviders } from "@/core/providers/ClientProviders";
 import { AuthButton } from "@/components/ui/AuthButton";
@@ -21,6 +21,7 @@ import { SessionRevalidator } from "@/components/ui/SessionRevalidator";
 import { dictionary, Language } from "@/core/i18n/translations";
 import { ChatFloating } from "@/components/chat/ChatFloating";
 import { SovereignProgressBar } from "@/components/ui/SovereignProgressBar";
+import { ConsoleSanitizer } from "@/components/ui/ConsoleSanitizer";
 
 const inter = Inter({
     subsets: ["latin"],
@@ -28,9 +29,9 @@ const inter = Inter({
     display: 'swap',
 });
 
-const fustat = Fustat({
+const spaceGrotesk = Space_Grotesk({
     subsets: ["latin"],
-    variable: "--font-fustat",
+    variable: "--font-space-grotesk",
     display: 'swap',
 });
 
@@ -85,9 +86,10 @@ export default async function RootLayout({
                 <StructuredData schema={schema} />
             </head>
             <body
-                className={`${inter.variable} ${fustat.variable} font-sans bg-black text-white antialiased`}
+                className={`${inter.variable} ${spaceGrotesk.variable} font-sans bg-[#000000] text-white antialiased`}
             >
                 <SovereignErrorBoundary>
+                    <ConsoleSanitizer />
                     <SovereignProgressBar />
                     <SovereignWebGL variant={activeVariant} opacity={0.15} />
                     <BroadcastBanner message={overrides.broadcast} urgency={overrides.broadcastUrgency as any} />
@@ -106,9 +108,9 @@ export default async function RootLayout({
                             </nav>
                             <GlobalCommandPalette />
                             {isSystemHalted ? (
-                                <div className="flex flex-col items-center justify-center min-h-screen text-center p-8 space-y-6">
-                                    <h1 className="text-4xl md:text-6xl font-black text-red-500 tracking-tighter uppercase font-mono">{t.systemHalted.title}</h1>
-                                    <p className="text-white/50 text-sm md:text-base font-mono max-w-lg leading-relaxed uppercase tracking-widest">
+                                <div className="flex flex-col items-center justify-center min-h-screen text-center p-8 space-y-6 bg-black">
+                                    <h1 className="text-4xl md:text-6xl font-bold text-red-500 tracking-normal">{t.systemHalted.title}</h1>
+                                    <p className="text-white/50 text-base max-w-lg leading-relaxed">
                                         {t.systemHalted.descLine1}
                                         <br /><br />
                                         {t.systemHalted.descLine2}

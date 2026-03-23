@@ -11,12 +11,12 @@ interface TooltipProps {
 
 export function TooltipContent({ term, definition }: { term: string; definition: string }) {
     return (
-        <div className="bg-black/70 border border-white/20 px-4 py-3 shadow-2xl backdrop-blur-2xl pointer-events-none text-left">
-            <div className="text-[0.625rem] font-black uppercase tracking-[0.2em] text-white/90 mb-1.5 border-b border-white/10 pb-1.5 flex items-center justify-between">
+        <div className="bg-[#0a0a0a]/95 backdrop-blur-md border border-white/20 px-4 py-3 shadow-[0_20px_50px_rgba(0,0,0,0.8)] pointer-events-none text-left rounded-sm relative">
+            <div className="text-[0.625rem] font-bold tracking-normal] text-white/90 mb-1.5 border-b border-white/10 pb-1.5 flex items-center justify-between">
                 <span>{term}</span>
                 <span className="w-1.5 h-1.5 bg-white/80 animate-pulse rounded-full" />
             </div>
-            <p className="text-[0.6875rem] leading-relaxed text-zinc-300 font-serif lowercase italic">
+            <p className="text-[0.6875rem] leading-relaxed text-zinc-300 font-sans lowercase">
                 {definition}
             </p>
             <div className="absolute top-full left-1/2 -translate-x-1/2 -mt-[1px] w-0 h-0 border-l-[6px] border-l-transparent border-r-[6px] border-r-transparent border-t-[6px] border-t-white/20" />

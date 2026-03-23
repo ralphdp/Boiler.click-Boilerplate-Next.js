@@ -1,6 +1,6 @@
 "use server";
 
-import { getAdminDb } from "@/core/firebase/admin";
+import { getAdminDb, getCollectionName } from "@/core/firebase/admin";
 import { auth } from "@/core/auth";
 import { logWorkspaceAction } from "./workspaces";
 import crypto from "crypto";
@@ -10,7 +10,7 @@ export async function registerWebhook(workspaceId: string, url: string, descript
     if (!session?.user?.id) throw new Error("UNAUTHORIZED");
 
     const db = getAdminDb();
-    const callerMemberSnap = await db.collection("omni_workspaces").doc(workspaceId).collection("members").doc(session.user.id).get();
+    const callerMemberSnap = await db.collection(getCollectionName("omni_workspaces")).doc(workspaceId).collection("members").doc(session.user.id).get();
 
     if (!callerMemberSnap.exists || !["OWNER", "ADMIN"].includes(callerMemberSnap.data()?.role)) {
         throw new Error("UNAUTHORIZED_ACCESS: Only ADMINs can register webhooks.");
@@ -19,7 +19,7 @@ export async function registerWebhook(workspaceId: string, url: string, descript
     try {
         const secret = crypto.randomBytes(32).toString('hex');
 
-        await db.collection("omni_workspaces").doc(workspaceId).collection("webhooks").add({
+        await db.collection(getCollectionName("omni_workspaces")).doc(workspaceId).collection("webhooks").add({
             url,
             description,
             secret, // Store secret for generating HMAC later
@@ -45,14 +45,14 @@ export async function getWorkspaceWebhooks(workspaceId: string) {
     if (!session?.user?.id) return [];
 
     const db = getAdminDb();
-    const snap = await db.collection("omni_workspaces").doc(workspaceId).collection("webhooks").get();
+    const snap = await db.collection(getCollectionName("omni_workspaces")).doc(workspaceId).collection("webhooks").get();
 
     return snap.docs.map(doc => ({ id: doc.id, ...doc.data() }));
 }
 
 export async function triggerWebhook(workspaceId: string, eventType: string, payload: any) {
     const db = getAdminDb();
-    const snap = await db.collection("omni_workspaces").doc(workspaceId).collection("webhooks").where("active", "==", true).get();
+    const snap = await db.collection(getCollectionName("omni_workspaces")).doc(workspaceId).collection("webhooks").where("active", "==", true).get();
 
     if (snap.empty) return;
 
@@ -78,7 +78,7 @@ export async function triggerWebhook(workspaceId: string, eventType: string, pay
             });
 
             // Optionally log delivery trace in database
-            await db.collection("omni_workspaces").doc(workspaceId).collection("webhook_deliveries").add({
+            await db.collection(getCollectionName("omni_workspaces")).doc(workspaceId).collection("webhook_deliveries").add({
                 webhookId: doc.id,
                 event: eventType,
                 status: response.status,

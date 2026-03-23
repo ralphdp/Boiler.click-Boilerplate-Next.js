@@ -5,7 +5,7 @@ import { ACTIVE_THEME } from "@/theme/config";
 import SovereignBackground from "@/theme/shaders/SovereignBackground";
 import { CopyX } from "lucide-react";
 import { Button } from "@/components/ui/Button";
-import { GlassCard } from "@/components/ui/GlassCard";
+import { SolidCard } from "@/components/ui/SolidCard";
 import { dictionary, SUPPORTED_LOCALES, Language } from "@/core/i18n/translations";
 
 export default function GlobalError({
@@ -42,16 +42,16 @@ export default function GlobalError({
                     <div className="absolute inset-0 pointer-events-none z-10 opacity-[0.03] bg-[linear-gradient(rgba(18,16,16,0)_50%,rgba(0,0,0,0.25)_50%),linear-gradient(90deg,rgba(255,0,0,0.06),rgba(0,255,0,0.02),rgba(0,0,255,0.06))] bg-[length:100%_2px,3px_100%]" />
 
                     <div className="z-20 w-full max-w-md">
-                        <GlassCard>
+                        <SolidCard>
                             <header className="space-y-4">
                                 <div className="flex justify-center">
-                                    <div className="p-4 rounded-full glass text-red-500">
+                                    <div className="p-4 rounded-full bg-[#0a0a0a] border border-white/10 rounded-xl shadow-lg text-red-500">
                                         <CopyX size={32} strokeWidth={1.5} />
                                     </div>
                                 </div>
                                 <div className="text-center">
-                                    <h1 className="text-2xl font-black technical tracking-[0.2em] text-red-500">{t.title}</h1>
-                                    <p className="text-[10px] text-white/50 uppercase tracking-[0.3em] font-bold mt-2">
+                                    <h1 className="text-2xl font-bold tracking-normal] text-red-500">{t.title}</h1>
+                                    <p className="text-[10px] text-white/50 tracking-normal] font-bold mt-2">
                                         {t.subtitle}
                                     </p>
                                 </div>
@@ -64,14 +64,14 @@ export default function GlobalError({
                                 </div>
 
                                 <Button
-                                    variant="glass-accent"
+                                    variant="solid-accent"
                                     onClick={() => reset()}
                                     className="w-full mt-4 !border-red-500/50 hover:!bg-red-500/10"
                                 >
                                     {t.reboot}
                                 </Button>
                             </div>
-                        </GlassCard>
+                        </SolidCard>
                     </div>
                 </main>
             </body>

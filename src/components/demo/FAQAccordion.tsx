@@ -3,7 +3,7 @@
 import { useState } from "react";
 import { motion, AnimatePresence } from "framer-motion";
 import { ChevronDown } from "lucide-react";
-import { GlassCard } from "@/components/ui/GlassCard";
+import { SolidCard } from "@/components/ui/SolidCard";
 
 interface FAQ {
     q: string;
@@ -46,9 +46,9 @@ function FAQItem({ faq }: { faq: FAQ }) {
 
 export function FAQAccordion({ faqs, title, description }: { faqs: FAQ[]; title: string; description?: string }) {
     return (
-        <GlassCard className="border border-white/10 bg-transparent flex flex-col p-0 overflow-hidden max-w-4xl mx-auto w-full">
+        <SolidCard className="border border-white/10 bg-transparent flex flex-col p-0 overflow-hidden max-w-4xl mx-auto w-full">
             <div className="p-8 pb-4 flex flex-col items-center text-center">
-                <h3 className="text-2xl font-bold uppercase tracking-widest text-[var(--accent)] mb-4">{title}</h3>
+                <h3 className="text-2xl font-bold tracking-normal text-[var(--accent)] mb-4">{title}</h3>
                 {description && (
                     <p className="text-white/50 text-sm font-mono max-w-2xl">
                         {description}
@@ -61,6 +61,6 @@ export function FAQAccordion({ faqs, title, description }: { faqs: FAQ[]; title:
                     <FAQItem key={i} faq={faq} />
                 ))}
             </div>
-        </GlassCard>
+        </SolidCard>
     );
 }

@@ -27,7 +27,9 @@ import { useToast } from "@/components/ui/Toast";
 
 // Core Actions
 import { getSovereignNodes, setNodeRole, setNodeStatus, getAuditTraces } from "@/core/actions/nodes";
-import { getGlobalOverrides, getTelemetryData } from "@/core/actions/system";
+import { getGlobalOverrides } from "@/core/actions/branding";
+import { getTelemetryData } from "@/core/actions/telemetry";
+import { getSEOMatrix } from "@/core/actions/branding";
 import { getStoreProducts } from "@/core/actions/commerce";
 
 // Extracted Components
@@ -250,11 +252,11 @@ export default function AdminPage() {
                     </Button>
 
                     <div className="flex flex-col md:flex-row justify-between items-start md:items-center gap-4">
-                        <h1 className="text-2xl font-black technical tracking-[0.2em] uppercase text-[var(--accent)] font-mono flex items-center gap-3">
+                        <h1 className="text-2xl font-bold tracking-normal] text-[var(--accent)] font-mono flex items-center gap-3">
                             <ShieldAlert size={24} />
                             {t.admin.title}
                         </h1>
-                        <div className="text-[10px] font-mono tracking-widest px-4 py-2 bg-[var(--accent)]/10 border border-[var(--accent)]/30 text-[var(--accent)]">
+                        <div className="text-[10px] font-mono tracking-normal px-4 py-2 bg-[var(--accent)]/10 border border-[var(--accent)]/30 text-[var(--accent)]">
                             {t.admin.loggedInAs} {session?.user?.email}
                         </div>
                     </div>

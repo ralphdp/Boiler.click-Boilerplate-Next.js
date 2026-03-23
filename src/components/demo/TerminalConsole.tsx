@@ -2,7 +2,7 @@
 
 import { motion } from "framer-motion";
 import { TerminalSquare } from "lucide-react";
-import { GlassCard } from "@/components/ui/GlassCard";
+import { SolidCard } from "@/components/ui/SolidCard";
 
 interface TerminalConsoleProps {
     lines: string[];
@@ -16,10 +16,10 @@ export function TerminalConsole({
     userName = "root@vanguard"
 }: TerminalConsoleProps) {
     return (
-        <GlassCard className="p-8 flex flex-col gap-4 border-[var(--accent)]/20 shadow-[0_0_15px_rgba(var(--accent-rgb),0.05)] w-full">
+        <SolidCard className="p-8 flex flex-col gap-4 border-[var(--accent)]/20 shadow-[0_0_15px_rgba(var(--accent-rgb),0.05)] w-full">
             <div className="flex items-center gap-3 border-b border-white/5 pb-4">
                 <TerminalSquare className="text-[var(--accent)]" size={20} />
-                <h3 className="text-lg font-bold uppercase tracking-widest leading-none mt-1">{title}</h3>
+                <h3 className="text-lg font-bold tracking-normal leading-none mt-1">{title}</h3>
             </div>
             <div className="bg-black/80 p-4 font-mono text-xs text-[var(--accent)]/80 gap-2 flex-grow border border-white/5 flex flex-col justify-end overflow-hidden h-64 text-left">
                 {lines.map((line, idx) => (
@@ -33,6 +33,6 @@ export function TerminalConsole({
                     <span className="w-2 h-4 bg-white/50 inline-block" />
                 </div>
             </div>
-        </GlassCard>
+        </SolidCard>
     );
 }

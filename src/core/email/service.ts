@@ -1,5 +1,5 @@
 import { Resend } from "resend";
-import { getGlobalOverrides } from "@/core/actions/system";
+import { getGlobalOverrides } from "@/core/actions/branding";
 
 let resendInstance: Resend | null = null;
 
@@ -26,10 +26,12 @@ export async function sendVanguardEmail({
     try {
         const resend = await getResend();
         const overrides = await getGlobalOverrides();
-        const from = overrides.resendFrom || "nexus@rdepaz.com";
+
+        // 1. Resolve raw origin domain (from Factory Defaults if DB is empty)
+        let finalFromAddress = overrides.resendFrom || process.env.RESEND_DEFAULT_FROM || "Boilerplate <noreply@boiler.click>";
 
         const { data, error } = await resend.emails.send({
-            from: `Sovereign Substrate <${from}>`,
+            from: finalFromAddress,
             to: Array.isArray(to) ? to : [to],
             subject: `[VANGUARD] ${subject}`,
             react: template,

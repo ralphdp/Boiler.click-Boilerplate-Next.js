@@ -5,7 +5,7 @@ import { cn } from "@/core/utils";
 
 export function Table({ className, children, ...props }: React.TableHTMLAttributes<HTMLTableElement>) {
     return (
-        <div className="w-full overflow-auto glass bg-transparent rounded-none border border-white/5">
+        <div className="w-full overflow-auto bg-[#0a0a0a] border border-white/10 rounded-xl shadow-lg bg-transparent rounded-none border border-white/5">
             <table className={cn("w-full text-left text-sm technical", className)} {...props}>
                 {children}
             </table>

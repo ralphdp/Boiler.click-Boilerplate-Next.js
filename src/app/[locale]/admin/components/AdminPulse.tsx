@@ -2,7 +2,7 @@
 
 import { motion } from "framer-motion";
 import { Activity, Shield, Cpu, Zap } from "lucide-react";
-import { GlassCard } from "@/components/ui/GlassCard";
+import { SolidCard } from "@/components/ui/SolidCard";
 import { cn } from "@/core/utils";
 
 interface PulseProps {
@@ -56,13 +56,13 @@ export function AdminPulse({ traces, nodesCount, haltingProtocol, telemetry }: P
     const systemVitality = Math.min(1, nodesCount / 10);
 
     return (
-        <GlassCard className="p-6 border-white/5 bg-black/40 overflow-hidden relative">
+        <SolidCard className="p-6 border-white/5 bg-black/40 overflow-hidden relative">
             <div className="flex flex-col md:flex-row justify-between gap-8 relative z-10">
                 {/* Left: Main Pulse Visualizer */}
                 <div className="flex-1 space-y-4">
                     <div className="flex items-center gap-2">
                         <Activity size={14} className="text-[var(--accent)]" />
-                        <h3 className="text-[10px] font-black uppercase tracking-[0.2em] text-white/50">Substrate Vitality</h3>
+                        <h3 className="text-[10px] font-semibold tracking-normal] text-white/50">Substrate Vitality</h3>
                     </div>
 
                     <div className="h-32 flex items-center justify-center relative">
@@ -94,7 +94,7 @@ export function AdminPulse({ traces, nodesCount, haltingProtocol, telemetry }: P
                             <motion.div
                                 animate={{ scale: [1, 1.05, 1] }}
                                 transition={{ duration: 1, repeat: Infinity }}
-                                className="text-4xl font-mono font-black text-white"
+                                className="text-4xl font-mono font-semibold text-white"
                             >
                                 {Math.round(systemVitality * 100)}%
                             </motion.div>
@@ -137,14 +137,14 @@ export function AdminPulse({ traces, nodesCount, haltingProtocol, telemetry }: P
             <div className="absolute inset-0 pointer-events-none opacity-20">
                 <div className="w-full h-full bg-[radial-gradient(circle_at_center,var(--accent)_1px,transparent_1px)] [background-size:20px_20px]" />
             </div>
-        </GlassCard>
+        </SolidCard>
     );
 }
 
 function PulseMetric({ label, value, icon, active, warning }: { label: string, value: string, icon: any, active: boolean, warning?: boolean }) {
     return (
         <div className="p-3 border border-white/5 bg-white/5 space-y-1 relative">
-            <div className="flex items-center justify-between text-[8px] font-black uppercase tracking-widest text-white/30">
+            <div className="flex items-center justify-between text-[8px] font-semibold tracking-normal text-white/30">
                 <span>{label}</span>
                 <span className={warning ? "text-red-500" : active ? "text-[var(--accent)]" : "text-white/20"}>{icon}</span>
             </div>

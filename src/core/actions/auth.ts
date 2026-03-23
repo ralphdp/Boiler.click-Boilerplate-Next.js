@@ -1,9 +1,9 @@
 "use server";
 
-import { getAdminAuth, getAdminDb } from "@/core/firebase/admin";
+import { getAdminAuth, getAdminDb, getCollectionName } from "@/core/firebase/admin";
 import { Resend } from "resend";
 import { ACTIVE_THEME } from "@/theme/config";
-import { getGlobalOverrides } from "@/core/actions/system";
+import { getGlobalOverrides } from "@/core/actions/branding";
 import { auth } from "@/core/auth";
 
 const resend = new Resend(process.env.RESEND_API_KEY || "re_fallback");
@@ -126,12 +126,12 @@ export async function revokeAllSessions() {
         }
 
         // Update the database to force NextAuth JWTs to instantly expire
-        await db.collection("users").doc(uid).set({
+        await db.collection(getCollectionName("users")).doc(uid).set({
             tokensValidAfterTime: now
         }, { merge: true });
 
         // Purge the physical 'active_sessions' sub-collection to refresh the UI matrix
-        const sessionsRef = db.collection("users").doc(uid).collection("active_sessions");
+        const sessionsRef = db.collection(getCollectionName("users")).doc(uid).collection("active_sessions");
         const sessionsSnap = await sessionsRef.get();
 
         const batch = db.batch();
@@ -156,7 +156,7 @@ export async function getActiveSessions() {
 
     try {
         const db = getAdminDb();
-        const snapshot = await db.collection("users").doc(session.user.id).collection("active_sessions").orderBy("lastSeen", "desc").get();
+        const snapshot = await db.collection(getCollectionName("users")).doc(session.user.id).collection("active_sessions").orderBy("lastSeen", "desc").get();
 
         return snapshot.docs.map(doc => ({
             id: doc.id,
@@ -174,7 +174,7 @@ export async function revokeSession(sessionId: string) {
 
     try {
         const db = getAdminDb();
-        await db.collection("users").doc(session.user.id).collection("active_sessions").doc(sessionId).delete();
+        await db.collection(getCollectionName("users")).doc(session.user.id).collection("active_sessions").doc(sessionId).delete();
 
         // Note: For a true JWT revocation without state, we'd need to store a blacklist.
         // For the Sovereign Boiler, we audit the revocation and the client will be rejected 

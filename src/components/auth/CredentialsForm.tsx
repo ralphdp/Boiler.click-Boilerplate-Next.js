@@ -86,30 +86,30 @@ export function CredentialsForm({ markLastUsed }: { markLastUsed?: () => void })
             />
 
             {error && (
-                <p className="text-[8px] text-red-500 uppercase font-black tracking-widest text-center" aria-live="polite">
+                <p className="text-xs text-red-500 font-semibold text-center" aria-live="polite">
                     {error}
                 </p>
             )}
 
             <Button
                 type="submit"
-                variant="glass-accent"
+                variant="solid-accent"
                 disabled={loading}
-                className="w-full py-4 uppercase"
+                className="w-full py-4 font-bold"
             >
                 {loading
                     ? t.auth.initializing
                     : (isRegistering ? t.auth.registerIdentity : t.auth.confirmIdentity)}
             </Button>
 
-            <div className="pt-2 text-center text-[10px] uppercase font-bold tracking-[0.15em]">
+            <div className="pt-2 text-center text-sm">
                 <button
                     type="button"
                     onClick={() => {
                         setIsRegistering(!isRegistering);
                         setError("");
                     }}
-                    className="text-white/40 hover:text-white transition-colors duration-300"
+                    className="text-white/50 hover:text-white transition-colors duration-200"
                 >
                     {isRegistering ? t.auth.modeToggleLogin : t.auth.modeToggleRegister}
                 </button>

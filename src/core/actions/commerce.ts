@@ -1,8 +1,8 @@
 "use server";
 
-import { getAdminDb } from "@/core/firebase/admin";
+import { getAdminDb, getCollectionName } from "@/core/firebase/admin";
 import { auth } from "@/core/auth";
-import { getGlobalOverrides } from "./system";
+import { getGlobalOverrides } from "./branding";
 import { logAuditTrace } from "./nodes";
 
 /**
@@ -24,7 +24,7 @@ export async function setCommerceMode(mode: string) {
 
     try {
         const db = getAdminDb();
-        await db.collection("sovereign_config").doc("global").set({ commerceMode: mode }, { merge: true });
+        await db.collection(getCollectionName("sovereign_config")).doc("global").set({ commerceMode: mode }, { merge: true });
         await logAuditTrace("COMMERCE_UPDATE", "INFO", `Changed commerce mode to ${mode}`, session?.user?.email || "SYSTEM", "RECURSION");
         return { success: true };
     } catch (e: any) {
@@ -43,7 +43,7 @@ export async function setPricingMatrix(data: {
     await verifyCommerceClearance();
 
     const db = getAdminDb();
-    await db.collection("sovereign_config").doc("global").set({
+    await db.collection(getCollectionName("sovereign_config")).doc("global").set({
         pricingTiers: data.pricingTiers || [],
         recommendedPlan: data.recommendedPlan || ""
     }, { merge: true });
@@ -55,7 +55,7 @@ export async function getStoreProducts(searchStr: string = "", limitCount: numbe
     // Read-only operations are permitted even if module is off for administrative visibility
     const db = getAdminDb();
     try {
-        let queryRef: any = db.collection("store_products");
+        let queryRef: any = db.collection(getCollectionName("store_products"));
         if (searchStr) {
             queryRef = queryRef.where("name", ">=", searchStr).where("name", "<=", searchStr + '\uf8ff');
         } else {
@@ -66,7 +66,7 @@ export async function getStoreProducts(searchStr: string = "", limitCount: numbe
 
         let totalCount = 0;
         try {
-            const countSnap = await db.collection("store_products").count().get();
+            const countSnap = await db.collection(getCollectionName("store_products")).count().get();
             totalCount = countSnap.data().count;
         } catch { }
 
@@ -89,7 +89,7 @@ export async function bulkImportStoreProducts(products: any[]) {
     const db = getAdminDb();
     const batch = db.batch();
     for (const p of products) {
-        const docRef = db.collection("store_products").doc();
+        const docRef = db.collection(getCollectionName("store_products")).doc();
         batch.set(docRef, { ...p, createdAt: new Date().toISOString() });
     }
     await batch.commit();
@@ -107,7 +107,7 @@ export async function bulkUpdateStoreProducts(ids: string[], updates: any) {
     const db = getAdminDb();
     const batch = db.batch();
     for (const id of ids) {
-        const docRef = db.collection("store_products").doc(id);
+        const docRef = db.collection(getCollectionName("store_products")).doc(id);
         batch.update(docRef, { ...updates, updatedAt: new Date().toISOString() });
     }
     await batch.commit();
@@ -125,7 +125,7 @@ export async function bulkDeleteStoreProducts(ids: string[]) {
     const db = getAdminDb();
     const batch = db.batch();
     for (const id of ids) {
-        const docRef = db.collection("store_products").doc(id);
+        const docRef = db.collection(getCollectionName("store_products")).doc(id);
         batch.delete(docRef);
     }
     await batch.commit();
@@ -141,7 +141,7 @@ export async function createStoreProduct(data: any) {
     await verifyCommerceClearance();
 
     const db = getAdminDb();
-    const docRef = db.collection("store_products").doc();
+    const docRef = db.collection(getCollectionName("store_products")).doc();
     await docRef.set({ ...data, createdAt: new Date().toISOString() });
     await logAuditTrace("COMMERCE_UPDATE", "INFO", "Created new store product", session?.user?.email || "SYSTEM", "RECURSION");
     return { success: true, id: docRef.id };
@@ -155,7 +155,7 @@ export async function updateStoreProduct(id: string, data: any) {
     await verifyCommerceClearance();
 
     const db = getAdminDb();
-    await db.collection("store_products").doc(id).set(data, { merge: true });
+    await db.collection(getCollectionName("store_products")).doc(id).set(data, { merge: true });
     await logAuditTrace("COMMERCE_UPDATE", "INFO", "Updated store product", session?.user?.email || "SYSTEM", "RECURSION");
     return { success: true };
 }
@@ -168,7 +168,7 @@ export async function deleteStoreProduct(id: string) {
     await verifyCommerceClearance();
 
     const db = getAdminDb();
-    await db.collection("store_products").doc(id).delete();
+    await db.collection(getCollectionName("store_products")).doc(id).delete();
     await logAuditTrace("COMMERCE_UPDATE", "WARN", "Deleted store product", session?.user?.email || "SYSTEM", "PARSIMONY");
     return { success: true };
 }

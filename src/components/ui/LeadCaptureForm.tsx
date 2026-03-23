@@ -83,7 +83,7 @@ export function LeadCaptureForm({ isOpen, onClose }: LeadCaptureFormProps) {
                         animate={{ opacity: 1 }}
                         exit={{ opacity: 0 }}
                         onClick={onClose}
-                        className="fixed inset-0 bg-black/95 backdrop-blur-3xl z-0"
+                        className="fixed inset-0 z-0"
                     />
 
                     {/* Modal Content */}
@@ -109,12 +109,12 @@ export function LeadCaptureForm({ isOpen, onClose }: LeadCaptureFormProps) {
                                     <div className="p-2 bg-white/5 border border-white/10">
                                         <ShieldCheck className="w-5 h-5 text-white/80" />
                                     </div>
-                                    <span className="text-[10px] font-black tracking-[0.4em] uppercase text-white/80">Initiate_Handshake</span>
+                                    <span className="text-[10px] font-bold tracking-normal] text-white/80">Initiate_Handshake</span>
                                 </div>
-                                <h2 className="text-3xl font-black italic tracking-tighter uppercase leading-tight">
+                                <h2 className="text-3xl font-bold tracking-normal leading-tight">
                                     Engage <span className="text-white/60">{ACTIVE_THEME.siteName}</span> Substrate
                                 </h2>
-                                <p className="text-sm text-zinc-500 font-serif italic">
+                                <p className="text-sm text-zinc-500 font-sans">
                                     Submit your parameters to coordinate a formal transmission.
                                 </p>
                             </div>
@@ -128,7 +128,7 @@ export function LeadCaptureForm({ isOpen, onClose }: LeadCaptureFormProps) {
                                     <div className="w-16 h-16 bg-white/5 border border-white/20 flex items-center justify-center mx-auto">
                                         <Send className="w-8 h-8 text-white/80" />
                                     </div>
-                                    <div className="text-xl font-black italic uppercase tracking-tighter text-white">Transmission Successful</div>
+                                    <div className="text-xl font-bold tracking-normal text-white">Transmission Successful</div>
                                     <p className="text-sm text-zinc-500">Your request has been logged to the Sovereign Architecture.</p>
                                 </motion.div>
                             ) : (
@@ -140,7 +140,7 @@ export function LeadCaptureForm({ isOpen, onClose }: LeadCaptureFormProps) {
                                                 required
                                                 type="text"
                                                 placeholder="Name / Designation"
-                                                className="w-full bg-white/[0.03] border border-white/10 px-12 py-4 text-xs font-black uppercase tracking-widest outline-none focus:border-white/50 transition-all text-white"
+                                                className="w-full bg-white/[0.03] border border-white/10 px-12 py-4 text-xs font-bold tracking-normal outline-none focus:border-white/50 transition-all text-white"
                                                 value={formData.name}
                                                 onChange={e => setFormData({ ...formData, name: e.target.value })}
                                             />
@@ -151,7 +151,7 @@ export function LeadCaptureForm({ isOpen, onClose }: LeadCaptureFormProps) {
                                                 required
                                                 type="email"
                                                 placeholder="Email Origin"
-                                                className="w-full bg-white/[0.03] border border-white/10 px-12 py-4 text-xs font-black uppercase tracking-widest outline-none focus:border-white/50 transition-all text-white"
+                                                className="w-full bg-white/[0.03] border border-white/10 px-12 py-4 text-xs font-bold tracking-normal outline-none focus:border-white/50 transition-all text-white"
                                                 value={formData.email}
                                                 onChange={e => setFormData({ ...formData, email: e.target.value })}
                                             />
@@ -161,7 +161,7 @@ export function LeadCaptureForm({ isOpen, onClose }: LeadCaptureFormProps) {
                                             <input
                                                 type="text"
                                                 placeholder="Organization"
-                                                className="w-full bg-white/[0.03] border border-white/10 px-12 py-4 text-xs font-black uppercase tracking-widest outline-none focus:border-white/50 transition-all text-white"
+                                                className="w-full bg-white/[0.03] border border-white/10 px-12 py-4 text-xs font-bold tracking-normal outline-none focus:border-white/50 transition-all text-white"
                                                 value={formData.organization}
                                                 onChange={e => setFormData({ ...formData, organization: e.target.value })}
                                             />
@@ -171,7 +171,7 @@ export function LeadCaptureForm({ isOpen, onClose }: LeadCaptureFormProps) {
                                             <button
                                                 type="button"
                                                 onClick={() => setActiveSelect(activeSelect === 'interest' ? null : 'interest')}
-                                                className="w-full text-left bg-black border border-white/10 px-12 py-4 text-xs font-black tracking-widest outline-none focus:border-white/50 transition-all text-white/80"
+                                                className="w-full text-left bg-black border border-white/10 px-12 py-4 text-xs font-bold tracking-normal outline-none focus:border-white/50 transition-all text-white/80"
                                             >
                                                 {formData.interest}
                                             </button>
@@ -179,7 +179,7 @@ export function LeadCaptureForm({ isOpen, onClose }: LeadCaptureFormProps) {
                                             {activeSelect === 'interest' && (
                                                 <>
                                                     <div className="fixed inset-0 z-40" onClick={() => setActiveSelect(null)} />
-                                                    <div className="absolute top-full left-0 right-0 mt-1 bg-black/95 backdrop-blur-xl border border-white/10 flex flex-col z-50 shadow-2xl">
+                                                    <div className="absolute top-full left-0 right-0 mt-1 border border-white/10 flex flex-col z-50 shadow-2xl">
                                                         {[
                                                             "General Inquiry",
                                                             "Strategic Consultation (Waitlist)",
@@ -193,7 +193,7 @@ export function LeadCaptureForm({ isOpen, onClose }: LeadCaptureFormProps) {
                                                                     setFormData({ ...formData, interest: opt });
                                                                     setActiveSelect(null);
                                                                 }}
-                                                                className="px-6 py-4 text-xs font-black tracking-widest text-left text-white/60 hover:text-white hover:bg-white/5 transition-colors border-b border-white/5 last:border-0"
+                                                                className="px-6 py-4 text-xs font-bold tracking-normal text-left text-white/60 hover:text-white hover:bg-white/5 transition-colors border-b border-white/5 last:border-0"
                                                             >
                                                                 {opt}
                                                             </button>
@@ -216,14 +216,14 @@ export function LeadCaptureForm({ isOpen, onClose }: LeadCaptureFormProps) {
                                                             <button
                                                                 type="button"
                                                                 onClick={() => setActiveSelect(activeSelect === 'timeline' ? null : 'timeline')}
-                                                                className="w-full text-left bg-black border border-white/10 px-4 py-3 text-[10px] font-bold tracking-widest outline-none transition-all text-white/60 uppercase"
+                                                                className="w-full text-left bg-black border border-white/10 px-4 py-3 text-[10px] font-bold tracking-normal outline-none transition-all text-white/60"
                                                             >
                                                                 {formData.questionnaire.timeline || "TIMELINE"}
                                                             </button>
                                                             {activeSelect === 'timeline' && (
                                                                 <>
                                                                     <div className="fixed inset-0 z-40" onClick={() => setActiveSelect(null)} />
-                                                                    <div className="absolute bottom-full left-0 right-0 mb-1 bg-black/95 backdrop-blur-xl border border-white/10 flex flex-col z-50">
+                                                                    <div className="absolute bottom-full left-0 right-0 mb-1 border border-white/10 flex flex-col z-50">
                                                                         {["Immediate", "1-3 Months", "3-6 Months"].map(opt => (
                                                                             <button
                                                                                 type="button"
@@ -232,7 +232,7 @@ export function LeadCaptureForm({ isOpen, onClose }: LeadCaptureFormProps) {
                                                                                     setFormData({ ...formData, questionnaire: { ...formData.questionnaire, timeline: opt } });
                                                                                     setActiveSelect(null);
                                                                                 }}
-                                                                                className="px-4 py-3 text-[10px] font-bold tracking-widest text-left uppercase text-white/60 hover:text-white hover:bg-white/5 transition-colors border-b border-white/5 last:border-0"
+                                                                                className="px-4 py-3 text-[10px] font-bold tracking-normal text-left text-white/60 hover:text-white hover:bg-white/5 transition-colors border-b border-white/5 last:border-0"
                                                                             >
                                                                                 {opt}
                                                                             </button>
@@ -246,14 +246,14 @@ export function LeadCaptureForm({ isOpen, onClose }: LeadCaptureFormProps) {
                                                             <button
                                                                 type="button"
                                                                 onClick={() => setActiveSelect(activeSelect === 'budget' ? null : 'budget')}
-                                                                className="w-full text-left bg-black border border-white/10 px-4 py-3 text-[10px] font-bold tracking-widest outline-none transition-all text-white/60 uppercase"
+                                                                className="w-full text-left bg-black border border-white/10 px-4 py-3 text-[10px] font-bold tracking-normal outline-none transition-all text-white/60"
                                                             >
                                                                 {formData.questionnaire.budget || "BUDGET RANGE"}
                                                             </button>
                                                             {activeSelect === 'budget' && (
                                                                 <>
                                                                     <div className="fixed inset-0 z-40" onClick={() => setActiveSelect(null)} />
-                                                                    <div className="absolute bottom-full left-0 right-0 mb-1 bg-black/95 backdrop-blur-xl border border-white/10 flex flex-col z-50">
+                                                                    <div className="absolute bottom-full left-0 right-0 mb-1 border border-white/10 flex flex-col z-50">
                                                                         {["$10k-$25k", "$25k-$50k", "$50k+"].map(opt => (
                                                                             <button
                                                                                 type="button"
@@ -262,7 +262,7 @@ export function LeadCaptureForm({ isOpen, onClose }: LeadCaptureFormProps) {
                                                                                     setFormData({ ...formData, questionnaire: { ...formData.questionnaire, budget: opt } });
                                                                                     setActiveSelect(null);
                                                                                 }}
-                                                                                className="px-4 py-3 text-[10px] font-bold tracking-widest text-left uppercase text-white/60 hover:text-white hover:bg-white/5 transition-colors border-b border-white/5 last:border-0"
+                                                                                className="px-4 py-3 text-[10px] font-bold tracking-normal text-left text-white/60 hover:text-white hover:bg-white/5 transition-colors border-b border-white/5 last:border-0"
                                                                             >
                                                                                 {opt}
                                                                             </button>
@@ -278,7 +278,7 @@ export function LeadCaptureForm({ isOpen, onClose }: LeadCaptureFormProps) {
                                         <textarea
                                             placeholder="Payload / Message"
                                             rows={4}
-                                            className="w-full bg-white/[0.03] border border-white/10 px-6 py-4 text-xs font-black tracking-widest outline-none focus:border-white/50 transition-all resize-none text-white"
+                                            className="w-full bg-white/[0.03] border border-white/10 px-6 py-4 text-xs font-bold tracking-normal outline-none focus:border-white/50 transition-all resize-none text-white"
                                             value={formData.message}
                                             onChange={e => setFormData({ ...formData, message: e.target.value })}
                                         />
@@ -287,15 +287,15 @@ export function LeadCaptureForm({ isOpen, onClose }: LeadCaptureFormProps) {
                                     <button
                                         disabled={status === 'submitting'}
                                         type="submit"
-                                        className="w-full py-6 bg-white/90 text-black font-black uppercase tracking-[0.2em] text-[10px] hover:bg-white transition-all disabled:opacity-50 flex items-center justify-center gap-3 shadow-[0_10px_30px_rgba(255,255,255,0.1)]"
+                                        className="w-full py-6 bg-white/90 text-black font-bold tracking-normal] text-[10px] hover:bg-white transition-all disabled:opacity-50 flex items-center justify-center gap-3 shadow-[0_10px_30px_rgba(255,255,255,0.1)]"
                                     >
                                         {status === 'submitting' ? 'TRANSMITTING...' : 'INITIATE_HANDSHAKE'}
                                     </button>
 
                                     {status === 'error' && (
-                                        <p className="text-[10px] font-black uppercase text-red-500 text-center tracking-widest mb-4">Handshake Failed. Node Unreachable.</p>
+                                        <p className="text-[10px] font-bold text-red-500 text-center tracking-normal mb-4">Handshake Failed. Node Unreachable.</p>
                                     )}
-                                    <p className="text-[10px] font-black uppercase text-white/20 mt-6 text-center tracking-[0.3em]">
+                                    <p className="text-[10px] font-bold text-white/20 mt-6 text-center tracking-normal]">
                                         DIRECT BRAIN LINK: <a href={`mailto:${process.env.NEXT_PUBLIC_ADMIN_EMAIL || 'admin@sovereign.local'}`} className="text-white/40 hover:text-white transition-colors">{process.env.NEXT_PUBLIC_ADMIN_EMAIL || 'ADMIN@SOVEREIGN.LOCAL'}</a>
                                     </p>
                                 </form>

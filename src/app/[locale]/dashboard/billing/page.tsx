@@ -1,7 +1,7 @@
 "use client";
 
 import { useSession } from "next-auth/react";
-import { GlassCard } from "@/components/ui/GlassCard";
+import { SolidCard } from "@/components/ui/SolidCard";
 import { Button } from "@/components/ui/Button";
 import { Input } from "@/components/ui/Input";
 import Link from "next/link";
@@ -83,14 +83,14 @@ export default function BillingPage() {
     if (!activeWorkspace) {
         return (
             <main className="relative min-h-screen flex flex-col items-center justify-center p-6 text-white overflow-hidden">
-                <GlassCard className="w-full max-w-2xl text-center space-y-6">
+                <SolidCard className="w-full max-w-2xl text-center space-y-6">
                     <ShieldAlert size={48} className="mx-auto text-red-500/50" />
-                    <h1 className="text-xl font-black technical tracking-[0.2em] uppercase text-[var(--accent)]">{t.billing.noContext}</h1>
-                    <p className="text-xs uppercase font-mono tracking-widest text-white/50">{t.billing.noContextDesc}</p>
-                    <Button as={Link} href={`/${language}/dashboard/workspaces`} variant="glass-accent">
+                    <h1 className="text-xl font-bold tracking-normal text-[var(--accent)]">{t.billing.noContext}</h1>
+                    <p className="text-sm text-white/50">{t.billing.noContextDesc}</p>
+                    <Button as={Link} href={`/${language}/dashboard/workspaces`} variant="solid-accent">
                         {t.billing.returnToWorkspaces}
                     </Button>
-                </GlassCard>
+                </SolidCard>
             </main>
         );
     }
@@ -104,13 +104,13 @@ export default function BillingPage() {
                 </Button>
             </div>
 
-            <GlassCard className="w-full max-w-4xl space-y-8">
+            <SolidCard className="w-full max-w-4xl space-y-8">
                 <div className="space-y-2 text-left">
-                    <h1 className="text-2xl font-black technical tracking-[0.2em] uppercase text-[var(--accent)] flex items-center gap-3">
-                        <CreditCard size={24} />
+                    <h1 className="text-2xl font-bold tracking-normal text-white flex items-center gap-3">
+                        <CreditCard size={24} className="text-[var(--accent)]" />
                         {t.billing.title}
                     </h1>
-                    <p className="text-[10px] uppercase tracking-[0.2em] font-bold text-white/50">
+                    <p className="text-sm text-white/50">
                         {t.billing.context} {activeWorkspace}
                     </p>
                 </div>
@@ -119,31 +119,28 @@ export default function BillingPage() {
 
                 <div className="grid grid-cols-1 md:grid-cols-2 gap-8">
                     {/* Left side: Subscription Status */}
-                    <div className="space-y-6">
-                        <h2 className="text-[10px] font-black technical tracking-[0.2em] uppercase text-white/70">{t.billing.currentInfra}</h2>
+                    <div className="space-y-6 text-left">
+                        <h2 className="text-xs font-semibold text-white/70 mb-4">{t.billing.currentInfra}</h2>
 
                         {loading ? (
-                            <p className="text-white/30 text-xs font-mono uppercase tracking-widest animate-pulse">{t.billing.scanning}</p>
+                            <p className="text-white/50 text-sm animate-pulse">{t.billing.scanning}</p>
                         ) : (
-                            <div className="p-6 bg-black/50 border border-white/10 relative overflow-hidden flex flex-col justify-between min-h-[160px]">
-                                {billingData?.billingStatus === 'active' && (
-                                    <div className="absolute top-0 right-0 w-32 h-32 bg-[#00E676]/10 blur-[50px] pointer-events-none rounded-full" />
-                                )}
+                            <div className="p-6 bg-[#0a0a0a] border border-white/10 relative overflow-hidden flex flex-col justify-between min-h-[160px]">
                                 <div>
-                                    <h3 className="font-black uppercase tracking-widest text-xl mb-1 flex items-center gap-2">
+                                    <h3 className="font-bold text-xl mb-1 flex items-center gap-2">
                                         {billingData?.billingStatus === 'active' ? t.billing.vanguardSecure : t.billing.freeTier}
                                     </h3>
-                                    <p className="text-[10px] uppercase font-mono text-white/50">
+                                    <p className="text-xs font-mono text-white/50">
                                         {t.billing.status} <span className={billingData?.billingStatus === 'active' ? 'text-[#00E676]' : 'text-white/70'}>{billingData?.billingStatus || t.billing.noneStatus}</span>
                                     </p>
                                 </div>
 
                                 {billingData?.billingStatus === 'active' ? (
-                                    <Button variant="outline" onClick={handleManage} disabled={actionLoading} className="w-full mt-6 text-xs border-white/20">
+                                    <Button variant="outline" onClick={handleManage} disabled={actionLoading} className="w-full mt-6 text-sm border-white/20">
                                         {t.billing.openPortal}
                                     </Button>
                                 ) : (
-                                    <p className="text-[9px] uppercase tracking-widest text-white/30 mt-6 font-bold leading-relaxed">
+                                    <p className="text-xs text-white/50 mt-6 leading-relaxed">
                                         {t.billing.unhardenedWarning}
                                     </p>
                                 )}
@@ -152,24 +149,23 @@ export default function BillingPage() {
                     </div>
 
                     {/* Right side: Upgrade Option */}
-                    <div className="space-y-6">
-                        <h2 className="text-[10px] font-black technical tracking-[0.2em] uppercase text-white/70">{t.billing.upgradePath}</h2>
+                    <div className="space-y-6 text-left">
+                        <h2 className="text-xs font-semibold text-white/70 mb-4">{t.billing.upgradePath}</h2>
 
-                        <div className="p-6 bg-[var(--accent)]/5 border border-[var(--accent)]/20 relative flex flex-col justify-between min-h-[160px]">
-                            <div className="absolute top-0 right-0 w-32 h-32 bg-[var(--accent)]/10 blur-[50px] pointer-events-none rounded-full" />
+                        <div className="p-6 bg-[#0a0a0a] border border-[var(--accent)]/30 relative flex flex-col justify-between min-h-[160px]">
                             <div>
-                                <h3 className="font-black uppercase tracking-widest text-xl text-[var(--accent)] flex items-center gap-2 mb-4">
+                                <h3 className="font-bold text-xl text-[var(--accent)] flex items-center gap-2 mb-4">
                                     <Sparkles size={18} /> {t.billing.omniVanguard}
                                 </h3>
-                                <ul className="space-y-2 text-xs uppercase tracking-widest font-mono text-white/70 mb-6">
-                                    <li className="flex items-center gap-2"><CheckCircle size={10} className="text-[#00E676]" /> {t.billing.edgeComputations}</li>
-                                    <li className="flex items-center gap-2"><CheckCircle size={10} className="text-[#00E676]" /> {t.billing.masterStorage}</li>
-                                    <li className="flex items-center gap-2"><CheckCircle size={10} className="text-[#00E676]" /> {t.billing.outboundWebhooks}</li>
-                                    <li className="flex items-center gap-2"><CheckCircle size={10} className="text-[#00E676]" /> {t.billing.priorityLogic}</li>
+                                <ul className="space-y-2 text-sm text-white/70 mb-6">
+                                    <li className="flex items-center gap-2"><CheckCircle size={14} className="text-[#00E676]" /> {t.billing.edgeComputations}</li>
+                                    <li className="flex items-center gap-2"><CheckCircle size={14} className="text-[#00E676]" /> {t.billing.masterStorage}</li>
+                                    <li className="flex items-center gap-2"><CheckCircle size={14} className="text-[#00E676]" /> {t.billing.outboundWebhooks}</li>
+                                    <li className="flex items-center gap-2"><CheckCircle size={14} className="text-[#00E676]" /> {t.billing.priorityLogic}</li>
                                 </ul>
                             </div>
 
-                            <Button variant="glass-accent" onClick={handleUpgrade} disabled={actionLoading || billingData?.billingStatus === 'active'} className="w-full py-6 font-bold uppercase tracking-[0.2em]">
+                            <Button variant="solid-accent" onClick={handleUpgrade} disabled={actionLoading || billingData?.billingStatus === 'active'} className="w-full py-6 font-bold">
                                 {billingData?.billingStatus === 'active' ? t.billing.activeStatus : t.billing.initializeProtocol}
                             </Button>
                         </div>
@@ -178,8 +174,8 @@ export default function BillingPage() {
 
                 <div className="w-full h-px bg-white/5" />
 
-                <div className="space-y-4">
-                    <h2 className="text-[10px] font-black technical tracking-[0.2em] uppercase text-white/70">{t.billing.hardwareLicensing}</h2>
+                <div className="space-y-4 text-left">
+                    <h2 className="text-xs font-semibold text-white/70 mb-4">{t.billing.hardwareLicensing}</h2>
                     <form onSubmit={handleRedeemVoucher} className="flex flex-col sm:flex-row gap-4 max-w-xl items-center">
                         <div className="flex-1 w-full">
                             <Input
@@ -187,18 +183,18 @@ export default function BillingPage() {
                                 value={voucherCode}
                                 onChange={(e) => setVoucherCode(e.target.value)}
                                 placeholder={t.billing.voucherPlaceholder}
-                                className="tracking-[0.2em] font-mono text-white h-[52px]"
+                                className="font-mono text-white h-[52px]"
                             />
                         </div>
-                        <Button type="submit" variant="glass" disabled={voucherLoading || !voucherCode.trim()} className="whitespace-nowrap cursor-pointer h-[52px]">
+                        <Button type="submit" variant="solid" disabled={voucherLoading || !voucherCode.trim()} className="whitespace-nowrap cursor-pointer h-[52px]">
                             {voucherLoading ? t.billing.verifyingCrypto : t.billing.redeemVoucher}
                         </Button>
                     </form>
-                    <p className="text-[9px] uppercase tracking-widest text-white/30 text-left font-serif italic">
+                    <p className="text-xs text-white/40 text-left mt-2 italic">
                         {t.billing.voucherHint}
                     </p>
                 </div>
-            </GlassCard>
+            </SolidCard>
 
             <div className="absolute inset-0 z-[-1] opacity-5 pointer-events-none" aria-hidden="true">
                 <div className="w-full h-full bg-[radial-gradient(circle_at_center,var(--accent)_1px,transparent_1px)] [background-size:32px_32px]" />

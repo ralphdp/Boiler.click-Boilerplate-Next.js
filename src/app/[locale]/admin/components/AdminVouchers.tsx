@@ -19,7 +19,7 @@ import {
 } from "lucide-react";
 import { Button } from "@/components/ui/Button";
 import { Tooltip } from "@/components/ui/Tooltip";
-import { GlassCard } from "@/components/ui/GlassCard";
+import { SolidCard } from "@/components/ui/SolidCard";
 import { Input } from "@/components/ui/Input";
 import { Select } from "@/components/ui/Select";
 import { ConfirmationModal } from "@/components/ui/ConfirmationModal";
@@ -163,13 +163,13 @@ export function AdminVouchers({ t }: { t: any }) {
         >
             {/* Minting Controller */}
             <div className={`overflow-hidden transition-all duration-500 ease-vanguard ${isMinting ? 'max-h-[800px] mb-6' : 'max-h-0'}`}>
-                <GlassCard className="border border-[var(--accent)]/30 bg-[var(--accent)]/5 p-6 space-y-6">
+                <SolidCard className="border border-[var(--accent)]/30 bg-[var(--accent)]/5 p-6 space-y-6">
                     <div className="flex justify-between items-center">
-                        <h3 className="text-[10px] font-black uppercase tracking-[0.3em] text-[var(--accent)] flex items-center gap-2">
+                        <h3 className="text-[10px] font-semibold tracking-normal] text-[var(--accent)] flex items-center gap-2">
                             Voucher Initialization Terminal
                         </h3>
                         <Tooltip content="Terminate the voucher initialization session." term="TERMINAL_SHUTDOWN">
-                            <button onClick={() => setIsMinting(false)} className="text-[10px] font-bold uppercase tracking-widest text-white/30 hover:text-white transition-colors">
+                            <button onClick={() => setIsMinting(false)} className="text-[10px] font-bold tracking-normal text-white/30 hover:text-white transition-colors">
                                 Close Terminal
                             </button>
                         </Tooltip>
@@ -192,7 +192,7 @@ export function AdminVouchers({ t }: { t: any }) {
                             <>
                                 <div className="col-span-1">
                                     <Input
-                                        label="TARGET PLAN ID"
+                                        label="Target Plan ID"
                                         placeholder="pro"
                                         value={planId}
                                         onChange={(e) => setPlanId(e.target.value)}
@@ -200,11 +200,11 @@ export function AdminVouchers({ t }: { t: any }) {
                                 </div>
                                 <div className="col-span-1">
                                     <Select
-                                        label="TERM DURATION"
+                                        label="Term Duration"
                                         options={[
-                                            { value: "1", label: `1 MONTH` },
-                                            { value: "12", label: `1 YEAR (12M)` },
-                                            { value: "-1", label: "LIFETIME (INF)" }
+                                            { value: "1", label: `1 Month` },
+                                            { value: "12", label: `1 Year (12M)` },
+                                            { value: "-1", label: "Lifetime (INF)" }
                                         ]}
                                         value={duration}
                                         onChange={(val) => setDuration(val)}
@@ -214,7 +214,7 @@ export function AdminVouchers({ t }: { t: any }) {
                         ) : (
                             <div className="col-span-2">
                                 <Input
-                                    label="VALUE MAGNITUDE"
+                                    label="Value Magnitude"
                                     type="number"
                                     value={value}
                                     onChange={(e) => setValue(parseFloat(e.target.value))}
@@ -223,7 +223,7 @@ export function AdminVouchers({ t }: { t: any }) {
                         )}
                         <div className="col-span-1">
                             <Input
-                                label="INITIAL QUANTITY"
+                                label="Initial Quantity"
                                 type="number"
                                 min={1}
                                 max={100}
@@ -233,7 +233,7 @@ export function AdminVouchers({ t }: { t: any }) {
                         </div>
                         <div className="col-span-1">
                             <Input
-                                label="MAX REDEMPTIONS"
+                                label="Max Redemptions"
                                 type="number"
                                 value={maxRedemptions}
                                 onChange={(e) => setMaxRedemptions(parseInt(e.target.value, 10))}
@@ -241,7 +241,7 @@ export function AdminVouchers({ t }: { t: any }) {
                         </div>
                         <div className="col-span-1">
                             <Input
-                                label="EXPIRY TARGET"
+                                label="Expiry Target"
                                 type="date"
                                 value={expiryDate}
                                 onChange={(e) => setExpiryDate(e.target.value)}
@@ -251,7 +251,7 @@ export function AdminVouchers({ t }: { t: any }) {
                             <Button
                                 onClick={() => handleCreate()}
                                 disabled={generating}
-                                className="w-full bg-[var(--accent)] border border-[var(--accent)]/50 text-[10px] font-black uppercase tracking-widest text-black h-[54px] hover:brightness-110 transition-all flex items-center justify-center gap-2"
+                                className="w-full bg-[var(--accent)] border border-[var(--accent)]/50 text-[10px] font-semibold tracking-normal text-black h-[54px] hover:brightness-110 transition-all flex items-center justify-center gap-2"
                                 tooltip="Execute the voucher minting protocol and commit new authorizations to the substrate."
                                 tooltipTerm="VOUCHER_MINT"
                             >
@@ -259,7 +259,7 @@ export function AdminVouchers({ t }: { t: any }) {
                             </Button>
                         </div>
                     </div>
-                </GlassCard>
+                </SolidCard>
             </div>
 
             {/* Audit View */}
@@ -268,10 +268,10 @@ export function AdminVouchers({ t }: { t: any }) {
 
                 <div className="p-4 md:p-6 border-b border-white/5 bg-white/5">
                     <div className="flex flex-col gap-1 shrink-0">
-                        <h3 className="text-xs font-black uppercase tracking-[0.2em] text-[var(--accent)] flex items-center gap-2">
+                        <h3 className="text-xs font-semibold tracking-normal text-[var(--accent)] flex items-center gap-2">
                             Sovereign Voucher Vault
                         </h3>
-                        <span className="text-[8px] font-mono text-white/30 uppercase tracking-[0.3em]">Authorization & Access Matrix Stewardship</span>
+                        <span className="text-[8px] font-mono text-white/30 tracking-normal">Authorization & Access Matrix Stewardship</span>
                     </div>
                 </div>
 
@@ -280,7 +280,7 @@ export function AdminVouchers({ t }: { t: any }) {
                         <div className="grid grid-cols-2 gap-2 sm:flex sm:items-center sm:gap-2">
                             <Button
                                 onClick={() => setIsMinting(!isMinting)}
-                                className="h-[54px] px-6 bg-[var(--accent)]/20 border border-[var(--accent)]/50 text-[10px] font-black uppercase tracking-widest text-white hover:bg-[var(--accent)]/30 transition-all flex items-center justify-center gap-2"
+                                className="h-[54px] px-6 bg-[var(--accent)]/20 border border-[var(--accent)]/50 text-xs font-semibold tracking-normal text-white hover:bg-[var(--accent)]/30 transition-all flex items-center justify-center gap-2"
                                 tooltip="Initialize the minting protocol for new authorization vouchers."
                                 tooltipTerm="MINT_INIT"
                             >
@@ -288,10 +288,10 @@ export function AdminVouchers({ t }: { t: any }) {
                             </Button>
                             <Select
                                 options={[
-                                    { label: "ALL TYPES", value: "ALL" },
-                                    { label: "PLAN UNLOCK", value: "PLAN_UNLOCK" },
-                                    { label: "PERCENTAGE", value: "PERCENTAGE" },
-                                    { label: "CREDIT", value: "CREDIT" },
+                                    { label: "All Types", value: "ALL" },
+                                    { label: "Plan Unlock", value: "PLAN_UNLOCK" },
+                                    { label: "Percentage", value: "PERCENTAGE" },
+                                    { label: "Credit", value: "CREDIT" },
                                 ]}
                                 value={typeFilter}
                                 onChange={(val) => setTypeFilter(val)}
@@ -303,7 +303,7 @@ export function AdminVouchers({ t }: { t: any }) {
                             <div className="relative flex-1">
                                 <Input
                                     type="text"
-                                    placeholder="SEARCH CODES..."
+                                    placeholder="Search codes..."
                                     value={search}
                                     onChange={(e) => setSearch(e.target.value)}
                                     icon={<Search size={14} />}
@@ -313,7 +313,7 @@ export function AdminVouchers({ t }: { t: any }) {
                             <Button
                                 onClick={handleExport}
                                 disabled={exporting}
-                                className="shrink-0 flex items-center justify-center gap-2 bg-white/5 hover:bg-white/10 border border-white/10 px-6 h-[54px] text-[10px] font-black uppercase tracking-widest transition-colors text-white/70 hover:text-white"
+                                className="shrink-0 flex items-center justify-center gap-2 bg-white/5 hover:bg-white/10 border border-white/10 px-6 h-[54px] text-xs font-semibold tracking-normal transition-colors text-white/70 hover:text-white"
                                 tooltip="Extract the current voucher matrix to a CSV audit buffer."
                                 tooltipTerm="VOUCHER_EXPORT"
                             >
@@ -327,25 +327,25 @@ export function AdminVouchers({ t }: { t: any }) {
                     <table className="w-full min-w-[800px] text-left border-collapse text-xs font-mono">
                         <thead>
                             <tr className="bg-white/5 text-white/50 sticky top-0 z-10 backdrop-blur-md">
-                                <th className="p-4 font-normal tracking-widest uppercase">Secret Cipher</th>
-                                <th className="p-4 font-normal tracking-widest uppercase">Auth Type</th>
-                                <th className="p-4 font-normal tracking-widest uppercase">Value / Plan</th>
-                                <th className="p-4 font-normal tracking-widest uppercase">Redemptions</th>
-                                <th className="p-4 font-normal tracking-widest uppercase">Health</th>
-                                <th className="p-4 font-normal tracking-widest uppercase">Timestamp</th>
-                                <th className="p-4 font-normal text-right tracking-widest uppercase">Actions</th>
+                                <th className="p-4 font-normal tracking-normal">Secret Cipher</th>
+                                <th className="p-4 font-normal tracking-normal">Auth Type</th>
+                                <th className="p-4 font-normal tracking-normal">Value / Plan</th>
+                                <th className="p-4 font-normal tracking-normal">Redemptions</th>
+                                <th className="p-4 font-normal tracking-normal">Health</th>
+                                <th className="p-4 font-normal tracking-normal">Timestamp</th>
+                                <th className="p-4 font-normal text-right tracking-normal">Actions</th>
                             </tr>
                         </thead>
                         <tbody className="divide-y divide-white/5">
                             {loading && vouchers.length === 0 ? (
-                                <tr><td colSpan={7} className="p-12 text-center text-white/20 animate-pulse uppercase tracking-[0.3em] font-black">Syncing Substrate...</td></tr>
+                                <tr><td colSpan={7} className="p-12 text-center text-white/20 animate-pulse tracking-normal font-semibold">Syncing Substrate...</td></tr>
                             ) : filteredVouchers.length === 0 ? (
-                                <tr><td colSpan={7} className="p-12 text-center text-white/10 uppercase tracking-[0.3em] font-black h-[200px]">Vault Vacant</td></tr>
+                                <tr><td colSpan={7} className="p-12 text-center text-white/10 tracking-normal font-semibold h-[200px]">Vault Vacant</td></tr>
                             ) : filteredVouchers.map((v) => (
                                 <tr key={v.id} className="hover:bg-white/5 transition-colors group">
-                                    <td className="p-4 font-bold text-[var(--accent)] tracking-widest">{v.id}</td>
+                                    <td className="p-4 font-bold text-[var(--accent)] tracking-normal">{v.id}</td>
                                     <td className="p-4 text-white/40">{v.type || 'PLAN_UNLOCK'}</td>
-                                    <td className="p-4 font-black">
+                                    <td className="p-4 font-semibold">
                                         {v.type === 'PERCENTAGE' ? `${v.value}%` :
                                             v.type === 'CREDIT' ? `$${v.value}` :
                                                 (v.planId || 'DEFAULT').toUpperCase()}
@@ -362,7 +362,7 @@ export function AdminVouchers({ t }: { t: any }) {
                                         </div>
                                     </td>
                                     <td className="p-4">
-                                        <span className={`px-3 py-1 text-[10px] font-black uppercase tracking-widest border transition-colors ${v.status === 'ACTIVE' ? 'bg-green-500/10 text-green-500 border-green-500/20' :
+                                        <span className={`px-3 py-1 text-[10px] font-semibold uppercase border transition-colors ${v.status === 'ACTIVE' ? 'bg-green-500/10 text-green-500 border-green-500/20' :
                                             v.status === 'REDEEMED' || v.status === 'MAXED' ? 'bg-blue-500/10 text-blue-500 border-blue-500/20' :
                                                 'bg-red-500/10 text-red-500 border-red-500/20'
                                             }`}>
@@ -373,7 +373,7 @@ export function AdminVouchers({ t }: { t: any }) {
                                     <td className="p-4 text-right">
                                         {v.status === 'ACTIVE' && (
                                             <Button
-                                                variant="glass"
+                                                variant="solid"
                                                 onClick={() => handleRevoke(v.id)}
                                                 className="text-white/20 hover:text-red-500 p-2 transition-all border-none bg-transparent hover:bg-red-500/10"
                                                 tooltip="Sever the authorization for this voucher and neutralize its validity."

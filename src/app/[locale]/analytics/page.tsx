@@ -21,11 +21,11 @@ export default function PublicAnalyticsPage() {
         return (
             <main className="min-h-screen flex flex-col items-center justify-center p-8 text-center space-y-6">
                 <ShieldAlert size={64} className="text-red-500 opacity-50" />
-                <h1 className="text-2xl font-black uppercase tracking-widest">ACCESS RESTRICTED</h1>
-                <p className="text-white/40 text-xs font-mono max-w-sm uppercase tracking-widest">
+                <h1 className="text-2xl font-bold tracking-normal">ACCESS RESTRICTED</h1>
+                <p className="text-white/40 text-xs font-mono max-w-sm tracking-normal">
                     The Public Analytics Matrix has been deactivated by the system administrator.
                 </p>
-                <Button as={Link} href={`/${language}`} variant="glass">
+                <Button as={Link} href={`/${language}`} variant="solid">
                     Return to Reality
                 </Button>
             </main>
@@ -35,8 +35,8 @@ export default function PublicAnalyticsPage() {
     return (
         <main className="min-h-screen p-8 pt-24 max-w-6xl mx-auto">
             <div className="mb-12 text-center md:text-left">
-                <h1 className="text-4xl font-black uppercase tracking-tighter">Public Pulse</h1>
-                <p className="text-[10px] uppercase font-bold tracking-[0.4em] text-[var(--accent)] mt-2">Open Substrate Telemetry</p>
+                <h1 className="text-4xl font-bold tracking-normal">Public Pulse</h1>
+                <p className="text-[10px] font-bold tracking-normal] text-[var(--accent)] mt-2">Open Substrate Telemetry</p>
             </div>
 
             <AdminAnalytics t={t} />

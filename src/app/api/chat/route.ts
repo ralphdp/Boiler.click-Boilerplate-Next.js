@@ -1,5 +1,5 @@
 import { NextResponse } from "next/server";
-import { getAdminDb } from "@/core/firebase/admin";
+import { getAdminDb, getCollectionName } from "@/core/firebase/admin";
 import * as admin from "firebase-admin";
 import { sanitizeText } from "@/core/security/input-sanitization";
 
@@ -106,7 +106,7 @@ export async function POST(req: Request) {
                     // Optional: Persist to Firebase after stream is done
                     try {
                         const batch = getAdminDb().batch();
-                        const sessionRef = getAdminDb().collection("chat_sessions").doc(activeSessionId);
+                        const sessionRef = getAdminDb().collection(getCollectionName("chat_sessions")).doc(activeSessionId);
                         const msgRef = sessionRef.collection("messages").doc();
                         batch.set(sessionRef, {
                             lastActive: admin.firestore.FieldValue.serverTimestamp(),

@@ -4,7 +4,7 @@ import { useState, useEffect } from "react";
 import { motion, AnimatePresence } from "framer-motion";
 import { Folder, File, ChevronRight, ChevronDown, Lock, ShieldAlert, Cpu } from "lucide-react";
 import { listVfsDirectory, readVfsFile } from "@/core/actions/vfs";
-import { GlassCard } from "@/components/ui/GlassCard";
+import { SolidCard } from "@/components/ui/SolidCard";
 import { Button } from "@/components/ui/Button";
 import { Tooltip } from "@/components/ui/Tooltip";
 import { cn } from "@/core/utils";
@@ -59,7 +59,7 @@ export function AdminVFS() {
                     <Tooltip content="Navigate to the root identity node of the virtual substrate." term="VFS_ROOT_SHIFT">
                         <button
                             onClick={() => loadDirectory(".")}
-                            className="text-[10px] font-black uppercase text-[var(--accent)] hover:underline shrink-0"
+                            className="text-[10px] font-semibold text-[var(--accent)] hover:underline shrink-0"
                         >
                             ROOT
                         </button>
@@ -71,7 +71,7 @@ export function AdminVFS() {
                 </div>
                 <div className="flex items-center gap-2">
                     <ShieldAlert size={12} className="text-yellow-500/50" />
-                    <span className="text-[9px] font-black uppercase tracking-widest text-white/20">VFS HARDENING ACTIVE</span>
+                    <span className="text-[9px] font-semibold tracking-normal text-white/20">VFS HARDENING ACTIVE</span>
                 </div>
             </div>
 
@@ -120,7 +120,7 @@ export function AdminVFS() {
                     ) : (
                         <div className="flex-1 flex flex-col items-center justify-center space-y-4 opacity-10">
                             <ShieldAlert size={64} />
-                            <div className="text-[10px] font-black uppercase tracking-[0.2em]">Select an Identity Node to Audit</div>
+                            <div className="text-[10px] font-semibold tracking-normal]">Select an Identity Node to Audit</div>
                         </div>
                     )}
 
@@ -139,8 +139,8 @@ export function AdminVFS() {
 
             {/* Footer / Status */}
             <div className="p-2 bg-black/40 border-t border-white/5 flex justify-between items-center px-4">
-                <span className="text-[8px] text-white/20 uppercase tracking-widest font-black">Substrate Build: 6.8.5</span>
-                <span className="text-[8px] text-[var(--accent)]/50 uppercase tracking-widest font-black">Read-Only Gate</span>
+                <span className="text-[8px] text-white/20 tracking-normal font-semibold">Substrate Build: 6.8.5</span>
+                <span className="text-[8px] text-[var(--accent)]/50 tracking-normal font-semibold">Read-Only Gate</span>
             </div>
         </motion.div>
     );

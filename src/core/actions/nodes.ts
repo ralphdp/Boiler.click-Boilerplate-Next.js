@@ -1,6 +1,6 @@
 "use server";
 
-import { getAdminAuth, getAdminDb } from "@/core/firebase/admin";
+import { getAdminAuth, getAdminDb, getCollectionName } from "@/core/firebase/admin";
 import { auth } from "@/core/auth";
 
 export async function logAuditTrace(
@@ -12,7 +12,7 @@ export async function logAuditTrace(
 ) {
     try {
         const db = getAdminDb();
-        await db.collection("omni_audit_traces").add({
+        await db.collection(getCollectionName("omni_audit_traces")).add({
             action,
             severity,
             message,
@@ -147,16 +147,27 @@ export async function getUserAuditTraces(limitCount = 50) {
 
     try {
         const db = getAdminDb();
-        const snapshot = await db.collection("omni_audit_traces")
-            .where("user", "==", session.user.email)
-            .orderBy("timestamp", "desc")
-            .limit(limitCount)
-            .get();
+        try {
+            const snapshot = await db.collection(getCollectionName("omni_audit_traces"))
+                .where("user", "==", session.user.email)
+                .orderBy("timestamp", "desc")
+                .limit(limitCount)
+                .get();
 
-        return snapshot.docs.map(doc => ({
-            id: doc.id,
-            ...doc.data()
-        }));
+            return snapshot.docs.map(doc => ({
+                id: doc.id,
+                ...doc.data()
+            }));
+        } catch (indexError: any) {
+            console.warn("[Substrate Audit] Primary composite index missing. Executing VFS memory fallback array sort.");
+            // VFS Hardened Fallback if composite index (user ASC, timestamp DESC) is missing
+            const snapshot = await db.collection(getCollectionName("omni_audit_traces"))
+                .where("user", "==", session.user.email)
+                .get();
+
+            const docs = snapshot.docs.map(doc => ({ id: doc.id, ...doc.data() }));
+            return docs.sort((a: any, b: any) => b.timestamp - a.timestamp).slice(0, limitCount);
+        }
     } catch (e) {
         console.error("Failed to fetch user audit traces:", e);
         return [];
@@ -173,7 +184,7 @@ export async function getAuditTraces(limitCount = 20) {
 
     try {
         const db = getAdminDb();
-        const snapshot = await db.collection("omni_audit_traces")
+        const snapshot = await db.collection(getCollectionName("omni_audit_traces"))
             .orderBy("timestamp", "desc")
             .limit(limitCount)
             .get();

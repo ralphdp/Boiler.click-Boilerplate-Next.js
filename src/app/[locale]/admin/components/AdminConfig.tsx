@@ -1,13 +1,15 @@
 "use client";
 
 import { motion } from "framer-motion";
-import { GlassCard } from "@/components/ui/GlassCard";
+import { SolidCard } from "@/components/ui/SolidCard";
 import { Input } from "@/components/ui/Input";
 import { Activity } from "lucide-react";
 import { useToast } from "@/components/ui/Toast";
 import { useRouter } from "next/navigation";
 import { useState } from "react";
-import { setPreLaunchMode as setPreLaunchModeAction, setHaltingProtocol as setHaltingProtocolAction, setMFAEnforced as setMFAEnforcedAction, setRateLimitMode, setResendFrom, setSandboxMode as setSandboxModeAction, setDomainShield as setDomainShieldAction, setTelemetryKeys, updateGlobalModules } from "@/core/actions/system";
+import { setMFAEnforced as setMFAEnforcedAction, setRateLimitMode, setDomainShield as setDomainShieldAction } from "@/core/actions/security";
+import { setPreLaunchMode as setPreLaunchModeAction, setHaltingProtocol as setHaltingProtocolAction, setResendFrom, setSandboxMode as setSandboxModeAction, updateGlobalModules } from "@/core/actions/branding";
+import { setTelemetryKeys } from "@/core/actions/telemetry";
 import { ConfirmationModal } from "@/components/ui/ConfirmationModal";
 import { CipherGate } from "@/components/ui/CipherGate";
 import { Button } from "@/components/ui/Button";
@@ -97,9 +99,9 @@ export function AdminConfig({
             className="grid grid-cols-1 md:grid-cols-2 gap-6"
         >
             <Tooltip content="Toggle public access vs. pre-launch landing node." term="ACCESS_POLARITY">
-                <GlassCard className="border border-white/5 bg-black/40 p-6 flex flex-col justify-between gap-4 h-full">
+                <SolidCard className="border border-white/5 bg-black/40 p-6 flex flex-col justify-between gap-4 h-full">
                     <div className="space-y-2 text-left">
-                        <h3 className="text-sm font-bold uppercase tracking-widest text-[var(--accent)]">{t.admin.config.earlyAccess}</h3>
+                        <h3 className="text-sm font-bold tracking-normal text-[var(--accent)]">{t.admin.config.earlyAccess}</h3>
                         <p className="text-xs font-serif italic text-white/50">{t.admin.config.earlyAccessDesc}</p>
                     </div>
                     <div className="flex w-full justify-start">
@@ -116,13 +118,13 @@ export function AdminConfig({
                             <div className={`w-4 h-4 rounded-full bg-white absolute top-1 transition-transform ${preLaunchMode ? 'translate-x-6' : 'translate-x-1'}`} />
                         </button>
                     </div>
-                </GlassCard>
+                </SolidCard>
             </Tooltip>
 
             <Tooltip content="Activate the halting protocol and show maintenance screen to all nodes." term="HALT_PROTOCOL">
-                <GlassCard className="border border-white/5 bg-black/40 p-6 flex flex-col justify-between gap-4 h-full">
+                <SolidCard className="border border-white/5 bg-black/40 p-6 flex flex-col justify-between gap-4 h-full">
                     <div className="space-y-2 text-left">
-                        <h3 className="text-sm font-bold uppercase tracking-widest text-[var(--accent)]">{t.admin.config.maintenance}</h3>
+                        <h3 className="text-sm font-bold tracking-normal text-[var(--accent)]">{t.admin.config.maintenance}</h3>
                         <p className="text-xs font-serif italic text-white/50">{t.admin.config.maintenanceDesc}</p>
                     </div>
                     <div className="flex w-full justify-start">
@@ -134,7 +136,7 @@ export function AdminConfig({
                             <div className={`w-4 h-4 rounded-full bg-white absolute top-1 transition-transform ${haltingProtocol ? 'translate-x-6' : 'translate-x-1'}`} />
                         </button>
                     </div>
-                </GlassCard>
+                </SolidCard>
             </Tooltip>
 
             <ConfirmationModal
@@ -158,9 +160,9 @@ export function AdminConfig({
             )}
 
             <Tooltip content="Enforce multi-factor authentication for all workspace members." term="MFA_ENFORCE">
-                <GlassCard className="border border-white/5 bg-black/40 p-6 flex flex-col justify-between gap-4 relative h-full">
+                <SolidCard className="border border-white/5 bg-black/40 p-6 flex flex-col justify-between gap-4 relative h-full">
                     <div className="space-y-2 text-left">
-                        <h3 className="text-sm font-bold uppercase tracking-widest text-[var(--accent)]">{t.admin.config.mfa}</h3>
+                        <h3 className="text-sm font-bold tracking-normal text-[var(--accent)]">{t.admin.config.mfa}</h3>
                         <p className="text-xs font-serif italic text-white/50">{t.admin.config.mfaDesc}</p>
                     </div>
                     <div className="flex w-full justify-start">
@@ -177,13 +179,13 @@ export function AdminConfig({
                             <div className={`w-4 h-4 rounded-full bg-white absolute top-1 transition-transform ${mfaEnforced ? 'translate-x-6' : 'translate-x-1'}`} />
                         </button>
                     </div>
-                </GlassCard>
+                </SolidCard>
             </Tooltip>
 
             <Tooltip content="Enable testing mode for all commerce and integration transactions." term="SANDBOX_MODE">
-                <GlassCard className="border border-white/5 bg-black/40 p-6 flex flex-col justify-between gap-4 h-full">
+                <SolidCard className="border border-white/5 bg-black/40 p-6 flex flex-col justify-between gap-4 h-full">
                     <div className="space-y-2 text-left">
-                        <h3 className="text-sm font-bold uppercase tracking-widest text-[var(--accent)]">{t.admin.overview.sandbox}</h3>
+                        <h3 className="text-sm font-bold tracking-normal text-[var(--accent)]">{t.admin.overview.sandbox}</h3>
                         <p className="text-xs font-serif italic text-white/50">{t.admin.config.sandboxDesc}</p>
                     </div>
                     <div className="flex w-full justify-start">
@@ -200,13 +202,13 @@ export function AdminConfig({
                             <div className={`w-4 h-4 rounded-full bg-white absolute top-1 transition-transform ${sandboxMode ? 'translate-x-6' : 'translate-x-1'}`} />
                         </button>
                     </div>
-                </GlassCard>
+                </SolidCard>
             </Tooltip>
 
             <Tooltip content="Automatically block disposable email domains and suspicious Edge traffic." term="DOMAIN_SHIELD">
-                <GlassCard className="border border-white/5 bg-black/40 p-6 flex flex-col justify-between gap-4 h-full">
+                <SolidCard className="border border-white/5 bg-black/40 p-6 flex flex-col justify-between gap-4 h-full">
                     <div className="space-y-2 text-left">
-                        <h3 className="text-sm font-bold uppercase tracking-widest text-[var(--accent)]">{t.admin.config.domainShield}</h3>
+                        <h3 className="text-sm font-bold tracking-normal text-[var(--accent)]">{t.admin.config.domainShield}</h3>
                         <p className="text-xs font-serif italic text-white/50">{t.admin.config.domainShieldDesc}</p>
                     </div>
                     <div className="flex w-full justify-start">
@@ -223,19 +225,19 @@ export function AdminConfig({
                             <div className={`w-4 h-4 rounded-full bg-white absolute top-1 transition-transform ${domainShield ? 'translate-x-6' : 'translate-x-1'}`} />
                         </button>
                     </div>
-                </GlassCard>
+                </SolidCard>
             </Tooltip>
 
-            <GlassCard className="border border-white/5 bg-black/40 p-6 flex flex-col justify-between gap-4 md:col-span-2">
+            <SolidCard className="border border-white/5 bg-black/40 p-6 flex flex-col justify-between gap-4 md:col-span-2">
                 <div className="space-y-2 text-left">
-                    <h3 className="text-sm font-bold uppercase tracking-widest text-[var(--accent)]">{t.admin.config.rateLimit}</h3>
+                    <h3 className="text-sm font-bold tracking-normal text-[var(--accent)]">{t.admin.config.rateLimit}</h3>
                     <p className="text-xs font-serif italic text-white/50">{t.admin.config.rateLimitDesc}</p>
                 </div>
                 <div className="flex flex-wrap w-full justify-start gap-4">
                     {['relaxed', 'standard', 'strict', 'lockdown'].map((variant) => (
                         <Button
                             key={variant}
-                            variant={rateLimitMode === variant ? 'glass-accent' : 'glass'}
+                            variant={rateLimitMode === variant ? 'solid-accent' : 'solid'}
                             onClick={async () => {
                                 const res = await setRateLimitMode(variant);
                                 if (res.success) {
@@ -243,11 +245,11 @@ export function AdminConfig({
                                     router.refresh();
                                 }
                             }}
-                            className={`px-6 py-2 min-w-[120px] uppercase tracking-widest font-bold ${rateLimitMode === variant ? 'border-[var(--accent)] shadow-[0_0_15px_var(--accent)]/20' : 'opacity-60 hover:opacity-100'}`}
+                            className={`px-6 py-2 min-w-[120px] font-semibold tracking-normal ${rateLimitMode === variant ? 'border-[var(--accent)]' : 'text-white/40 hover:text-white'}`}
                             tooltip={`Activate ${variant} rate limiting protocols for systemic Edge traffic.`}
                             tooltipTerm={`RL_${variant.toUpperCase()}`}
                         >
-                            {variant}
+                            {variant.charAt(0).toUpperCase() + variant.slice(1)}
                         </Button>
                     ))}
                 </div>
@@ -257,17 +259,17 @@ export function AdminConfig({
                     {rateLimitMode === 'strict' && t.admin.config.rlStrict}
                     {rateLimitMode === 'lockdown' && t.admin.config.rlLockdown}
                 </div>
-            </GlassCard>
+            </SolidCard>
 
-            <GlassCard className="border border-white/5 bg-black/40 p-6 flex flex-col justify-between gap-4 md:col-span-2">
+            <SolidCard className="border border-white/5 bg-black/40 p-6 flex flex-col justify-between gap-4 md:col-span-2">
                 <div className="space-y-2 text-left">
-                    <h3 className="text-sm font-bold uppercase tracking-widest text-[var(--accent)]">{t.admin.config.senderEmail}</h3>
+                    <h3 className="text-sm font-bold tracking-normal text-[var(--accent)]">{t.admin.config.senderEmail}</h3>
                     <p className="text-xs font-serif italic text-white/50">{t.admin.config.senderEmailDesc}</p>
                 </div>
                 <div className="flex flex-col gap-3 w-full justify-start">
                     <Input
                         type="text"
-                        placeholder={t.admin.config.senderEmailPlace || "NOREPLY@DOMAIN.COM"}
+                        placeholder={t.admin.config.senderEmailPlace || "noreply@domain.com"}
                         value={resendFrom}
                         onChange={(e) => setResendFromUI(e.target.value)}
                         onBlur={async (e) => {
@@ -279,11 +281,11 @@ export function AdminConfig({
                         }}
                     />
                 </div>
-            </GlassCard>
+            </SolidCard>
 
-            <GlassCard className="border border-white/5 bg-black/40 p-6 flex flex-col justify-between gap-4 md:col-span-2">
+            <SolidCard className="border border-white/5 bg-black/40 p-6 flex flex-col justify-between gap-4 md:col-span-2">
                 <div className="space-y-2 text-left">
-                    <h3 className="text-sm font-bold uppercase tracking-widest text-[var(--accent)]">Module Governance</h3>
+                    <h3 className="text-sm font-bold tracking-normal text-[var(--accent)]">Module Governance</h3>
                     <p className="text-xs font-serif italic text-white/50">Toggle entire system modules on/off. Disabled modules will be hidden from all standard administrative and user views.</p>
                 </div>
                 <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-6 py-4">
@@ -300,7 +302,7 @@ export function AdminConfig({
                     ]).map((mod) => (
                         <div key={mod.id} className="flex items-center justify-between gap-4 p-3 bg-white/5 border border-white/5 rounded-lg">
                             <div className="space-y-1">
-                                <span className="text-[10px] font-black uppercase tracking-widest text-white">{mod.label}</span>
+                                <span className="text-[10px] font-semibold tracking-normal text-white">{mod.label}</span>
                                 <p className="text-[9px] text-white/40 italic">{mod.desc}</p>
                             </div>
                             <Tooltip content={`Toggle the ${mod.label} module. Changes affect all nodes in real-time.`} term={`GOVERNANCE_${mod.id.toUpperCase()}`}>
@@ -312,7 +314,7 @@ export function AdminConfig({
                                         router.refresh();
                                         toast({ title: "Module Synchronized", description: `${mod.label} state updated successfully.`, type: "success" });
                                     }}
-                                    className={`w-10 h-5 rounded-full relative transition-colors border shrink-0 ${modules[mod.id] ? 'bg-green-500/50 border-green-500/50' : 'bg-white/10 border-white/20'}`}
+                                    className={`w-10 h-5 rounded-full relative transition-colors border shrink-0 ${modules[mod.id] ? 'bg-[var(--accent)] border-[var(--accent)]' : 'bg-white/10 border-white/20'}`}
                                 >
                                     <div className={`w-3 h-3 rounded-full bg-white absolute top-0.5 transition-transform ${modules[mod.id] ? 'translate-x-5.5' : 'translate-x-1'}`} />
                                 </button>
@@ -320,16 +322,16 @@ export function AdminConfig({
                         </div>
                     ))}
                 </div>
-            </GlassCard>
+            </SolidCard>
 
-            <GlassCard className="border border-white/5 bg-black/40 p-6 flex flex-col justify-between gap-4 md:col-span-2">
+            <SolidCard className="border border-white/5 bg-black/40 p-6 flex flex-col justify-between gap-4 md:col-span-2">
                 <div className="space-y-2 text-left">
-                    <h3 className="text-sm font-bold uppercase tracking-widest text-[var(--accent)]">Sovereign Telemetry Gates</h3>
+                    <h3 className="text-sm font-bold tracking-normal text-[var(--accent)]">Sovereign Telemetry Gates</h3>
                     <p className="text-xs font-serif italic text-white/50">Configure external behavioral monitoring identifiers. Changes propagate to all nodes on next mount.</p>
                 </div>
                 <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
                     <div className="space-y-2">
-                        <label className="text-[10px] font-black uppercase tracking-widest text-white/30">GA4 Measurement ID</label>
+                        <label className="text-[10px] font-semibold tracking-normal text-white/30">GA4 Measurement ID</label>
                         <Input
                             type="text"
                             placeholder="G-XXXXXXXXXX"
@@ -342,7 +344,7 @@ export function AdminConfig({
                         />
                     </div>
                     <div className="space-y-2">
-                        <label className="text-[10px] font-black uppercase tracking-widest text-white/30">GA4 Property ID</label>
+                        <label className="text-[10px] font-semibold tracking-normal text-white/30">GA4 Property ID</label>
                         <Input
                             type="text"
                             placeholder="528435699"
@@ -355,7 +357,7 @@ export function AdminConfig({
                         />
                     </div>
                     <div className="space-y-2 md:col-span-2">
-                        <label className="text-[10px] font-black uppercase tracking-widest text-white/30">PostHog API Key</label>
+                        <label className="text-[10px] font-semibold tracking-normal text-white/30">PostHog API Key</label>
                         <Input
                             type="text"
                             placeholder="PHC_XXXXXXXXXX"
@@ -368,12 +370,12 @@ export function AdminConfig({
                         />
                     </div>
                 </div>
-            </GlassCard>
+            </SolidCard>
 
-            <GlassCard className="border border-white/5 bg-black/40 p-6 flex flex-col justify-between gap-4 md:col-span-2 relative overflow-hidden">
+            <SolidCard className="border border-white/5 bg-black/40 p-6 flex flex-col justify-between gap-4 md:col-span-2 relative overflow-hidden">
                 <div className="absolute top-0 right-0 w-32 h-32 bg-[var(--accent)]/10 blur-[50px] pointer-events-none rounded-full" />
                 <div className="space-y-2 text-left z-10">
-                    <h3 className="text-sm font-bold uppercase tracking-widest text-[var(--accent)] flex items-center gap-2">
+                    <h3 className="text-sm font-bold tracking-normal text-[var(--accent)] flex items-center gap-2">
                         <Activity size={16} /> {t.admin.config.edgeFlags}
                     </h3>
                     <p className="text-xs font-serif italic text-white/50 leading-relaxed">
@@ -382,10 +384,10 @@ export function AdminConfig({
                         <strong>2. {t.admin.config.edgeFlagsDesc4}</strong> {t.admin.config.edgeFlagsDesc5}
                     </p>
                 </div>
-                <div className="z-10 mt-2 p-3 bg-black/50 border border-white/10 font-mono text-[9px] uppercase tracking-[0.2em] text-white/40 shadow-inner">
+                <div className="z-10 mt-2 p-3 bg-black/50 border border-white/10 font-mono text-[9px] tracking-normal] text-white/40 shadow-inner">
                     {t.admin.config.edgeFlagsDesc6}
                 </div>
-            </GlassCard>
+            </SolidCard>
         </motion.div >
     );
 }
