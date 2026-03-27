@@ -32,7 +32,7 @@ export const SecurityAlertEmail = ({ action, user, ip, timestamp }: SecurityAler
 
         <Button
             style={button}
-            href="https://boiler.logos.pub/admin#audit"
+            href="https://boiler.click/admin#audit"
         >
             Inquire Audit Logs
         </Button>

@@ -157,7 +157,7 @@ export default function GalaxyEngine({ color = "var(--accent)", zIndex = 0 }: { 
                     ease: "easeInOut"
                 }}
                 className="absolute inset-0 mix-blend-screen bg-no-repeat bg-cover bg-center pointer-events-none will-change-transform z-[1]"
-                style={{ backgroundImage: 'url("https://rddp.ai/images/cosmos-nebula.png")', filter: `hue-rotate(0deg)` }} // Fallback image if local unavailable
+                style={{ backgroundImage: 'url("/images/cosmos-nebula.png")', filter: `hue-rotate(0deg)` }} // Fallback image if local unavailable
             />
 
             <div className="absolute inset-0 z-[2]">

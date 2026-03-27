@@ -14,12 +14,12 @@ export const FACTORY_DEFAULTS = {
     // Growth & Visibility
     preLaunchMode: false,
     haltingProtocol: false, // Emergency system halt
-    contactEmail: "nexus@rddp.ai",
+    contactEmail: "nexus@boilerplate.com",
     resendFrom: "Boilerplate <noreply@boiler.click>",
 
     // Social Vector Shards
     socialX: "https://x.com/ralpdp",
-    socialGithub: "https://github.com/ralphdp/Boiler.click-Boilerplate-Next.js",
+    socialGithub: "https://github.com/organization/boilerplate-repo",
     socialDiscord: "",
 
     // Global Commerce Logic (SaaS Matrix)
