@@ -14,7 +14,7 @@ export const FACTORY_DEFAULTS = {
     // Growth & Visibility
     preLaunchMode: false,
     haltingProtocol: false, // Emergency system halt
-    contactEmail: "nexus@boilerplate.com",
+    contactEmail: "hi@rddp.ai",
     resendFrom: "Boilerplate <noreply@boiler.click>",
 
     // Social Vector Shards
