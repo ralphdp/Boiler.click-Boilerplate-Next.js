@@ -8,7 +8,7 @@ describe('SecurityUtils: Domain Shield', () => {
     });
 
     it('should allow legitimate domains', () => {
-        expect(SecurityUtils.isDomainBlocked('hi@rdepaz.com')).toBe(false);
+        expect(SecurityUtils.isDomainBlocked('me@rdepaz.com')).toBe(false);
         expect(SecurityUtils.isDomainBlocked('google.com')).toBe(false);
     });
 });
