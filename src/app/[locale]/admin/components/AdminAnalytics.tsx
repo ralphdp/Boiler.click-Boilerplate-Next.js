@@ -16,6 +16,8 @@ import {
     ShieldAlert,
     Activity
 } from "lucide-react";
+import { auth } from "@/core/auth";
+import { getAdminAuth, getAdminDb, getCollectionName } from "@/core/firebase/admin";
 import { getAnalyticsOverview } from "@/core/actions/analytics";
 import {
     AreaChart,
@@ -144,10 +146,11 @@ export function AdminAnalytics({ t }: { t: any }) {
                     <div className="space-y-1">
                         <h4 className="text-xs font-semibold tracking-normal]">Permission Required</h4>
                         <p className="text-[10px] text-white/40 tracking-normal leading-relaxed">
-                            Ensure `firebase-adminsdk-fbsvc@boiler-click-next-js.iam.gserviceaccount.com` <br />
-                            is added as a **VIEWER** to GA4 Property **528435699**.
+                            Ensure `<span className="text-white font-mono">{data?.clientEmail || 'your-service-account'}</span>` <br />
+                            is added as a **VIEWER** to GA4 Property **{data?.propertyId || 'your-property-id'}**.
                         </p>
                     </div>
+
                 </SolidCard>
             )}
 
@@ -157,11 +160,12 @@ export function AdminAnalytics({ t }: { t: any }) {
                     <div className="space-y-1">
                         <h4 className="text-xs font-semibold tracking-normal]">Identity Synchronized</h4>
                         <p className="text-[10px] text-white/40 tracking-normal leading-relaxed">
-                            Bridge established with Property **528435699**. <br />
+                            Bridge established with Property **{data?.propertyId || '...'}**. <br />
                             <span className="text-[var(--accent)] font-bold">Latency Warning:</span> GA4 historical data (Charts, Top Routes, Hardware) <br />
                             requires **24-48 hours** to process. Real-time "Active Now" is live.
                         </p>
                     </div>
+
                 </SolidCard>
             )}
 

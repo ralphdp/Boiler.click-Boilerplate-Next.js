@@ -19,8 +19,15 @@ export default function HandshakePage() {
     const [isMagicLinkMode, setIsMagicLinkMode] = useState(false);
     const [lastUsed, setLastUsed] = useState<string | null>(null);
 
+    const [mousePos, setMousePos] = useState({ x: 0, y: 0 });
+
     useEffect(() => {
         setLastUsed(localStorage.getItem("lastUsedAuthMethod"));
+        const handleMouseMove = (e: MouseEvent) => {
+            setMousePos({ x: e.clientX, y: e.clientY });
+        };
+        window.addEventListener('mousemove', handleMouseMove);
+        return () => window.removeEventListener('mousemove', handleMouseMove);
     }, []);
 
     const markPendingAuth = (method: string) => {
@@ -28,9 +35,14 @@ export default function HandshakePage() {
     };
 
     return (
-        <main className="relative min-h-screen flex flex-col items-center justify-center p-6 overflow-hidden font-sans text-white">
+        <main className="relative min-h-screen flex flex-col items-center justify-center p-6 overflow-hidden font-sans text-white bg-transparent">
+
+            {/* Global SovereignWebGL handles projection here via RootLayout */}
+
+
             {/* SCANLINE EFFECT overlay */}
             <div className="absolute inset-0 pointer-events-none z-10 opacity-[0.03] bg-[linear-gradient(rgba(18,16,16,0)_50%,rgba(0,0,0,0.25)_50%),linear-gradient(90deg,rgba(255,0,0,0.06),rgba(0,255,0,0.02),rgba(0,0,255,0.06))] bg-[length:100%_2px,3px_100%]" aria-hidden="true" />
+
 
             <motion.div
                 initial={{ opacity: 0, scale: 0.95 }}

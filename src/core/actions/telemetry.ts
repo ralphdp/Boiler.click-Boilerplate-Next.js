@@ -8,8 +8,8 @@ export async function verifySovereignCipher(cipher: string) {
     const isRootAdmin = session?.user?.role === "ADMIN" || session?.user?.email === process.env.NEXT_PUBLIC_SUPER_ADMIN_EMAIL;
     if (!isRootAdmin) throw new Error("UNAUTHORIZED");
 
-    const systemCipher = process.env.SOVEREIGN_CIPHER || "21170194";
-    const isValid = cipher === systemCipher;
+    const systemCipher = process.env.SOVEREIGN_CIPHER;
+    const isValid = cipher && cipher === systemCipher;
 
     if (isValid) {
         await logAuditTrace("CIPHER_AUTH", "INFO", "Sovereign Cipher Authenticated", session?.user?.email || "SYSTEM");

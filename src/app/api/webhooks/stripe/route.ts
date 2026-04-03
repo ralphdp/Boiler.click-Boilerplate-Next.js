@@ -5,6 +5,8 @@ import { getGlobalOverrides } from '@/core/actions/branding';
 import { emitAuditLog } from '@/core/actions/audit';
 import { z } from 'zod';
 
+export const dynamic = 'force-dynamic';
+
 const StripeSignatureSchema = z.string().min(5, "Invalid or missing Stripe Signature");
 const SessionMetadataSchema = z.object({
     client_reference_id: z.string().min(1, "Workspace ID is required for mapping"),

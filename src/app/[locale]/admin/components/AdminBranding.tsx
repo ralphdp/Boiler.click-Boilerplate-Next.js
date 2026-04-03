@@ -168,7 +168,7 @@ export function AdminBranding({
                 </div>
                 <div className="flex flex-col gap-4 w-full">
                     <Textarea
-                        placeholder={t.admin.branding.seoDescPlace}
+                        placeholder={t.admin.branding.siteDescription || "The definitive Next.js boilerplate for sovereign SaaS and localized commerce nodes."}
                         value={seoDescription}
                         onChange={(e) => setSeoDescriptionUI(e.target.value)}
                         onBlur={async () => {
@@ -182,9 +182,10 @@ export function AdminBranding({
                     <div className="grid grid-cols-1 sm:grid-cols-2 gap-4 w-full">
                         <Input
                             type="text"
-                            placeholder={t.admin.branding.seoKeywordsPlace}
+                            placeholder={t.admin.branding.seoKeywordsPlace || "keywords, separated, by, commas"}
                             value={seoKeywords}
                             onChange={(e) => setSeoKeywordsUI(e.target.value)}
+
                             onBlur={async () => {
                                 const res = await setSEOMetadata({ description: seoDescription, keywords: seoKeywords, ogUrl: seoOgImage });
                                 if (res.success) {
@@ -263,7 +264,7 @@ export function AdminBranding({
                     <p className="text-xs font-serif italic text-white/50">{t.admin.branding.bgAnimationDesc}</p>
                 </div>
                 <div className="flex flex-wrap w-full justify-start gap-4">
-                    {['fire', 'matrix', 'galaxy', 'none'].map((variant) => {
+                    {['fire', 'matrix', 'galaxy', 'tesseract', 'none'].map((variant) => {
                         const isActive = webglVariantUI?.toLowerCase() === variant.toLowerCase();
                         return (
                             <Button
